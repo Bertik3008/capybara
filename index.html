@@ -1,0 +1,2553 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Капибара">
+<meta name="theme-color" content="#0a3f4a">
+<meta name="description" content="Капибара Капа спасает остров от Короля Клаца: собирай апельсины, спасай малышей, побеждай боссов.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Капибара: Апельсиновый остров</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@600;700;800;900&family=Nunito:wght@600;700;800&display=swap">
+<style>
+/* Единый игровой мир: тёмно-бирюзовая лагуна, контрастная апельсинам; кнопки — мята и лагуна, без чёрных обводок */
+:root {
+  --lagoon-1: #0f5b63;
+  --lagoon-2: #0a3f4a;
+  --lagoon-3: #06303a;
+  --orange: #ff9a1f;
+  --orange-deep: #f07500;
+  --mint-1: #4fe0a0;
+  --mint-2: #19b877;
+  --teal-1: #3fc8e8;
+  --teal-2: #1688b8;
+  --cream: #fff7e8;
+  --cream-2: #ffe9c7;
+  --ink: #23323a;
+  --ink-soft: #5d6f77;
+  --glass: rgba(255, 255, 255, 0.14);
+  --glass-line: rgba(255, 255, 255, 0.28);
+  --danger: #ff6b6b;
+  --gold: #ffd54a;
+  --font-display: "Rubik", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--lagoon-3);
+  color: var(--cream);
+  font-family: var(--font-body);
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+}
+#app { position: fixed; inset: 0; }
+canvas { display: block; }
+#game { position: absolute; inset: 0; width: 100%; height: 100%; }
+#bg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+.screen {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px calc(env(safe-area-inset-bottom, 0px) + 16px);
+  box-sizing: border-box;
+}
+.screen[hidden], [hidden] { display: none !important; }
+#menu {
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(79, 224, 160, 0.18), transparent 60%),
+    radial-gradient(90% 70% at 50% 110%, rgba(255, 154, 31, 0.16), transparent 60%),
+    linear-gradient(180deg, var(--lagoon-1), var(--lagoon-2) 55%, var(--lagoon-3));
+}
+.menu-inner { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 14px; width: min(420px, 100%); }
+.wallet {
+  position: absolute; top: calc(env(safe-area-inset-top, 0px) + 14px); right: 16px; z-index: 3;
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 14px 6px 6px; border-radius: 999px;
+  background: rgba(0, 0, 0, 0.28); border: 1px solid var(--glass-line);
+  font: 800 18px/1 var(--font-display); color: var(--cream);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  font-variant-numeric: tabular-nums;
+}
+.wallet canvas { width: 30px; height: 30px; }
+.logo-art { width: min(280px, 70vw); height: min(220px, 55vw); }
+.title {
+  margin: -6px 0 0;
+  font: 900 clamp(42px, 11vw, 64px)/0.95 var(--font-display);
+  letter-spacing: 0.01em;
+  background: linear-gradient(180deg, #fff3c4 0%, #ffc04d 45%, #ff8a00 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 4px 0 rgba(120, 50, 0, 0.55)) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.35));
+  text-align: center;
+}
+.subtitle {
+  margin: 0 0 10px;
+  font: 700 clamp(15px, 4vw, 18px)/1.2 var(--font-display);
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: #bff5df; text-align: center;
+}
+.btn {
+  position: relative; width: 100%;
+  border: 0; cursor: pointer;
+  font: 800 22px/1 var(--font-display); letter-spacing: 0.04em; color: #fff;
+  padding: 18px 20px; border-radius: 22px;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.18);
+}
+.btn::after {
+  content: ""; position: absolute; left: 10px; right: 10px; top: 5px; height: 42%;
+  border-radius: 16px 16px 40% 40%; background: linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+.btn:hover { filter: brightness(1.06); transform: translateY(-2px); }
+.btn:active { transform: translateY(3px) scale(0.98); }
+.btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.btn-primary { background: linear-gradient(180deg, var(--mint-1), var(--mint-2)); box-shadow: 0 6px 0 #0d8a57, 0 14px 24px rgba(0, 0, 0, 0.3); font-size: 26px; padding: 22px 20px; }
+.btn-primary:active { box-shadow: 0 2px 0 #0d8a57, 0 6px 12px rgba(0, 0, 0, 0.3); }
+.btn-teal { background: linear-gradient(180deg, var(--teal-1), var(--teal-2)); box-shadow: 0 6px 0 #0d5f86, 0 14px 24px rgba(0, 0, 0, 0.3); }
+.btn-teal:active { box-shadow: 0 2px 0 #0d5f86; }
+.btn-ghost { background: var(--glass); border: 1px solid var(--glass-line); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18); font-size: 19px; padding: 15px 20px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.btn-ghost::after { opacity: 0.35; }
+.btn-orange { background: linear-gradient(180deg, #ffbb4d, var(--orange-deep)); box-shadow: 0 6px 0 #b24f00, 0 14px 24px rgba(0, 0, 0, 0.3); }
+.btn-orange:active { box-shadow: 0 2px 0 #b24f00; }
+.btn .ico { width: 30px; height: 30px; flex: none; }
+.row { display: flex; gap: 12px; width: 100%; }
+.row .btn { flex: 1; min-width: 0; }
+.hint { font: 700 13px/1.4 var(--font-body); color: rgba(255, 247, 232, 0.6); text-align: center; margin-top: 4px; }
+
+/* Окна */
+.modal-wrap { background: rgba(4, 28, 34, 0.62); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); z-index: 20; }
+.panel {
+  width: min(560px, 100%); max-height: 100%;
+  background: linear-gradient(180deg, var(--cream), var(--cream-2));
+  color: var(--ink); border-radius: 28px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45), inset 0 2px 0 rgba(255, 255, 255, 0.9);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.panel-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 18px 18px 12px 22px;
+}
+.panel-head h2 { margin: 0; font: 900 28px/1 var(--font-display); color: var(--ink); }
+.close {
+  width: 44px; height: 44px; border-radius: 14px; border: 0; cursor: pointer;
+  background: #f3dcb7; color: #8a5a1c; font: 900 22px/1 var(--font-display);
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.08);
+}
+.close:focus-visible { outline: 3px solid var(--teal-2); }
+.chip-wallet { display: flex; align-items: center; gap: 6px; font: 800 18px/1 var(--font-display); color: #b25a00; font-variant-numeric: tabular-nums; }
+.chip-wallet canvas { width: 26px; height: 26px; }
+.tabs { display: flex; gap: 8px; padding: 0 18px 12px; }
+.tab {
+  flex: 1; border: 0; cursor: pointer; padding: 12px; border-radius: 16px;
+  font: 800 16px/1 var(--font-display); color: var(--ink-soft); background: rgba(0, 0, 0, 0.05);
+}
+.tab[aria-selected="true"] { background: linear-gradient(180deg, var(--teal-1), var(--teal-2)); color: #fff; box-shadow: 0 4px 0 #0d5f86; }
+.tab:focus-visible { outline: 3px solid var(--teal-2); }
+.panel-body { overflow-y: auto; padding: 4px 18px 20px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 420px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.card {
+  background: #fff; border-radius: 20px; padding: 10px 10px 12px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  box-shadow: 0 4px 0 rgba(160, 110, 40, 0.18), 0 8px 18px rgba(160, 110, 40, 0.12);
+  border: 2px solid transparent;
+}
+.card.equipped { border-color: var(--mint-2); }
+.card canvas { width: 100%; max-width: 120px; aspect-ratio: 1; height: auto; border-radius: 14px; background: radial-gradient(circle at 50% 40%, #fff3dc, #ffe1b0); }
+.card-name { font: 800 15px/1.1 var(--font-display); color: var(--ink); text-align: center; }
+.card .buy {
+  width: 100%; border: 0; cursor: pointer; border-radius: 14px; padding: 10px 8px;
+  font: 800 15px/1 var(--font-display); color: #fff;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  background: linear-gradient(180deg, var(--mint-1), var(--mint-2)); box-shadow: 0 3px 0 #0d8a57;
+}
+.card .buy canvas { width: 18px; height: 18px; background: none; border-radius: 0; }
+.card .buy.locked { background: linear-gradient(180deg, #d6cbb8, #b9ac96); box-shadow: 0 3px 0 #94876f; }
+.card .buy.owned { background: linear-gradient(180deg, var(--teal-1), var(--teal-2)); box-shadow: 0 3px 0 #0d5f86; }
+.card .buy.on { background: #e8f8f0; color: var(--mint-2); box-shadow: none; }
+.card .buy:focus-visible { outline: 3px solid var(--teal-2); }
+.upg { display: flex; flex-direction: column; gap: 12px; }
+.upg-row { background: #fff; border-radius: 20px; padding: 14px; display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 12px; align-items: center; box-shadow: 0 4px 0 rgba(160, 110, 40, 0.18); }
+.upg-row canvas { width: 56px; height: 56px; border-radius: 16px; background: radial-gradient(circle at 50% 40%, #fff3dc, #ffe1b0); }
+.upg-title { font: 800 17px/1.1 var(--font-display); color: var(--ink); }
+.upg-desc { font: 700 13px/1.3 var(--font-body); color: var(--ink-soft); margin-top: 2px; }
+.pips { display: flex; gap: 4px; margin-top: 7px; }
+.pip { width: 18px; height: 7px; border-radius: 4px; background: #eadbc3; }
+.pip.on { background: linear-gradient(90deg, var(--orange), var(--orange-deep)); }
+.upg-row .buy { width: auto; min-width: 92px; }
+.setting { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #fff; border-radius: 18px; padding: 16px; font: 800 18px/1 var(--font-display); color: var(--ink); margin-bottom: 10px; }
+.toggle { width: 64px; height: 36px; border-radius: 999px; border: 0; cursor: pointer; background: #d8ccb8; position: relative; transition: background 0.2s; flex: none; }
+.toggle::after { content: ""; position: absolute; top: 4px; left: 4px; width: 28px; height: 28px; border-radius: 50%; background: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); transition: transform 0.2s; }
+.toggle[aria-checked="true"] { background: var(--mint-2); }
+.toggle[aria-checked="true"]::after { transform: translateX(28px); }
+.toggle:focus-visible { outline: 3px solid var(--teal-2); }
+.danger-link { border: 0; background: none; color: #b0544b; font: 800 14px/1 var(--font-body); cursor: pointer; padding: 10px; }
+
+/* HUD */
+#hud { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+.hud-top { position: absolute; left: 0; right: 0; top: calc(env(safe-area-inset-top, 0px) + 12px); display: flex; justify-content: space-between; align-items: flex-start; padding: 0 14px; gap: 10px; }
+.pill {
+  display: flex; align-items: center; gap: 8px; padding: 6px 16px 6px 6px; border-radius: 999px;
+  background: rgba(6, 40, 46, 0.62); border: 1px solid var(--glass-line);
+  font: 900 24px/1 var(--font-display); color: #fff; font-variant-numeric: tabular-nums;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+}
+.pill canvas { width: 36px; height: 36px; }
+.pill.timer { padding: 10px 18px; font-size: 22px; }
+.pill.timer.low { color: #ffd1d1; background: rgba(120, 20, 20, 0.6); }
+.stack { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.relax {
+  display: flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px;
+  background: linear-gradient(90deg, #ff9a1f, #ff6f61); color: #fff; font: 800 15px/1 var(--font-display);
+  box-shadow: 0 6px 14px rgba(255, 110, 60, 0.4);
+}
+.pause-btn { pointer-events: auto; width: 48px; height: 48px; border-radius: 16px; border: 1px solid var(--glass-line); background: rgba(6, 40, 46, 0.62); color: #fff; font: 900 18px/1 var(--font-display); cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.pause-btn:focus-visible { outline: 3px solid #fff; }
+.toast { position: absolute; left: 50%; top: 22%; transform: translateX(-50%); font: 900 28px/1 var(--font-display); color: #fff; text-shadow: 0 3px 0 rgba(0, 0, 0, 0.25), 0 8px 18px rgba(0, 0, 0, 0.3); white-space: nowrap; opacity: 0; transition: opacity 0.25s, transform 0.25s; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(-8px); }
+
+/* Джойстик и рывок */
+#joy { position: absolute; width: 140px; height: 140px; margin: -70px 0 0 -70px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.04)); border: 2px solid rgba(255, 255, 255, 0.35); pointer-events: none; z-index: 6; }
+#joy-knob { position: absolute; left: 50%; top: 50%; width: 62px; height: 62px; margin: -31px 0 0 -31px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #fff, #ffd9a6 60%, #ffb35c); box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35); }
+#joy-hint { position: absolute; left: 18%; bottom: calc(env(safe-area-inset-bottom, 0px) + 70px); width: 120px; height: 120px; margin-left: -60px; border-radius: 50%; border: 2px dashed rgba(255, 255, 255, 0.25); pointer-events: none; z-index: 4; display: flex; align-items: center; justify-content: center; font: 800 12px/1.2 var(--font-display); color: rgba(255, 255, 255, 0.55); text-align: center; }
+#dash {
+  position: absolute; right: 22px; bottom: calc(env(safe-area-inset-bottom, 0px) + 34px); z-index: 6;
+  width: 96px; height: 96px; border-radius: 50%; border: 0; cursor: pointer;
+  background: radial-gradient(circle at 40% 30%, #8ff0c4, var(--mint-2)); color: #fff;
+  font: 900 15px/1 var(--font-display); box-shadow: 0 6px 0 #0d8a57, 0 14px 24px rgba(0, 0, 0, 0.35);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; overflow: hidden;
+}
+#dash .cd { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: rgba(0, 40, 30, 0.45); }
+#dash span { position: relative; }
+#dash .big { font-size: 30px; }
+
+/* Итог */
+.result-num { font: 900 72px/1 var(--font-display); background: linear-gradient(180deg, #ffd27a, var(--orange-deep)); -webkit-background-clip: text; background-clip: text; color: transparent; font-variant-numeric: tabular-nums; }
+.result-box { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 6px 22px 22px; }
+.result-sub { font: 800 16px/1.3 var(--font-body); color: var(--ink-soft); text-align: center; }
+.badge-new { font: 900 15px/1 var(--font-display); color: #fff; background: linear-gradient(90deg, #ff6f61, #ff9a1f); padding: 7px 14px; border-radius: 999px; }
+.result-box .row { margin-top: 10px; }
+
+/* Карта островов */
+#map {
+  justify-content: flex-start; padding: 0;
+  background:
+    radial-gradient(80% 50% at 20% 10%, rgba(79, 224, 160, 0.14), transparent 60%),
+    radial-gradient(70% 50% at 90% 80%, rgba(255, 154, 31, 0.12), transparent 60%),
+    linear-gradient(180deg, #13707a, var(--lagoon-2) 60%, var(--lagoon-3));
+}
+.map-head {
+  width: 100%; box-sizing: border-box; flex: none;
+  display: flex; align-items: center; gap: 10px;
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) 14px 10px;
+}
+.map-head h2 { flex: 1; margin: 0; font: 900 24px/1 var(--font-display); color: #fff; text-shadow: 0 3px 0 rgba(0, 0, 0, 0.2); min-width: 0; }
+.icon-btn {
+  width: 48px; height: 48px; flex: none; border-radius: 16px; cursor: pointer;
+  border: 1px solid var(--glass-line); background: rgba(6, 40, 46, 0.55); color: #fff;
+  font: 900 22px/1 var(--font-display); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.icon-btn:focus-visible { outline: 3px solid #fff; }
+.mini-btn {
+  border: 0; cursor: pointer; border-radius: 14px; padding: 12px 14px; flex: none;
+  font: 800 15px/1 var(--font-display); color: #fff;
+  background: linear-gradient(180deg, var(--teal-1), var(--teal-2)); box-shadow: 0 4px 0 #0d5f86;
+}
+.mini-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #0d5f86; }
+.map-wallet { position: static; }
+.map-scroll { flex: 1; width: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; touch-action: pan-y; }
+.map-track { position: relative; width: min(480px, 100%); margin: 0 auto; }
+#map-path { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.node {
+  position: absolute; width: 150px; margin-left: -75px; border: 0; background: none; cursor: pointer; padding: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 4px; color: #fff;
+  transition: transform 0.15s;
+}
+.node:active { transform: scale(0.95); }
+.node:focus-visible { outline: 3px solid #fff; outline-offset: 4px; border-radius: 20px; }
+.node canvas { width: 128px; height: 108px; filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.35)); }
+.node.locked canvas { filter: grayscale(0.75) brightness(0.75) drop-shadow(0 10px 14px rgba(0, 0, 0, 0.35)); }
+.node-num {
+  position: absolute; top: 4px; left: 18px; width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font: 900 18px/1 var(--font-display); color: #fff;
+  background: linear-gradient(180deg, #ffbb4d, var(--orange-deep)); box-shadow: 0 3px 0 #b24f00;
+}
+.node.locked .node-num { background: linear-gradient(180deg, #9aa7ad, #6c7a80); box-shadow: 0 3px 0 #4c585d; }
+.node-name { font: 800 16px/1.1 var(--font-display); text-align: center; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.3); }
+.node-stars { font: 900 20px/1 var(--font-display); letter-spacing: 2px; color: rgba(255, 255, 255, 0.25); }
+.node-stars b { color: var(--gold); font-weight: 900; text-shadow: 0 2px 0 rgba(140, 80, 0, 0.5); }
+.node-lock {
+  display: flex; align-items: center; gap: 5px; padding: 5px 12px 5px 6px; border-radius: 999px;
+  background: rgba(0, 0, 0, 0.4); font: 800 15px/1 var(--font-display);
+}
+.node-lock canvas { width: 22px; height: 22px; filter: none; }
+.node.current canvas { animation: bob 1.6s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-6px); } }
+
+/* Карточка уровня */
+.lvl-art { width: 100%; height: auto; aspect-ratio: 520 / 220; display: block; }
+.lvl-body { padding: 14px 20px 22px; display: flex; flex-direction: column; gap: 12px; }
+.lvl-goal { font: 800 18px/1.3 var(--font-body); color: var(--ink); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { padding: 8px 12px; border-radius: 12px; background: #fff; font: 800 14px/1 var(--font-display); color: var(--ink-soft); box-shadow: 0 3px 0 rgba(160, 110, 40, 0.15); }
+.chip.star { color: #b07a00; }
+.lvl-note { font: 700 14px/1.3 var(--font-body); color: #b0544b; text-align: center; }
+
+/* Диалоги сюжета */
+#story { justify-content: flex-end; z-index: 30; background: linear-gradient(180deg, rgba(4, 28, 34, 0.15), rgba(4, 28, 34, 0.75)); }
+.dialog {
+  position: relative; width: min(620px, 100%);
+  background: linear-gradient(180deg, var(--cream), var(--cream-2)); color: var(--ink);
+  border-radius: 26px; padding: 26px 20px 16px 20px; box-sizing: border-box;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45), inset 0 2px 0 #fff;
+  cursor: pointer; margin-top: 110px;
+}
+.dialog canvas { position: absolute; left: 12px; top: -118px; width: 150px; height: 150px; pointer-events: none; }
+.speaker {
+  position: absolute; top: -18px; left: 160px; padding: 8px 16px; border-radius: 14px;
+  font: 900 17px/1 var(--font-display); color: #fff; box-shadow: 0 4px 0 rgba(0, 0, 0, 0.18);
+}
+.say { font: 800 19px/1.4 var(--font-body); min-height: 82px; }
+.dialog-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+.skip { border: 0; background: none; font: 800 14px/1 var(--font-body); color: var(--ink-soft); cursor: pointer; padding: 10px 4px; }
+.next { border: 0; cursor: pointer; border-radius: 14px; padding: 12px 18px; font: 800 16px/1 var(--font-display); color: #fff; background: linear-gradient(180deg, var(--mint-1), var(--mint-2)); box-shadow: 0 4px 0 #0d8a57; }
+.dialog-btns { display: flex; gap: 8px; }
+.back { border: 0; cursor: pointer; border-radius: 14px; padding: 12px 14px; font: 800 16px/1 var(--font-display); color: #fff; background: linear-gradient(180deg, #b9b3aa, #8f8a82); box-shadow: 0 4px 0 #6d6963; }
+.back:disabled { opacity: 0.35; cursor: default; }
+.back:focus-visible, .next:focus-visible, .skip:focus-visible { outline: 3px solid var(--teal-2); }
+
+/* HUD: цель и босс */
+.center-stack { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; }
+.goal { font-size: 17px; padding: 7px 14px 7px 8px; gap: 6px; }
+.goal canvas { width: 26px; height: 26px; }
+.goal.done { background: rgba(20, 120, 70, 0.75); }
+.bossbar { width: min(300px, 62vw); }
+.bossbar-name { font: 900 14px/1 var(--font-display); color: #fff; text-align: center; margin-bottom: 4px; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35); }
+.bossbar-track { height: 16px; border-radius: 999px; background: rgba(0, 0, 0, 0.45); border: 2px solid rgba(255, 255, 255, 0.5); overflow: hidden; }
+.bossbar-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #ff5a5a, #ffb04d); transition: width 0.2s; }
+
+.world-head {
+  position: absolute; left: 50%; transform: translateX(-50%); width: min(340px, 86%); box-sizing: border-box;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 10px 14px; border-radius: 18px; background: rgba(0, 0, 0, 0.32); border: 1px solid var(--glass-line);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.world-head b { font: 900 17px/1.1 var(--font-display); color: #fff; }
+.world-head span { font: 800 14px/1 var(--font-display); color: var(--gold); white-space: nowrap; display: flex; align-items: center; gap: 4px; }
+.world-head span canvas { width: 20px; height: 20px; }
+.node.small { width: 120px; margin-left: -60px; }
+.node.small canvas { width: 100px; height: 84px; }
+.node.small .node-num { left: 6px; width: 30px; height: 30px; font-size: 16px; }
+.node.small .node-name { font-size: 14px; }
+.node.small .node-stars { font-size: 17px; }
+/* Анимации */
+@keyframes popIn { from { transform: translateY(18px) scale(0.92); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.035); } }
+@keyframes shine { 0% { left: -40%; } 60%, 100% { left: 120%; } }
+@keyframes floaty { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-5px) rotate(1deg); } }
+@keyframes bump { 0% { transform: scale(1); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
+@keyframes cardIn { from { transform: translateY(14px) scale(0.95); opacity: 0; } to { transform: none; opacity: 1; } }
+.modal-wrap:not([hidden]) { animation: fadeIn 0.18s ease-out; }
+.modal-wrap:not([hidden]) .panel { animation: popIn 0.28s cubic-bezier(.2, 1.4, .4, 1); }
+#story:not([hidden]) .dialog { animation: popIn 0.3s cubic-bezier(.2, 1.3, .4, 1); }
+#menu:not([hidden]) .menu-inner > * { animation: popIn 0.45s cubic-bezier(.2, 1.3, .4, 1) both; }
+#menu .menu-inner > *:nth-child(2) { animation-delay: 0.05s; } #menu .menu-inner > *:nth-child(3) { animation-delay: 0.1s; }
+#menu .menu-inner > *:nth-child(4) { animation-delay: 0.15s; } #menu .menu-inner > *:nth-child(5) { animation-delay: 0.2s; }
+.title { animation: floaty 3.2s ease-in-out infinite !important; }
+#btn-play { overflow: hidden; }
+#btn-play:not(:active) { animation: pulse 1.8s ease-in-out infinite; }
+#btn-play::before { content: ""; position: absolute; top: 0; bottom: 0; width: 30%; left: -40%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent); transform: skewX(-20deg); animation: shine 3s ease-in-out infinite; pointer-events: none; }
+.wallet.bump, .chip-wallet.bump { animation: bump 0.35s ease-out; }
+.anim .card, .anim .upg-row { animation: cardIn 0.35s ease-out both; }
+.card:nth-child(2), .upg-row:nth-child(2) { animation-delay: 0.04s; } .card:nth-child(3), .upg-row:nth-child(3) { animation-delay: 0.08s; }
+.card:nth-child(4) { animation-delay: 0.12s; } .card:nth-child(5) { animation-delay: 0.16s; } .card:nth-child(6) { animation-delay: 0.2s; }
+.card:nth-child(n+7) { animation-delay: 0.24s; }
+.card canvas { transition: transform 0.2s; } .card:hover canvas { transform: scale(1.06) rotate(-2deg); }
+.node { animation: popIn 0.4s ease-out both; }
+#fxc { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 60; }
+@media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; } }
+/* Кошельки, меню, мини-карта */
+.wallets { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 14px); right: 16px; z-index: 3; display: flex; gap: 8px; }
+.wallets .wallet { position: static; }
+.wallets.static { position: static; flex-direction: column; gap: 5px; align-items: flex-end; }
+.wallets.static .wallet { font-size: 15px; padding: 3px 10px 3px 4px; }
+.wallets.static .wallet canvas { width: 22px; height: 22px; }
+.wallet-mel { color: #ffd6dc; }
+.chips-col { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; margin-left: auto; }
+.chip-wallet.mel { color: #c8283f; }
+.pill-mel { font-size: 18px; padding: 4px 12px 4px 5px; } .pill-mel canvas { width: 28px; height: 28px; }
+.right-stack { align-items: flex-end; }
+#minimap { width: 96px; height: 96px; border-radius: 50%; background: rgba(6, 40, 46, 0.55); border: 2px solid var(--glass-line); box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25); }
+.burger { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
+.burger span { display: block; width: 22px; height: 3px; border-radius: 3px; background: currentColor; }
+.burger-dark { color: #8a5a1c; }
+#drawer { z-index: 45; padding: 0; align-items: flex-start; background: rgba(4, 28, 34, 0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+#drawer:not([hidden]) { animation: fadeIn 0.2s ease-out; }
+#drawer:not([hidden]) .drawer-panel { animation: slideIn 0.28s cubic-bezier(.2, 1.1, .4, 1); }
+@keyframes slideIn { from { transform: translateX(-100%); } to { transform: none; } }
+.drawer-panel {
+  height: 100%; width: min(300px, 82vw); box-sizing: border-box; display: flex; flex-direction: column; gap: 8px;
+  padding: calc(env(safe-area-inset-top, 0px) + 18px) 14px 18px;
+  background: linear-gradient(180deg, var(--cream), var(--cream-2)); box-shadow: 12px 0 40px rgba(0, 0, 0, 0.35);
+  border-radius: 0 26px 26px 0;
+}
+.drawer-head { display: flex; align-items: center; gap: 10px; padding: 4px 4px 12px; border-bottom: 2px dashed #ecd7b4; margin-bottom: 6px; }
+.drawer-head canvas { width: 72px; height: 58px; }
+.drawer-head b { display: block; font: 900 22px/1 var(--font-display); color: var(--orange-deep); }
+.drawer-head span { font: 700 13px/1.2 var(--font-body); color: var(--ink-soft); }
+.drawer-item {
+  display: flex; align-items: center; gap: 12px; width: 100%; border: 0; cursor: pointer; text-align: left;
+  padding: 14px; border-radius: 16px; background: #fff; color: var(--ink); font: 800 18px/1 var(--font-display);
+  box-shadow: 0 3px 0 rgba(160, 110, 40, 0.18); transition: transform 0.12s;
+}
+.drawer-item:active { transform: scale(0.97); }
+.drawer-item:focus-visible { outline: 3px solid var(--teal-2); }
+.drawer-item i { font-style: normal; width: 34px; height: 34px; border-radius: 11px; display: flex; align-items: center; justify-content: center; color: #fff; background: linear-gradient(180deg, #ffbb4d, var(--orange-deep)); font-size: 18px; flex: none; }
+.drawer-item:nth-of-type(2) i { background: linear-gradient(180deg, var(--teal-1), var(--teal-2)); }
+.drawer-item:nth-of-type(3) i { background: linear-gradient(180deg, #ff8fa0, #e0405a); }
+.drawer-item:nth-of-type(4) i { background: linear-gradient(180deg, #b9b3aa, #8f8a82); }
+.close-item { margin-top: auto; background: transparent; box-shadow: none; color: var(--ink-soft); }
+.close-item i { background: #e9dcc6 !important; color: var(--ink-soft); }
+.res-extra { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.res-extra span { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: #fff; font: 900 16px/1 var(--font-display); color: var(--ink); box-shadow: 0 3px 0 rgba(160, 110, 40, 0.15); }
+.res-extra canvas { width: 22px; height: 22px; }
+.res-extra .mult { color: #b03aa8; }
+/* Арбузные скины */
+.shop-sub { grid-column: 1 / -1; margin: 6px 2px 0; font: 900 16px/1.2 var(--font-display); color: #c8283f; display: flex; align-items: center; gap: 8px; }
+.shop-sub canvas { width: 24px; height: 24px; }
+.shop-sub.plain { color: var(--ink-soft); }
+.card.melon-card { background: linear-gradient(180deg, #fff, #fff0f2); border-color: #ffc2cc; }
+.card.melon-card.equipped { border-color: #e0405a; }
+.card .buy.mel { background: linear-gradient(180deg, #ff8fa0, #e0405a); box-shadow: 0 3px 0 #a52a3e; }
+.card .buy.mel.locked { background: linear-gradient(180deg, #e8c6cb, #c9a2a8); box-shadow: 0 3px 0 #a98a8f; }
+.mult-badge { font: 900 13px/1 var(--font-display); color: #fff; background: linear-gradient(90deg, #b03aa8, #e0405a); padding: 5px 9px; border-radius: 999px; margin-top: -2px; }
+.card { position: relative; }
+/* Звезды итога */
+.stars-row { display: flex; gap: 6px; align-items: flex-end; margin: 2px 0 4px; }
+.stars-row canvas { width: 64px; height: 64px; }
+.stars-row canvas:nth-child(2) { width: 80px; height: 80px; }
+.bonus { font: 900 15px/1 var(--font-display); color: #0d8a57; background: #e2f7ec; padding: 7px 12px; border-radius: 999px; }
+.res-col { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 10px; }
+.res-col .row { margin-top: 0; }
+@media (max-height: 640px) { .lvl-art { aspect-ratio: 520 / 160; } .dialog { margin-top: 90px; } .dialog canvas { width: 120px; height: 120px; top: -96px; } .speaker { left: 130px; } }
+</style>
+
+<div id="app">
+  <canvas id="fxc" aria-hidden="true"></canvas>
+  <canvas id="game" aria-label="Игровое поле"></canvas>
+
+  <div id="hud" hidden>
+    <div class="hud-top">
+      <div class="stack">
+        <div class="pill" id="hud-count"><canvas width="72" height="72" data-orange></canvas><span id="count">0</span></div>
+        <div class="pill pill-mel" id="hud-mel"><canvas width="60" height="60" data-melon></canvas><span id="mcount">0</span></div>
+        <div class="relax" id="relax" hidden>♨ Релакс ×2 · <span id="relax-t">30</span>с</div>
+      </div>
+      <div class="center-stack">
+        <div class="pill timer" id="timer">2:00</div>
+        <div class="pill goal" id="goal"><canvas width="52" height="52" id="goal-ico"></canvas><span id="goal-t">0/40</span></div>
+        <div class="bossbar" id="bossbar" hidden><div class="bossbar-name" id="boss-name">Король Клац</div><div class="bossbar-track"><div class="bossbar-fill" id="boss-fill"></div></div></div>
+      </div>
+      <div class="stack right-stack">
+        <button class="pause-btn" id="pause" aria-label="Пауза">II</button>
+        <canvas id="minimap" width="200" height="200" aria-label="Мини-карта"></canvas>
+      </div>
+    </div>
+    <div class="toast" id="toast"></div>
+  </div>
+  <div id="joy-hint" hidden>Веди пальцем<br>здесь</div>
+  <div id="joy" hidden><div id="joy-knob"></div></div>
+  <button id="dash" hidden aria-label="Рывок"><div class="cd" id="dash-cd"></div><span class="big">»</span><span>РЫВОК</span></button>
+
+  <section class="screen" id="menu">
+    <canvas id="bg"></canvas>
+    <div class="wallets"><div class="wallet"><canvas width="60" height="60" data-orange></canvas><span id="menu-wallet">0</span></div><div class="wallet wallet-mel"><canvas width="60" height="60" data-melon></canvas><span id="menu-mel">0</span></div></div>
+    <div class="menu-inner">
+      <canvas class="logo-art" id="logo" width="560" height="440" aria-hidden="true"></canvas>
+      <h1 class="title">КАПИБАРА</h1>
+      <p class="subtitle">Апельсиновый остров</p>
+      <button class="btn btn-primary" id="btn-play"><canvas class="ico" width="60" height="60" data-orange></canvas>ИГРАТЬ</button>
+      <div class="row">
+        <button class="btn btn-teal" id="btn-shop">Магазин</button>
+        <button class="btn btn-ghost" id="btn-settings">Настройки</button>
+      </div>
+      <p class="hint" id="best-line"></p>
+    </div>
+  </section>
+
+  <section class="screen" id="map" hidden>
+    <div class="map-head">
+      <button class="icon-btn burger" id="map-menu" aria-label="Меню"><span></span><span></span><span></span></button>
+      <h2>Карта островов</h2>
+      <div class="wallets static"><div class="wallet"><canvas width="60" height="60" data-orange></canvas><span id="map-wallet">0</span></div><div class="wallet wallet-mel"><canvas width="60" height="60" data-melon></canvas><span id="map-mel">0</span></div></div>
+    </div>
+    <div class="map-scroll" id="map-scroll">
+      <div class="map-track" id="map-track"><canvas id="map-path"></canvas></div>
+    </div>
+  </section>
+
+  <section class="screen modal-wrap" id="level" hidden>
+    <div class="panel" role="dialog" aria-labelledby="lvl-title" style="width:min(520px,100%)">
+      <div style="position:relative">
+        <canvas class="lvl-art" id="lvl-art" width="520" height="220"></canvas>
+        <button class="close burger burger-dark" id="lvl-menu" aria-label="Меню" style="position:absolute;right:12px;top:12px"><span></span><span></span><span></span></button>
+      </div>
+      <div class="lvl-body">
+        <h2 id="lvl-title" style="margin:0;font:900 26px/1.05 var(--font-display);color:var(--ink)">Остров</h2>
+        <div class="lvl-goal" id="lvl-goal"></div>
+        <div class="chips" id="lvl-chips"></div>
+        <div class="lvl-note" id="lvl-note" hidden></div>
+        <button class="btn btn-primary" id="lvl-go">Играть</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen modal-wrap" id="shop" hidden>
+    <div class="panel" role="dialog" aria-labelledby="shop-title">
+      <div class="panel-head">
+        <h2 id="shop-title">Магазин</h2>
+        <div class="chips-col"><div class="chip-wallet"><canvas width="52" height="52" data-orange></canvas><span id="shop-wallet">0</span></div><div class="chip-wallet mel"><canvas width="52" height="52" data-melon></canvas><span id="shop-mel">0</span></div></div>
+        <button class="close" data-close="shop" aria-label="Закрыть">X</button>
+      </div>
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" aria-selected="true" data-tab="skins">Скины</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="hats">Шапки</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="upg">Улучшения</button>
+      </div>
+      <div class="panel-body">
+        <div class="grid" id="skins-grid"></div>
+        <div class="grid" id="hats-grid" hidden></div>
+        <div class="upg" id="upg-list" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen modal-wrap" id="settings" hidden>
+    <div class="panel" role="dialog" aria-labelledby="set-title">
+      <div class="panel-head"><h2 id="set-title">Настройки</h2><button class="close" data-close="menu" aria-label="Закрыть">X</button></div>
+      <div class="panel-body">
+        <div class="setting">Музыка<button class="toggle" id="t-music" role="switch" aria-checked="true" aria-label="Музыка"></button></div>
+        <div class="setting">Звуки<button class="toggle" id="t-sound" role="switch" aria-checked="true" aria-label="Звуки"></button></div>
+        <div class="setting">Падающие апельсины<button class="toggle" id="t-fx" role="switch" aria-checked="true" aria-label="Падающие апельсины"></button></div>
+        <div class="setting">Показывать сюжет снова<button class="toggle" id="t-story" role="switch" aria-checked="false" aria-label="Показывать сюжет снова"></button></div>
+        <button class="danger-link" id="reset">Сбросить прогресс</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen modal-wrap" id="paused" hidden>
+    <div class="panel" role="dialog" aria-labelledby="pause-title" style="width:min(380px,100%)">
+      <div class="panel-head"><h2 id="pause-title">Пауза</h2></div>
+      <div class="result-box">
+        <div class="result-sub" id="pause-goal"></div>
+        <button class="btn btn-primary" id="btn-resume">Продолжить</button>
+        <button class="btn btn-ghost" style="color:var(--ink);background:#f3e2c4;border:0" id="btn-quit">На карту</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen modal-wrap" id="results" hidden>
+    <div class="panel" role="dialog" aria-labelledby="res-title" style="width:min(420px,100%)">
+      <div class="panel-head" style="justify-content:center"><h2 id="res-title">Уровень пройден!</h2></div>
+      <div class="result-box">
+        <div class="stars-row" id="res-stars"><canvas width="128" height="128"></canvas><canvas width="160" height="160"></canvas><canvas width="128" height="128"></canvas></div>
+        <div class="result-num" id="res-num">0</div>
+        <div class="result-sub" id="res-sub">апельсинов собрано</div>
+        <div class="res-extra" id="res-extra"></div>
+        <div class="bonus" id="res-bonus" hidden></div>
+        <div class="res-col">
+          <button class="btn btn-primary" id="btn-next">Следующий остров</button>
+          <div class="row">
+            <button class="btn btn-orange" id="btn-again">Еще раз</button>
+            <button class="btn btn-teal" id="btn-map">Карта</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen modal-wrap" id="confirm" hidden>
+    <div class="panel" role="dialog" aria-labelledby="conf-title" style="width:min(380px,100%)">
+      <div class="panel-head"><h2 id="conf-title">Сбросить все?</h2></div>
+      <div class="result-box">
+        <div class="result-sub">Апельсины, острова, скины и улучшения пропадут.</div>
+        <div class="row">
+          <button class="btn btn-orange" id="conf-yes">Сбросить</button>
+          <button class="btn btn-teal" id="conf-no">Отмена</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="drawer" hidden>
+    <nav class="drawer-panel" aria-label="Меню">
+      <div class="drawer-head"><canvas width="120" height="96" id="drawer-art" aria-hidden="true"></canvas><div><b>Капибара</b><span>Апельсиновый остров</span></div></div>
+      <button class="drawer-item" data-go="menu"><i>⌂</i>Главное меню</button>
+      <button class="drawer-item" data-go="map"><i>◎</i>Карта островов</button>
+      <button class="drawer-item" data-go="shop"><i>★</i>Магазин</button>
+      <button class="drawer-item" data-go="settings"><i>⚙</i>Настройки</button>
+      <button class="drawer-item close-item" data-go="close"><i>‹</i>Закрыть меню</button>
+    </nav>
+  </section>
+
+  <section class="screen" id="story" hidden>
+    <div class="dialog" id="dialog" role="dialog" aria-live="polite">
+      <canvas id="portrait" width="300" height="300" aria-hidden="true"></canvas>
+      <div class="speaker" id="speaker">Капа</div>
+      <div class="say" id="say"></div>
+      <div class="dialog-foot">
+        <button class="skip" id="skip">Пропустить</button>
+        <div class="dialog-btns"><button class="back" id="back">‹ Назад</button><button class="next" id="next">Далее ›</button></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+"use strict";
+const $ = (id) => document.getElementById(id);
+const TAU = Math.PI * 2;
+const rand = (a, b) => a + Math.random() * (b - a);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const reduceMotion = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- Сохранение ---------- */
+const SAVE_KEY = "capy-orange-save-v1";
+const defaults = {
+  wallet: 0, melons: 0, hats: ["none"], hat: "none", skins: ["classic"], skin: "classic",
+  upg: { speed: 0, magnet: 0, dash: 0 }, sound: true, fx: !reduceMotion,
+  stars: {}, unlocked: [1], seen: {}, storyAgain: false, music: true, voice: true, ver: 2,
+};
+let save = JSON.parse(JSON.stringify(defaults));
+try {
+  const raw = localStorage.getItem(SAVE_KEY);
+  if (raw) {
+    const s = JSON.parse(raw);
+    save = Object.assign(save, s);
+    save.upg = Object.assign({ speed: 0, magnet: 0, dash: 0 }, s.upg || {});
+    if (!Array.isArray(save.hats)) save.hats = ["none"];
+    if (!Array.isArray(save.skins)) save.skins = ["classic"];
+    if (!Array.isArray(save.unlocked) || !save.unlocked.length) save.unlocked = [1];
+    if (!save.stars || typeof save.stars !== "object") save.stars = {};
+    if (!save.seen || typeof save.seen !== "object") save.seen = {};
+    if (!s.ver) {
+      // перенос прогресса со старой версии (5 уровней) на 20 уровней
+      const map = { 1: 1, 2: 5, 3: 9, 4: 13, 5: 20 }, st = {}, seen = {};
+      for (const k in map) { if (save.stars[k]) st[map[k]] = save.stars[k]; if (save.seen["intro" + k]) seen["intro" + map[k]] = true; }
+      if (save.seen.outro1) seen.outro4 = true; if (save.seen.outro5) seen.outro20 = true;
+      save.stars = st; save.seen = seen; save.ver = 2;
+    }
+    if (save.music === undefined) save.music = true;
+    if (save.voice === undefined) save.voice = true;
+  }
+} catch (e) {}
+function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
+persist();
+
+/* ---------- Звук ---------- */
+let actx = null;
+function beep(freq, dur, type, vol, slide) {
+  if (!save.sound) return;
+  try {
+    if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = type || "sine";
+    o.frequency.setValueAtTime(freq, actx.currentTime);
+    if (slide) o.frequency.exponentialRampToValueAtTime(slide, actx.currentTime + dur);
+    g.gain.setValueAtTime(vol || 0.12, actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + dur);
+    o.connect(g); g.connect(actx.destination);
+    o.start(); o.stop(actx.currentTime + dur);
+  } catch (e) {}
+}
+const sfx = {
+  pick: () => beep(rand(820, 980), 0.12, "triangle", 0.1, 1400),
+  big: () => { beep(660, 0.12, "triangle", 0.12, 990); setTimeout(() => beep(990, 0.18, "triangle", 0.12, 1480), 90); },
+  dash: () => beep(300, 0.2, "sawtooth", 0.05, 900),
+  hit: () => beep(220, 0.3, "square", 0.08, 90),
+  relax: () => { [523, 659, 784].forEach((f, i) => setTimeout(() => beep(f, 0.25, "sine", 0.1), i * 110)); },
+  buy: () => { [784, 988, 1175].forEach((f, i) => setTimeout(() => beep(f, 0.14, "triangle", 0.1), i * 80)); },
+  click: () => {},
+};
+
+/* ---------- Рисование: апельсин, капибара, шапки ---------- */
+function drawOrange(c, x, y, r, rot, kind) {
+  c.save(); c.translate(x, y); c.rotate(rot || 0);
+  const gold = kind === "gold";
+  const g = c.createRadialGradient(-r * 0.35, -r * 0.4, r * 0.1, 0, 0, r);
+  if (gold) { g.addColorStop(0, "#fff6b8"); g.addColorStop(0.5, "#ffd23f"); g.addColorStop(1, "#e0a000"); }
+  else { g.addColorStop(0, "#ffd08a"); g.addColorStop(0.45, "#ff9a1f"); g.addColorStop(1, "#e86a00"); }
+  c.fillStyle = g; c.beginPath(); c.arc(0, 0, r, 0, TAU); c.fill();
+  c.fillStyle = gold ? "rgba(160,100,0,0.25)" : "rgba(180,70,0,0.18)";
+  for (let i = 0; i < 6; i++) { const a = i * 1.7, d = r * 0.55; c.beginPath(); c.arc(Math.cos(a) * d, Math.sin(a) * d, r * 0.06, 0, TAU); c.fill(); }
+  c.fillStyle = "rgba(255,255,255,0.55)"; c.beginPath(); c.ellipse(-r * 0.38, -r * 0.42, r * 0.28, r * 0.16, -0.6, 0, TAU); c.fill();
+  c.fillStyle = "#6b4a1e"; c.fillRect(-r * 0.07, -r * 1.08, r * 0.14, r * 0.26);
+  c.fillStyle = "#3fbf5f"; c.beginPath(); c.ellipse(r * 0.28, -r * 1.0, r * 0.34, r * 0.15, -0.5, 0, TAU); c.fill();
+  c.fillStyle = "rgba(255,255,255,0.35)"; c.beginPath(); c.ellipse(r * 0.24, -r * 1.04, r * 0.18, r * 0.05, -0.5, 0, TAU); c.fill();
+  if (gold) { c.fillStyle = "rgba(255,255,255,0.9)"; star(c, r * 0.55, -r * 0.55, r * 0.22); }
+  c.restore();
+}
+function star(c, x, y, r) { c.beginPath(); for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4, rr = i % 2 ? r * 0.35 : r; c.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } c.closePath(); c.fill(); }
+// круглый арбуз с вырезанной долькой: красная мякоть видна на любой траве
+function drawMelon(c, x, y, r, rot) {
+  c.save(); c.translate(x, y); c.rotate(rot || 0);
+  const cut0 = -0.95, cut1 = -0.05; // вырезанный сектор (справа сверху)
+  // корка
+  const g = c.createRadialGradient(-r * 0.35, -r * 0.35, r * 0.1, 0, 0, r * 1.05);
+  g.addColorStop(0, "#8fe36a"); g.addColorStop(0.65, "#3faa45"); g.addColorStop(1, "#23772d");
+  c.fillStyle = g; c.beginPath(); c.moveTo(0, 0); c.arc(0, 0, r, cut1, cut0 + TAU); c.closePath(); c.fill();
+  c.save(); c.beginPath(); c.moveTo(0, 0); c.arc(0, 0, r, cut1, cut0 + TAU); c.closePath(); c.clip();
+  c.strokeStyle = "#1b5e24"; c.lineWidth = r * 0.17; c.lineJoin = "round";
+  for (let i = -2; i <= 2; i++) { c.beginPath(); for (let k = 0; k <= 8; k++) { const yy = -r + k * r / 4, xx = i * r * 0.42 + (k % 2 ? r * 0.09 : -r * 0.09); k ? c.lineTo(xx, yy) : c.moveTo(xx, yy); } c.stroke(); }
+  c.restore();
+  // срез: белая корка и красная мякоть с косточками
+  c.fillStyle = "#f4ffe8"; c.beginPath(); c.moveTo(0, 0); c.arc(0, 0, r * 0.98, cut0, cut1); c.closePath(); c.fill();
+  const fg = c.createRadialGradient(0, 0, 1, 0, 0, r * 0.85); fg.addColorStop(0, "#ff6b7a"); fg.addColorStop(1, "#ff2d4b");
+  c.fillStyle = fg; c.beginPath(); c.moveTo(0, 0); c.arc(0, 0, r * 0.84, cut0, cut1); c.closePath(); c.fill();
+  c.fillStyle = "#2a1414";
+  for (const [a, d] of [[-0.75, 0.55], [-0.45, 0.35], [-0.3, 0.65], [-0.62, 0.72]]) { c.beginPath(); c.ellipse(Math.cos(a) * r * d, Math.sin(a) * r * d, r * 0.06, r * 0.1, a, 0, TAU); c.fill(); }
+  c.strokeStyle = "rgba(20,70,25,0.55)"; c.lineWidth = r * 0.08; c.beginPath(); c.arc(0, 0, r, cut1, cut0 + TAU); c.stroke();
+  c.fillStyle = "rgba(255,255,255,0.5)"; c.beginPath(); c.ellipse(-r * 0.42, -r * 0.42, r * 0.28, r * 0.13, -0.7, 0, TAU); c.fill();
+  c.restore();
+}
+function rr(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+
+const HATS = [
+  { id: "none", name: "Без шапки", price: 0 },
+  { id: "panama", name: "Панамка", price: 60 },
+  { id: "bow", name: "Бантик", price: 100 },
+  { id: "glasses", name: "Очки", price: 150 },
+  { id: "headphones", name: "Наушники", price: 250 },
+  { id: "orangehat", name: "Апельсин-шапка", price: 400 },
+  { id: "crown", name: "Корона", price: 800 },
+];
+// шапка рисуется относительно макушки (0,0), масштаб s
+function drawHat(c, id, s) {
+  c.save();
+  if (id === "panama") {
+    c.fillStyle = "#7fd3f0"; c.beginPath(); c.ellipse(0, 0, 20 * s, 6 * s, 0, 0, TAU); c.fill();
+    c.fillStyle = "#58bfe4"; c.beginPath(); c.ellipse(0, -5 * s, 12 * s, 9 * s, 0, Math.PI, TAU); c.fill(); c.fillRect(-12 * s, -5 * s, 24 * s, 4 * s);
+    c.fillStyle = "#ffffff"; c.fillRect(-12 * s, -4 * s, 24 * s, 2.5 * s);
+  } else if (id === "bow") {
+    c.fillStyle = "#ff6fa8";
+    c.beginPath(); c.moveTo(0, -3 * s); c.lineTo(-14 * s, -11 * s); c.lineTo(-14 * s, 5 * s); c.closePath(); c.fill();
+    c.beginPath(); c.moveTo(0, -3 * s); c.lineTo(14 * s, -11 * s); c.lineTo(14 * s, 5 * s); c.closePath(); c.fill();
+    c.fillStyle = "#ff4d8f"; c.beginPath(); c.arc(0, -3 * s, 4.5 * s, 0, TAU); c.fill();
+  } else if (id === "glasses") {
+    c.translate(10 * s, 13 * s);
+    c.fillStyle = "#24242c"; rr(c, -15 * s, -5 * s, 13 * s, 10 * s, 4 * s); c.fill(); rr(c, 2 * s, -5 * s, 13 * s, 10 * s, 4 * s); c.fill();
+    c.fillRect(-3 * s, -2 * s, 6 * s, 2.5 * s);
+    c.fillStyle = "rgba(255,255,255,0.35)"; c.fillRect(-12 * s, -3 * s, 4 * s, 3 * s); c.fillRect(5 * s, -3 * s, 4 * s, 3 * s);
+  } else if (id === "headphones") {
+    c.strokeStyle = "#5b5bd6"; c.lineWidth = 4 * s; c.beginPath(); c.arc(0, 6 * s, 16 * s, Math.PI * 1.05, Math.PI * 1.95); c.stroke();
+    c.fillStyle = "#ff7a59"; rr(c, -21 * s, 2 * s, 9 * s, 13 * s, 4 * s); c.fill(); rr(c, 12 * s, 2 * s, 9 * s, 13 * s, 4 * s); c.fill();
+  } else if (id === "orangehat") {
+    drawOrange(c, 0, -8 * s, 11 * s, 0);
+  } else if (id === "crown") {
+    c.fillStyle = "#ffcf3a";
+    c.beginPath(); c.moveTo(-13 * s, 2 * s); c.lineTo(-13 * s, -10 * s); c.lineTo(-6 * s, -4 * s); c.lineTo(0, -14 * s); c.lineTo(6 * s, -4 * s); c.lineTo(13 * s, -10 * s); c.lineTo(13 * s, 2 * s); c.closePath(); c.fill();
+    c.fillStyle = "#ff5a7a"; c.beginPath(); c.arc(0, -3 * s, 2.6 * s, 0, TAU); c.fill();
+    c.fillStyle = "#4fd1ff"; c.beginPath(); c.arc(-7 * s, -1 * s, 2 * s, 0, TAU); c.arc(7 * s, -1 * s, 2 * s, 0, TAU); c.fill();
+  }
+  c.restore();
+}
+
+/* ---------- Музыка (генерируется в браузере) ---------- */
+const mtof = (m) => 440 * Math.pow(2, (m - 69) / 12);
+const CH = { C: [60, 64, 67], Am: [57, 60, 64], F: [53, 57, 60], G: [55, 59, 62], E: [52, 56, 59], Dm: [50, 53, 57], Em: [52, 55, 59], D: [50, 54, 57] };
+const MEL_A = [
+  [[0, 76, 3], [4, 79, 2], [6, 81, 2], [8, 79, 4], [12, 76, 4]],
+  [[0, 72, 3], [4, 76, 2], [6, 74, 2], [8, 72, 6], [14, 69, 2]],
+  [[0, 72, 2], [2, 74, 2], [4, 76, 4], [8, 81, 3], [12, 79, 4]],
+  [[0, 79, 2], [2, 76, 2], [4, 74, 4], [8, 71, 2], [10, 74, 2], [12, 79, 4]],
+  [[0, 76, 3], [4, 79, 2], [6, 81, 2], [8, 84, 4], [12, 81, 4]],
+  [[0, 79, 3], [4, 76, 2], [6, 74, 2], [8, 72, 6]],
+  [[0, 69, 2], [2, 72, 2], [4, 74, 4], [8, 77, 2], [10, 76, 2], [12, 74, 4]],
+  [[0, 74, 3], [4, 71, 2], [6, 74, 2], [8, 79, 8]],
+];
+const MEL_B = [
+  [[0, 84, 2], [2, 81, 2], [4, 79, 4], [8, 76, 2], [10, 79, 2], [12, 81, 4]],
+  [[0, 81, 3], [4, 79, 2], [6, 76, 2], [8, 72, 4], [12, 76, 4]],
+  [[0, 77, 2], [2, 76, 2], [4, 74, 2], [6, 72, 2], [8, 69, 4], [12, 72, 4]],
+  [[0, 74, 4], [4, 79, 4], [8, 83, 2], [10, 81, 2], [12, 79, 4]],
+  [[0, 76, 2], [2, 79, 2], [4, 84, 4], [8, 81, 2], [10, 79, 2], [12, 76, 4]],
+  [[0, 76, 2], [2, 74, 2], [4, 72, 4], [8, 69, 4], [12, 72, 4]],
+  [[0, 72, 2], [2, 74, 2], [4, 77, 4], [8, 76, 2], [10, 74, 2], [12, 72, 4]],
+  [[0, 71, 4], [4, 74, 4], [8, 79, 8]],
+];
+const MEL_C = [
+  [[0, 74, 2], [2, 76, 2], [4, 79, 3], [8, 76, 2], [10, 74, 2], [12, 71, 4]],
+  [[0, 76, 3], [4, 79, 2], [6, 76, 2], [8, 72, 4], [12, 74, 4]],
+  [[0, 71, 2], [2, 74, 2], [4, 76, 4], [8, 79, 2], [10, 76, 2], [12, 74, 4]],
+  [[0, 69, 3], [4, 74, 2], [6, 78, 2], [8, 81, 4], [12, 78, 4]],
+  [[0, 79, 2], [2, 81, 2], [4, 83, 3], [8, 81, 2], [10, 79, 2], [12, 76, 4]],
+  [[0, 76, 2], [2, 79, 2], [4, 84, 4], [8, 79, 2], [10, 76, 2], [12, 72, 4]],
+  [[0, 74, 2], [2, 78, 2], [4, 81, 4], [8, 78, 2], [10, 74, 2], [12, 69, 4]],
+  [[0, 71, 3], [4, 74, 3], [8, 79, 8]],
+];
+const TRACKS = {
+  menu: { bpm: 88, prog: ["C", "Am", "F", "G"], mel: [MEL_A], shaker: false, arpVol: 0.035 },
+  game: { bpm: 104, prog: ["G", "C", "Em", "D", "G", "C", "D", "G"], mel: [MEL_C], shaker: true, strum: true, steel: true, kick: true },
+  boss: { bpm: 116, prog: ["Am", "F", "G", "E"], mel: null, shaker: true, arpVol: 0.05, drive: true },
+};
+const Music = { cur: null, step: 0, next: 0, timer: null, bus: null, duck: 1 };
+function audioCtx() {
+  if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; } }
+  return actx;
+}
+function musicBus() {
+  const ac = audioCtx(); if (!ac) return null;
+  if (!Music.bus) { Music.bus = ac.createGain(); Music.bus.gain.value = 0.55; Music.bus.connect(ac.destination); }
+  return Music.bus;
+}
+function note(freq, t, dur, vol, type, bright) {
+  const ac = actx, bus = Music.bus;
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.type = type || "sine"; o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(bus); o.start(t); o.stop(t + dur + 0.02);
+  if (bright) { // «маримба»: призвук на 4-й гармонике
+    const o2 = ac.createOscillator(), g2 = ac.createGain();
+    o2.type = "sine"; o2.frequency.setValueAtTime(freq * 4, t);
+    g2.gain.setValueAtTime(0.0001, t); g2.gain.exponentialRampToValueAtTime(vol * 0.25, t + 0.004); g2.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
+    o2.connect(g2); g2.connect(bus); o2.start(t); o2.stop(t + 0.12);
+  }
+}
+function steel(freq, t, dur) { // «стальной барабан»: основной тон + октава с легкой расстройкой
+  note(freq, t, dur, 0.06, "sine");
+  note(freq * 2.01, t, dur * 0.5, 0.022, "sine");
+  note(freq * 3, t, 0.08, 0.012, "triangle");
+}
+function kick(t) {
+  const ac = actx, o = ac.createOscillator(), g = ac.createGain();
+  o.type = "sine"; o.frequency.setValueAtTime(120, t); o.frequency.exponentialRampToValueAtTime(45, t + 0.12);
+  g.gain.setValueAtTime(0.12, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
+  o.connect(g); g.connect(Music.bus); o.start(t); o.stop(t + 0.18);
+}
+let noiseBuf = null;
+function shaker(t, vol) {
+  const ac = actx;
+  if (!noiseBuf) { noiseBuf = ac.createBuffer(1, ac.sampleRate * 0.1, ac.sampleRate); const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
+  const src = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
+  src.buffer = noiseBuf; f.type = "highpass"; f.frequency.value = 6000;
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
+  src.connect(f); f.connect(g); g.connect(Music.bus); src.start(t); src.stop(t + 0.08);
+}
+function scheduleStep(tr, step, t) {
+  const s = step % 16, bar = Math.floor(step / 16), chord = CH[tr.prog[bar % tr.prog.length]], sd = 60 / tr.bpm / 4;
+  if (s === 0) note(mtof(chord[0] - 12), t, sd * 7, 0.11, "triangle");
+  if (s === 8) note(mtof(chord[2] - 12), t, sd * 6, 0.08, "triangle");
+  if (tr.drive && s % 2 === 0) note(mtof(chord[0] - 12), t, sd * 1.5, 0.06, "triangle");
+  if (tr.strum) {
+    if ([0, 4, 6, 10, 12, 14].includes(s)) { const up = s === 6 || s === 14; chord.forEach((m, j) => note(mtof(m + 12), t + (up ? 2 - j : j) * 0.014, sd * 2.2, s % 4 === 0 ? 0.03 : 0.02, "triangle")); }
+    if (tr.kick && (s === 0 || s === 8)) kick(t);
+  } else if (s % 2 === 0) { const pat = [0, 1, 2, 1, 0, 2, 1, 2]; note(mtof(chord[pat[s / 2]] + 12), t, sd * 3, tr.arpVol, "sine", true); }
+  if (tr.drive) { const up = [0, 1, 2, 1]; note(mtof(chord[up[s % 4]] + 24), t, sd * 1.2, 0.025, "triangle"); }
+  if (tr.mel) {
+    const sec = tr.mel[Math.floor(bar / 8) % tr.mel.length], m = sec[bar % 8];
+    for (const ev of m) if (ev[0] === s) { if (tr.steel) steel(mtof(ev[1]), t, sd * ev[2] + 0.25); else note(mtof(ev[1]), t, sd * ev[2] + 0.15, 0.075, "sine", true); }
+  }
+  if (tr.shaker && !tr.strum && s % 4 === 2) shaker(t, 0.018);
+  if (tr.strum && s % 2 === 1) shaker(t, s % 4 === 3 ? 0.012 : 0.006);
+}
+function musicTick() {
+  if (!Music.cur || !actx) return;
+  const tr = TRACKS[Music.cur], sd = 60 / tr.bpm / 4;
+  while (Music.next < actx.currentTime + 0.15) { scheduleStep(tr, Music.step, Music.next); Music.next += sd; Music.step++; }
+}
+function playMusic(name) {
+  if (!save.music) { stopMusic(); return; }
+  const ac = audioCtx(); if (!ac || ac.state !== "running") { Music.want = name; return; }
+  if (Music.cur === name) return;
+  musicBus();
+  Music.cur = name; Music.step = 0; Music.next = ac.currentTime + 0.08;
+  if (!Music.timer) Music.timer = setInterval(musicTick, 30);
+}
+function stopMusic() { Music.cur = null; clearInterval(Music.timer); Music.timer = null; }
+function setDuck(v) { if (Music.bus && actx) Music.bus.gain.setTargetAtTime(0.55 * v, actx.currentTime, 0.15); }
+// браузер разрешает звук только после касания
+function unlockAudio() {
+  const ac = audioCtx(); if (!ac) return;
+  const go = () => { if (Music.want) { const w = Music.want; Music.want = null; playMusic(w); } };
+  if (ac.state !== "running") ac.resume().then(go).catch(() => {}); else go();
+}
+addEventListener("pointerdown", unlockAudio, true);
+addEventListener("keydown", unlockAudio, true);
+document.addEventListener("visibilitychange", () => { if (!actx) return; if (document.hidden) actx.suspend().catch(() => {}); else actx.resume().catch(() => {}); });
+
+/* ---------- Тихие звуки интерфейса ---------- */
+let lastTap = 0;
+function uiTap(kind) {
+  if (!save.sound) return;
+  const now = performance.now(); if (now - lastTap < 60) return; lastTap = now;
+  const ac = audioCtx(); if (!ac || ac.state !== "running") return;
+  const t = ac.currentTime, o = ac.createOscillator(), g = ac.createGain(), f = ac.createBiquadFilter();
+  const base = kind === "soft" ? 520 : 760 + Math.random() * 40;
+  o.type = "sine"; o.frequency.setValueAtTime(base, t); o.frequency.exponentialRampToValueAtTime(base * 0.6, t + 0.06);
+  f.type = "lowpass"; f.frequency.value = 2400;
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.06, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
+  o.connect(f); f.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + 0.1);
+}
+document.addEventListener("pointerdown", (e) => {
+  const b = e.target.closest && e.target.closest("button, .dialog");
+  if (!b || b.id === "dash") return;
+  uiTap(b.classList.contains("dialog") || b.classList.contains("tab") || b.classList.contains("toggle") ? "soft" : "");
+}, true);
+
+Object.assign(sfx, {
+  bonk: () => beep(180, 0.15, "square", 0.09, 120),
+  win: () => { [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => beep(f, 0.22, "triangle", 0.12), i * 120)); },
+  fail: () => { [392, 330, 262].forEach((f, i) => setTimeout(() => beep(f, 0.25, "sine", 0.1), i * 150)); },
+  free: () => { [880, 1175].forEach((f, i) => setTimeout(() => beep(f, 0.15, "triangle", 0.11), i * 90)); },
+  star: (i) => beep(660 + i * 220, 0.2, "triangle", 0.12, 990 + i * 220),
+});
+
+/* ---------- Скины ---------- */
+const SKINS = [
+  { id: "classic", name: "Капа", price: 0 },
+  { id: "caracal", name: "Каракал", price: 350, body: ["#e6b97c", "#c48d52"], head: ["#ecc48c", "#cf9a5e"], muzzle: "#fff3e0", nose: "#d9776e", legs: ["#b07a44", "#c9905a"], noEar: true,
+    onHead(c, t) {
+      for (const ex of [14, 24]) {
+        c.fillStyle = "#c48d52"; c.beginPath(); c.moveTo(ex - 6, -22); c.quadraticCurveTo(ex - 2, -34, ex, -40); c.quadraticCurveTo(ex + 3, -32, ex + 6, -22); c.closePath(); c.fill();
+        c.fillStyle = "#f2b5a8"; c.beginPath(); c.moveTo(ex - 3, -24); c.quadraticCurveTo(ex - 1, -31, ex, -34); c.quadraticCurveTo(ex + 2, -30, ex + 3, -24); c.closePath(); c.fill();
+        c.fillStyle = "#2a1f1a"; c.beginPath(); c.moveTo(ex - 2.5, -34); c.lineTo(ex, -41); c.lineTo(ex + 2.5, -34); c.closePath(); c.fill();
+        c.strokeStyle = "#2a1f1a"; c.lineWidth = 1.8; c.lineCap = "round";
+        const sw = Math.sin(t * 3 + ex) * 1.5;
+        c.beginPath(); c.moveTo(ex, -40); c.quadraticCurveTo(ex + sw, -45, ex + 2 + sw, -48); c.stroke();
+      }
+      c.strokeStyle = "#5a3a22"; c.lineWidth = 1.6; c.beginPath(); c.moveTo(29, -12); c.quadraticCurveTo(31, -6, 34, -4); c.stroke();
+    } },
+  { id: "gorilla", name: "Горилла", price: 900, body: ["#4d4d56", "#2e2e34"], head: ["#585862", "#3c3c44"], muzzle: "#8c8290", ear: "#3c3c44", nose: "#2a2228", legs: ["#28282e", "#36363d"], eyeRing: true, noBlush: true,
+    onBody(c) { c.fillStyle = "rgba(190,190,200,0.55)"; c.beginPath(); c.ellipse(-14, -10, 14, 8, -0.1, 0, TAU); c.fill(); c.fillStyle = "#6e6676"; c.beginPath(); c.ellipse(8, 4, 9, 8, 0, 0, TAU); c.fill(); },
+    onHead(c) { c.fillStyle = "#26262c"; rr(c, 17, -22, 22, 5, 2.5); c.fill(); } },
+  { id: "pirate", name: "Пират", price: 750, eyePatch: true,
+    onBody(c) {
+      c.save(); c.beginPath(); c.ellipse(-3, -2, 29, 19, 0, 0, TAU); c.clip();
+      for (let i = -4; i < 6; i++) { c.fillStyle = i % 2 ? "rgba(255,255,255,0.9)" : "rgba(40,70,140,0.9)"; c.fillRect(-36 + i * 8, 2, 8, 20); }
+      c.restore();
+      c.fillStyle = "#c0392b"; rr(c, -30, 0, 54, 4, 2); c.fill();
+    },
+    onHead(c) {
+      c.strokeStyle = "#1a1a1a"; c.lineWidth = 1.8; c.beginPath(); c.moveTo(14, -24); c.lineTo(36, -9); c.stroke();
+      c.fillStyle = "#1a1a1a"; c.beginPath(); c.ellipse(27, -15, 4.6, 4, 0, 0, TAU); c.fill();
+      c.fillStyle = "#ffcf3a"; c.beginPath(); c.arc(16, -19, 2.2, 0, TAU); c.fill();
+    } },
+  { id: "robot", name: "Робот", price: 1100, body: ["#d3dce4", "#8796a3"], head: ["#dde4ea", "#9aa7b3"], muzzle: "#7d8a96", ear: "#6c7884", nose: "#3b4650", legs: ["#5f6b77", "#7d8a96"], headR: 5, robotEye: true, noBlush: true,
+    onBody(c) {
+      c.strokeStyle = "rgba(60,75,90,0.35)"; c.lineWidth = 1.5; c.beginPath(); c.moveTo(-3, -20); c.lineTo(-3, 16); c.stroke();
+      c.fillStyle = "#6c7884"; for (const [x, y] of [[-22, -6], [-12, -14], [10, -12], [16, 2], [-18, 8]]) { c.beginPath(); c.arc(x, y, 1.8, 0, TAU); c.fill(); }
+      c.fillStyle = "#3fc8e8"; rr(c, -14, -2, 12, 7, 2); c.fill();
+    },
+    onHead(c, t) {
+      c.strokeStyle = "#6c7884"; c.lineWidth = 2.5; c.beginPath(); c.moveTo(20, -26); c.lineTo(20, -38); c.stroke();
+      c.fillStyle = Math.sin(t * 6) > 0 ? "#ff4d4d" : "#a82020"; c.beginPath(); c.arc(20, -40, 3.5, 0, TAU); c.fill();
+    } },
+  { id: "astro", name: "Астронавт", price: 1800, body: ["#ffffff", "#d3d9e1"], legs: ["#c3cad3", "#e1e6ec"],
+    back(c) { c.fillStyle = "#9aa6b2"; rr(c, -36, -22, 14, 26, 5); c.fill(); c.fillStyle = "#ff9a1f"; c.fillRect(-33, -16, 8, 3); },
+    onBody(c) { c.fillStyle = "#ff8a1f"; c.beginPath(); c.arc(-12, -6, 5, 0, TAU); c.fill(); c.fillStyle = "#3f7fd8"; rr(c, -26, 4, 40, 4, 2); c.fill(); },
+    onHead(c) {
+      c.fillStyle = "rgba(170,225,255,0.28)"; c.beginPath(); c.arc(26, -13, 23, 0, TAU); c.fill();
+      c.strokeStyle = "rgba(255,255,255,0.9)"; c.lineWidth = 3; c.stroke();
+      c.strokeStyle = "rgba(255,255,255,0.7)"; c.lineWidth = 3; c.lineCap = "round"; c.beginPath(); c.arc(26, -13, 17, Math.PI * 1.1, Math.PI * 1.45); c.stroke();
+    } },
+  { id: "ninja", name: "Ниндзя", price: 450, body: ["#3d4152", "#262a38"], head: ["#444a5e", "#2c3040"], muzzle: "#e9b98c", ear: "#2c3040", nose: "#5a3a22", legs: ["#1f2230", "#2c3040"], noBlush: true,
+    onFace(c) { c.fillStyle = "#e9b98c"; rr(c, 18, -21, 24, 10, 4); c.fill(); },
+    onHead(c, t) {
+      c.fillStyle = "#e5484d"; c.fillRect(10, -25, 30, 4);
+      const w = Math.sin(t * 9) * 3;
+      c.beginPath(); c.moveTo(11, -24); c.quadraticCurveTo(0, -26 + w, -8, -20 + w); c.lineTo(-6, -17 + w); c.quadraticCurveTo(2, -22 + w, 11, -21); c.fill();
+      c.beginPath(); c.moveTo(11, -23); c.quadraticCurveTo(2, -18 - w, -4, -12 - w); c.lineTo(-1, -11 - w); c.quadraticCurveTo(4, -17 - w, 11, -20); c.fill();
+    } },
+  { id: "chef", name: "Повар", price: 250,
+    onBody(c) { c.fillStyle = "#ffffff"; rr(c, -2, -14, 26, 30, 8); c.fill(); c.fillStyle = "#ffd2a8"; rr(c, 6, 2, 10, 7, 3); c.fill(); c.strokeStyle = "#e5484d"; c.lineWidth = 2; c.beginPath(); c.moveTo(2, -10); c.lineTo(20, -10); c.stroke(); },
+    onHead(c, t, sit, hat) {
+      c.fillStyle = "#4a2c18"; c.beginPath(); c.ellipse(38, -6, 5, 2.2, 0.2, 0, TAU); c.ellipse(44, -6, 5, 2.2, -0.2, 0, TAU); c.fill();
+      if ((!hat || hat === "none") && !sit) { c.fillStyle = "#fff"; c.fillRect(16, -32, 18, 8); c.beginPath(); c.arc(19, -36, 7, 0, TAU); c.arc(25, -39, 8, 0, TAU); c.arc(31, -36, 7, 0, TAU); c.fill(); }
+    } },
+  { id: "bee", name: "Пчелка", price: 150, body: ["#ffd84a", "#f0b400"], head: ["#ffe066", "#f2c12e"], muzzle: "#d79a1e", ear: "#2a2a2a", nose: "#2a2a2a", legs: ["#2a2a2a", "#3a3a3a"],
+    back(c, t) { const f = Math.abs(Math.sin(t * 30)); c.fillStyle = "rgba(220,240,255,0.75)"; c.beginPath(); c.ellipse(-8, -24 - f * 3, 10, 14 - f * 4, -0.5, 0, TAU); c.fill(); c.beginPath(); c.ellipse(4, -24 - f * 3, 9, 12 - f * 4, 0.4, 0, TAU); c.fill(); },
+    onBody(c) { c.save(); c.beginPath(); c.ellipse(-3, -2, 29, 19, 0, 0, TAU); c.clip(); c.fillStyle = "#2a2a2a"; for (const x of [-22, -10, 2]) c.fillRect(x, -24, 6, 44); c.restore(); },
+    onHead(c, t) { c.strokeStyle = "#2a2a2a"; c.lineWidth = 2; c.lineCap = "round"; for (const ex of [18, 26]) { const w = Math.sin(t * 4 + ex) * 2; c.beginPath(); c.moveTo(ex, -25); c.quadraticCurveTo(ex - 2 + w, -34, ex + 2 + w, -38); c.stroke(); c.fillStyle = "#2a2a2a"; c.beginPath(); c.arc(ex + 2 + w, -38, 2.4, 0, TAU); c.fill(); } } },
+  { id: "dino", name: "Динозаврик", price: 600, body: ["#6fd36a", "#3f9f45"], head: ["#7ad874", "#4aa850"], muzzle: "#a8ec98", ear: "#3f9f45", nose: "#2f6a30", legs: ["#358a3a", "#45a24a"], noBlush: true,
+    back(c) { c.fillStyle = "#ffb03a"; for (let i = 0; i < 5; i++) { const x = -26 + i * 10, y = -18 + Math.abs(i - 2) * 2.5; c.beginPath(); c.moveTo(x - 5, y + 2); c.lineTo(x, y - 9); c.lineTo(x + 5, y + 2); c.closePath(); c.fill(); } c.fillStyle = "#4aa850"; c.beginPath(); c.moveTo(-28, 0); c.quadraticCurveTo(-46, 2, -50, 10); c.quadraticCurveTo(-38, 10, -26, 8); c.closePath(); c.fill(); },
+    onBody(c) { c.fillStyle = "rgba(255,255,255,0.18)"; for (const [x, y] of [[-16, -6], [-4, -12], [8, -4]]) { c.beginPath(); c.arc(x, y, 3.5, 0, TAU); c.fill(); } } },
+  { id: "unicorn", name: "Единорог", price: 1400, body: ["#ffffff", "#ead9f2"], head: ["#ffffff", "#efe0f6"], muzzle: "#ffc6dc", ear: "#f3c4e0", nose: "#e07aa8", legs: ["#e0cdea", "#f2e6f8"],
+    back(c, t) { const cols = ["#ff7a7a", "#ffc24d", "#7ad874", "#5ab8ff", "#b48cff"]; cols.forEach((col, i) => { c.fillStyle = col; c.beginPath(); c.ellipse(-30 - i * 2, -6 + i * 4 + Math.sin(t * 3 + i) * 1.5, 10, 4, 0.4, 0, TAU); c.fill(); }); },
+    onHead(c, t) {
+      const cols = ["#ff7a7a", "#ffc24d", "#7ad874", "#5ab8ff", "#b48cff"];
+      cols.forEach((col, i) => { c.fillStyle = col; c.beginPath(); c.ellipse(12 - i * 1.5, -22 + i * 5, 6, 4, 0.6, 0, TAU); c.fill(); });
+      const g = c.createLinearGradient(30, -26, 34, -44); g.addColorStop(0, "#ffd84a"); g.addColorStop(1, "#fff3b0");
+      c.fillStyle = g; c.beginPath(); c.moveTo(27, -25); c.lineTo(34, -44); c.lineTo(35, -25); c.closePath(); c.fill();
+      c.fillStyle = "rgba(255,255,255," + (0.5 + Math.sin(t * 5) * 0.4) + ")"; star(c, 37, -45, 3);
+    } },
+  { id: "golden", name: "Золотая Капа", price: 3000, body: ["#ffe27a", "#e0a400"], head: ["#ffe98f", "#e8b21a"], muzzle: "#d49400", ear: "#c98d00", nose: "#7a5200", legs: ["#c98d00", "#e0a400"],
+    onBody(c, t) { c.fillStyle = "rgba(255,255,255,0.35)"; c.beginPath(); c.ellipse(-10, -12, 16, 4, -0.2, 0, TAU); c.fill(); },
+    onHead(c, t) { for (let i = 0; i < 3; i++) { const a = t * 2 + i * 2.1, v = Math.max(0, Math.sin(t * 4 + i * 1.7)); c.fillStyle = "rgba(255,255,255," + v + ")"; star(c, Math.cos(a) * 30 + 6, Math.sin(a) * 18 - 14, 3 + v * 2); } } },
+];
+// особые скины за арбузы: дают множитель апельсинов в конце уровня
+const rainbowGrad = (c, t, x0, x1) => { const g = c.createLinearGradient(x0, -20, x1, 20); for (let i = 0; i <= 6; i++) g.addColorStop(i / 6, "hsl(" + ((i * 55 + t * 90) % 360) + ",90%,68%)"); return g; };
+SKINS.push(
+  { id: "melonkid", name: "Арбузик", price: 100, cur: "melon", mult: 1.2, body: ["#5fcf5a", "#2f8f38"], head: ["#6fd86a", "#3a9a42"], muzzle: "#ff5a6e", ear: "#1f6a28", nose: "#2a1414", legs: ["#2a7a32", "#3a9a42"],
+    onBody(c) { c.save(); c.beginPath(); c.ellipse(-3, -2, 29, 19, 0, 0, TAU); c.clip(); c.strokeStyle = "#1b5e24"; c.lineWidth = 4; for (let i = -3; i <= 2; i++) { c.beginPath(); for (let k = 0; k <= 6; k++) { const yy = -22 + k * 7, xx = i * 10 + (k % 2 ? 3 : -3); k ? c.lineTo(xx, yy) : c.moveTo(xx, yy); } c.stroke(); } c.restore(); },
+    onFace(c) { c.fillStyle = "#2a1414"; for (const [x, y] of [[33, -12], [37, -6], [40, -14]]) { c.beginPath(); c.ellipse(x, y, 1.2, 1.8, 0.3, 0, TAU); c.fill(); } },
+    onHead(c, t, sit, hat) { if (hat && hat !== "none") return; c.strokeStyle = "#6b4a1e"; c.lineWidth = 2.5; c.beginPath(); c.moveTo(24, -26); c.quadraticCurveTo(24, -33, 27, -36); c.stroke(); c.fillStyle = "#4cc066"; c.beginPath(); c.ellipse(31, -36, 6, 3, -0.4 + Math.sin(t * 3) * 0.15, 0, TAU); c.fill(); } },
+  { id: "fire", name: "Огненная Капа", price: 150, cur: "melon", mult: 1.3, body: ["#ff9a3a", "#d9441a"], head: ["#ffaa4a", "#e05a20"], muzzle: "#b8361a", ear: "#9a2a10", nose: "#4a1408", legs: ["#a8320f", "#c8441a"], noBlush: true,
+    back(c, t) {
+      for (let i = 0; i < 6; i++) {
+        const x = -26 + i * 9, f = Math.sin(t * 14 + i * 1.7) * 3, h = 12 + (i % 3) * 4 + f;
+        c.fillStyle = i % 2 ? "#ffd23f" : "#ff6a1f";
+        c.beginPath(); c.moveTo(x - 6, -14); c.quadraticCurveTo(x - 4, -18 - h * 0.6, x + Math.sin(t * 9 + i) * 2, -16 - h); c.quadraticCurveTo(x + 4, -18 - h * 0.6, x + 6, -14); c.closePath(); c.fill();
+      }
+    },
+    onHead(c, t) {
+      for (let i = 0; i < 3; i++) { const x = 16 + i * 7, f = Math.sin(t * 13 + i * 2) * 2.5; c.fillStyle = i % 2 ? "#ffd23f" : "#ff6a1f"; c.beginPath(); c.moveTo(x - 4, -24); c.quadraticCurveTo(x, -34 - f, x + 1, -38 - f); c.quadraticCurveTo(x + 3, -32, x + 4, -24); c.closePath(); c.fill(); }
+      c.fillStyle = "rgba(255,230,120,0.9)"; c.beginPath(); c.arc(27, -15, 1.4, 0, TAU); c.fill();
+    } },
+  { id: "rainbow", name: "Радужная Капа", price: 300, cur: "melon", mult: 1.5, muzzle: "#ffffff", ear: "#ff8fd0", nose: "#ff4d8f", legs: ["#b48cff", "#5ab8ff"],
+    bodyGrad: (c, t) => rainbowGrad(c, t, -32, 26), headGrad: (c, t) => rainbowGrad(c, t + 0.6, 10, 40),
+    onBody(c, t) { c.fillStyle = "rgba(255,255,255,0.4)"; c.beginPath(); c.ellipse(-10, -12, 16, 4, -0.2, 0, TAU); c.fill(); },
+    onHead(c, t) {
+      for (let i = 0; i < 4; i++) { const a = t * 2.2 + i * 1.6, v = Math.max(0, Math.sin(t * 5 + i * 1.3)); c.fillStyle = "hsla(" + ((i * 90 + t * 120) % 360) + ",100%,85%," + v + ")"; star(c, Math.cos(a) * 32 + 4, Math.sin(a) * 20 - 12, 3 + v * 2.5); }
+      c.fillStyle = "#fff"; c.beginPath(); c.moveTo(26, -26); c.lineTo(31, -40); c.lineTo(33, -26); c.closePath(); c.fill();
+    } },
+);
+SKINS.sort((a, b) => (b.cur === "melon") - (a.cur === "melon") || a.price - b.price);
+const SKIN_MAP = {}; SKINS.forEach((s) => (SKIN_MAP[s.id] = s));
+const BASE_SKIN = { body: ["#c08453", "#9a6236"], head: ["#c88c5a", "#a56b3d"], muzzle: "#8a5530", ear: "#8a5530", nose: "#4a2c18", legs: ["#7a4a26", "#8d5a30"], headR: 12 };
+
+// капибара (вид сбоку), центр тела в 0,0, смотрит вправо
+function drawCapy(c, x, y, s, opts) {
+  opts = opts || {};
+  const sk = Object.assign({}, BASE_SKIN, SKIN_MAP[opts.skin || "classic"] || {});
+  const t = opts.t || 0, moving = opts.moving, dir = opts.dir || 1, sit = opts.sit;
+  c.save(); c.translate(x, y); c.scale(dir * s, s);
+  c.fillStyle = "rgba(0,0,0,0.18)"; c.beginPath(); c.ellipse(0, 20, 30, 7, 0, 0, TAU); c.fill();
+  const bob = moving ? Math.abs(Math.sin(t * 14)) * 2.5 : Math.sin(t * 2) * 0.8;
+  const legA = moving ? Math.sin(t * 14) * 4 : 0;
+  if (!sit) {
+    c.fillStyle = sk.legs[0];
+    rr(c, -20, 8 + legA * 0.3, 8, 13 - legA * 0.3, 4); c.fill();
+    rr(c, 12, 8 - legA * 0.3, 8, 13 + legA * 0.3, 4); c.fill();
+    c.fillStyle = sk.legs[1];
+    rr(c, -12, 8 - legA * 0.3, 8, 13 + legA * 0.3, 4); c.fill();
+    rr(c, 4, 8 + legA * 0.3, 8, 13 - legA * 0.3, 4); c.fill();
+  }
+  c.translate(0, -bob + (sit ? 7 : 0));
+  if (sk.back) sk.back(c, t);
+  let bg;
+  if (sk.bodyGrad) bg = sk.bodyGrad(c, t);
+  else { bg = c.createLinearGradient(0, -22, 0, 18); bg.addColorStop(0, sk.body[0]); bg.addColorStop(1, sk.body[1]); }
+  c.fillStyle = bg; c.beginPath(); c.ellipse(-3, -2, 29, 19, 0, 0, TAU); c.fill();
+  c.fillStyle = "rgba(255,255,255,0.12)"; c.beginPath(); c.ellipse(-8, -12, 18, 6, -0.1, 0, TAU); c.fill();
+  if (sk.onBody) sk.onBody(c, t);
+  let hg;
+  if (sk.headGrad) hg = sk.headGrad(c, t);
+  else { hg = c.createLinearGradient(0, -30, 0, 6); hg.addColorStop(0, sk.head[0]); hg.addColorStop(1, sk.head[1]); }
+  c.fillStyle = hg; rr(c, 10, -26, 30, 26, sk.headR); c.fill();
+  if (sk.onFace) sk.onFace(c, t);
+  c.fillStyle = sk.muzzle; rr(c, 30, -16, 14, 15, sk.headR === 5 ? 4 : 7); c.fill();
+  c.fillStyle = sk.nose; c.beginPath(); c.ellipse(41, -11, 2.2, 1.6, 0, 0, TAU); c.fill();
+  if (!sk.noEar) { c.fillStyle = sk.ear; c.beginPath(); c.ellipse(16, -25, 4.5, 4, 0, 0, TAU); c.fill(); }
+  if (sk.robotEye) {
+    c.fillStyle = "#3fe0ff"; c.shadowColor = "#3fe0ff"; c.shadowBlur = 8;
+    if (sit) c.fillRect(22, -15, 10, 2); else rr(c, 22, -18, 10, 6, 2), c.fill();
+    c.shadowBlur = 0;
+  } else if (sit) {
+    c.strokeStyle = sk.eyeRing ? "#d8d0c8" : "#2a1a10"; c.lineWidth = 2; c.beginPath(); c.arc(27, -15, 3, Math.PI * 0.15, Math.PI * 0.85); c.stroke();
+  } else {
+    if (sk.eyeRing) { c.fillStyle = "#e8e0d8"; c.beginPath(); c.arc(27, -15, 4.2, 0, TAU); c.fill(); }
+    c.fillStyle = "#1f140c"; c.beginPath(); c.arc(27, -15, 3, 0, TAU); c.fill(); c.fillStyle = "#fff"; c.beginPath(); c.arc(28, -16, 1.1, 0, TAU); c.fill();
+  }
+  if (!sk.noBlush) { c.fillStyle = "rgba(255,120,120,0.35)"; c.beginPath(); c.ellipse(28, -7, 4, 2.4, 0, 0, TAU); c.fill(); }
+  if (sk.onHead) sk.onHead(c, t, sit, opts.hat);
+  c.translate(24, -27);
+  if (sit) drawOrange(c, 0, -8, 9, Math.sin(t * 1.5) * 0.1);
+  else if (opts.hat && opts.hat !== "none") drawHat(c, opts.hat, 1);
+  c.restore();
+}
+
+/* ---------- Персонажи сюжета ---------- */
+function drawParrot(c, x, y, s, t) {
+  c.save(); c.translate(x, y); c.scale(s, s);
+  const b = Math.sin(t * 3) * 1.5;
+  c.fillStyle = "#3f7fd8"; c.beginPath(); c.moveTo(-6, 18); c.lineTo(-14, 44); c.lineTo(-2, 40); c.lineTo(4, 18); c.fill();
+  c.fillStyle = "#3fbf5f"; c.beginPath(); c.ellipse(0, 6 + b, 16, 22, 0.15, 0, TAU); c.fill();
+  c.fillStyle = "#2a9a48"; c.beginPath(); c.ellipse(-6, 10 + b, 9, 16, 0.4, 0, TAU); c.fill();
+  c.fillStyle = "#e5484d"; c.beginPath(); c.arc(4, -18 + b, 15, 0, TAU); c.fill();
+  c.fillStyle = "#ffcf3a"; c.beginPath(); c.moveTo(15, -22 + b); c.quadraticCurveTo(30, -18 + b, 22, -6 + b); c.quadraticCurveTo(20, -12 + b, 14, -12 + b); c.fill();
+  c.fillStyle = "#fff"; c.beginPath(); c.arc(8, -21 + b, 5, 0, TAU); c.fill();
+  c.fillStyle = "#1a1a1a"; c.beginPath(); c.arc(9, -21 + b, 2.6, 0, TAU); c.fill();
+  c.fillStyle = "#ff9a1f"; c.beginPath(); c.moveTo(-2, -32 + b); c.lineTo(2, -44 + b); c.lineTo(6, -32 + b); c.fill();
+  c.fillStyle = "#c9905a"; c.fillRect(-6, 26, 4, 8); c.fillRect(3, 26, 4, 8);
+  c.restore();
+}
+function drawTurtle(c, x, y, s, t) {
+  c.save(); c.translate(x, y); c.scale(s, s);
+  const b = Math.sin(t * 2) * 1.2;
+  c.fillStyle = "#b9c98a"; rr(c, -26, 10, 12, 12, 5); c.fill(); rr(c, 14, 10, 12, 12, 5); c.fill();
+  c.save(); c.translate(30, -6 + b);
+  c.fillStyle = "#c8d89a"; c.beginPath(); c.ellipse(0, 0, 13, 11, 0, 0, TAU); c.fill();
+  c.fillStyle = "#fff"; c.beginPath(); c.moveTo(-2, 8); c.quadraticCurveTo(4, 22, 10, 7); c.fill();
+  c.strokeStyle = "#3a3a3a"; c.lineWidth = 1.6; c.beginPath(); c.arc(3, -3, 4.5, 0, TAU); c.stroke(); c.beginPath(); c.arc(-6, -3, 3.5, 0, TAU); c.stroke();
+  c.fillStyle = "#1a1a1a"; c.beginPath(); c.arc(3, -3, 1.8, 0, TAU); c.fill();
+  c.restore();
+  const g = c.createLinearGradient(0, -26, 0, 14); g.addColorStop(0, "#5cb85c"); g.addColorStop(1, "#2f7a37");
+  c.fillStyle = g; c.beginPath(); c.ellipse(0, 0, 30, 24, 0, Math.PI, TAU); c.lineTo(30, 10); c.lineTo(-30, 10); c.closePath(); c.fill();
+  c.strokeStyle = "rgba(255,255,220,0.45)"; c.lineWidth = 2;
+  c.beginPath(); c.moveTo(-10, -18); c.lineTo(10, -18); c.lineTo(16, -4); c.lineTo(-16, -4); c.closePath(); c.stroke();
+  c.beginPath(); c.moveTo(-16, -4); c.lineTo(-26, 6); c.moveTo(16, -4); c.lineTo(26, 6); c.stroke();
+  c.fillStyle = "#a9ba76"; rr(c, -32, 6, 64, 8, 4); c.fill();
+  c.restore();
+}
+function drawKing(c, x, y, s, t, dir, open, flash, variant) {
+  const gen = variant === "general";
+  c.save(); c.translate(x, y); c.scale((dir || 1) * s, s);
+  c.fillStyle = gen ? "#5e6b2e" : "#c0392b"; c.beginPath(); c.moveTo(-10, -12); c.quadraticCurveTo(-40, -6, -46, 14); c.lineTo(4, 10); c.closePath(); c.fill();
+  c.fillStyle = "#e5c07b"; c.fillRect(-44, 11, 46, 3);
+  c.restore();
+  drawCroc(c, x, y, s, t, dir || 1, open);
+  c.save(); c.translate(x, y); c.scale((dir || 1) * s, s);
+  if (gen) {
+    c.translate(20, -14);
+    c.fillStyle = "#4b5626"; c.beginPath(); c.ellipse(0, 0, 13, 7, 0, Math.PI, TAU); c.fill();
+    c.fillStyle = "#3a4320"; rr(c, -4, -2, 22, 4, 2); c.fill();
+    c.fillStyle = "#ffcf3a"; star(c, 0, -3, 3.5);
+    c.fillStyle = "#ffcf3a"; c.fillRect(-26, 8, 8, 3); c.fillRect(-26, 13, 8, 3);
+  } else { c.translate(18, -16); drawHat(c, "crown", 0.9); }
+  c.restore();
+  if (flash > 0) { c.save(); c.globalAlpha = Math.min(1, flash * 5) * 0.55; c.fillStyle = "#fff"; c.beginPath(); c.ellipse(x, y, 34 * s, 16 * s, 0, 0, TAU); c.fill(); c.restore(); }
+}
+function drawBaby(c, x, y, s, t, moving, dir, skin) { drawCapy(c, x, y, s * 0.55, { t: t * 1.2, moving, dir, skin: skin || "classic" }); }
+function drawCage(c, x, y, t) {
+  drawBaby(c, x, y + 4, 1, t, false, Math.sin(t * 0.8) > 0 ? 1 : -1);
+  c.fillStyle = "rgba(0,0,0,0.15)"; c.beginPath(); c.ellipse(x, y + 16, 30, 7, 0, 0, TAU); c.fill();
+  c.strokeStyle = "#6b4423"; c.lineWidth = 4; c.lineCap = "round";
+  rr(c, x - 26, y - 30, 52, 46, 6); c.stroke();
+  c.lineWidth = 3; for (let i = -2; i <= 2; i++) { c.beginPath(); c.moveTo(x + i * 9, y - 30); c.lineTo(x + i * 9, y + 16); c.stroke(); }
+  c.fillStyle = "#8a5a2e"; c.beginPath(); c.moveTo(x - 32, y - 28); c.lineTo(x, y - 46); c.lineTo(x + 32, y - 28); c.closePath(); c.fill();
+  c.fillStyle = "#ffcf3a"; c.beginPath(); c.arc(x, y - 4, 4, 0, TAU); c.fill();
+  const a = 0.5 + Math.sin(t * 4) * 0.3;
+  c.fillStyle = `rgba(255,255,255,${a})`; c.font = "900 16px Rubik, sans-serif"; c.textAlign = "center"; c.fillText("SOS", x, y - 52);
+}
+function drawStar5(c, x, y, r, fill, stroke) {
+  c.beginPath();
+  for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr2 = i % 2 ? r * 0.48 : r; c.lineTo(x + Math.cos(a) * rr2, y + Math.sin(a) * rr2); }
+  c.closePath();
+  if (stroke) { c.lineJoin = "round"; c.lineWidth = r * 0.16; c.strokeStyle = stroke; c.stroke(); }
+  c.fillStyle = fill; c.fill();
+}
+function paintStar(cv, on) {
+  const c = cv.getContext("2d"), w = cv.width; c.clearRect(0, 0, w, w);
+  if (on) {
+    const g = c.createLinearGradient(0, w * 0.1, 0, w * 0.9); g.addColorStop(0, "#fff0a0"); g.addColorStop(0.5, "#ffcf3a"); g.addColorStop(1, "#f29a00");
+    drawStar5(c, w / 2, w * 0.54, w * 0.42, g, "#b86a00");
+    c.fillStyle = "rgba(255,255,255,0.55)"; c.beginPath(); c.ellipse(w * 0.42, w * 0.4, w * 0.08, w * 0.04, -0.6, 0, TAU); c.fill();
+  } else drawStar5(c, w / 2, w * 0.54, w * 0.42, "#e6d6bb", "#cdb999");
+}
+
+/* ---------- Деревья и колонны ---------- */
+function drawTree(c, o, t) {
+  const sw = Math.sin(t * 1.2 + o.ph) * 3;
+  c.fillStyle = "rgba(0,0,0,0.16)"; c.beginPath(); c.ellipse(o.x, o.y + 6, 26, 9, 0, 0, TAU); c.fill();
+  if (o.kind === "palm") {
+    c.strokeStyle = "#a8743f"; c.lineWidth = 12; c.lineCap = "round";
+    c.beginPath(); c.moveTo(o.x, o.y); c.quadraticCurveTo(o.x + 10, o.y - o.h * 0.5, o.x + sw, o.y - o.h); c.stroke();
+    c.strokeStyle = "rgba(90,50,20,0.35)"; c.lineWidth = 2;
+    for (let s = 0.15; s < 0.95; s += 0.15) { const yy = o.y - o.h * s; c.beginPath(); c.moveTo(o.x - 5 + s * 10, yy); c.lineTo(o.x + 6 + s * 10, yy); c.stroke(); }
+    for (let l = 0; l < 6; l++) {
+      const a = l / 6 * TAU + Math.sin(t + o.ph) * 0.05;
+      c.fillStyle = l % 2 ? "#3aa655" : "#4cc066";
+      c.save(); c.translate(o.x + sw, o.y - o.h); c.rotate(a);
+      c.beginPath(); c.ellipse(26, 4, 30, 9, 0.25, 0, TAU); c.fill(); c.restore();
+    }
+    drawOrange(c, o.x + sw - 6, o.y - o.h + 8, 6, 0); drawOrange(c, o.x + sw + 7, o.y - o.h + 10, 6, 0.4);
+  } else if (o.kind === "jtree" || o.kind === "willow") {
+    const j = o.kind === "jtree";
+    c.fillStyle = j ? "#7a4f2a" : "#5a4a32"; rr(c, o.x - 8, o.y - o.h * 0.6, 16, o.h * 0.6 + 4, 6); c.fill();
+    const cy = o.y - o.h * 0.75, cols = j ? ["#2f7f3a", "#3f9a46", "#55b45a"] : ["#5b7a35", "#6b8a3e", "#86a352"];
+    [[-22, 6, 26], [22, 6, 26], [0, -10, 32], [-10, -2, 24], [12, -4, 22]].forEach(([dx, dy, r], i) => { c.fillStyle = cols[i % 3]; c.beginPath(); c.arc(o.x + dx + sw * 0.5, cy + dy, r, 0, TAU); c.fill(); });
+    c.strokeStyle = j ? "#3f9a46" : "#86a352"; c.lineWidth = 3; c.lineCap = "round";
+    for (let i = -2; i <= 2; i++) { const vx = o.x + i * 13 + sw * 0.5; c.beginPath(); c.moveTo(vx, cy + 10); c.quadraticCurveTo(vx + Math.sin(t * 1.5 + i) * 4, cy + 30, vx, cy + (j ? 40 : 52) + Math.abs(i) * -6); c.stroke(); }
+    if (j) { c.fillStyle = "#ff5a7a"; c.beginPath(); c.arc(o.x - 14, cy - 8, 4, 0, TAU); c.arc(o.x + 16, cy + 2, 4, 0, TAU); c.fill(); }
+  } else if (o.kind === "dead") {
+    c.strokeStyle = "#5a4a42"; c.lineCap = "round";
+    c.lineWidth = 10; c.beginPath(); c.moveTo(o.x, o.y); c.lineTo(o.x + sw * 0.3, o.y - o.h); c.stroke();
+    c.lineWidth = 5;
+    c.beginPath(); c.moveTo(o.x, o.y - o.h * 0.55); c.lineTo(o.x - 22, o.y - o.h * 0.8); c.lineTo(o.x - 30, o.y - o.h * 0.78); c.stroke();
+    c.beginPath(); c.moveTo(o.x + 1, o.y - o.h * 0.75); c.lineTo(o.x + 22, o.y - o.h * 0.98); c.stroke();
+    c.fillStyle = "rgba(255,120,30," + (0.35 + Math.sin(t * 4 + o.ph) * 0.2) + ")"; c.beginPath(); c.arc(o.x + 22, o.y - o.h * 0.98, 3, 0, TAU); c.fill();
+  } else if (o.kind === "bigtree") {
+    c.fillStyle = "rgba(0,0,0,0.2)"; c.beginPath(); c.ellipse(o.x, o.y + 8, 70, 20, 0, 0, TAU); c.fill();
+    c.fillStyle = "#7a4a26";
+    c.beginPath(); c.moveTo(o.x - 34, o.y + 8); c.quadraticCurveTo(o.x - 14, o.y - 10, o.x - 16, o.y - o.h * 0.55); c.lineTo(o.x + 16, o.y - o.h * 0.55); c.quadraticCurveTo(o.x + 14, o.y - 10, o.x + 36, o.y + 8); c.closePath(); c.fill();
+    c.fillStyle = "#5e3818"; c.fillRect(o.x + 4, o.y - o.h * 0.5, 6, o.h * 0.48);
+    const cy = o.y - o.h * 0.78, sw2 = sw * 0.6;
+    [[-62, 18, 46, "#2f8a3a"], [62, 18, 46, "#2f8a3a"], [-36, -30, 52, "#3fa046"], [36, -30, 52, "#3fa046"], [0, -58, 54, "#4cb452"], [0, 10, 60, "#36953f"]].forEach(([dx, dy, r, col]) => { c.fillStyle = col; c.beginPath(); c.arc(o.x + dx + sw2, cy + dy, r, 0, TAU); c.fill(); });
+    c.fillStyle = "rgba(255,255,255,0.12)"; c.beginPath(); c.arc(o.x - 20 + sw2, cy - 70, 26, 0, TAU); c.fill();
+    const spots = [[-60, 20], [-30, -20], [10, -60], [44, -26], [64, 24], [-8, 22], [26, 30], [-44, 48], [40, 54], [-16, -44], [6, -8]];
+    spots.forEach(([dx, dy], i) => drawOrange(c, o.x + dx + sw2, cy + dy + Math.sin(t * 2 + i) * 1.5, 9, Math.sin(t + i) * 0.2));
+    c.fillStyle = "rgba(255,240,150," + (0.35 + Math.sin(t * 3) * 0.25) + ")"; star(c, o.x + 30 + sw2, cy - 70, 6); star(c, o.x - 50 + sw2, cy - 10, 5);
+  } else if (o.kind === "pillar") {
+    c.fillStyle = "#b9b2a6"; rr(c, o.x - 13, o.y - o.h, 26, o.h, 4); c.fill();
+    c.fillStyle = "#d8d2c6"; rr(c, o.x - 18, o.y - o.h - 8, 36, 10, 3); c.fill(); rr(c, o.x - 17, o.y - 6, 34, 9, 3); c.fill();
+    c.fillStyle = "rgba(0,0,0,0.12)"; c.fillRect(o.x + 4, o.y - o.h, 5, o.h - 6);
+    const fy = o.y - o.h - 10, fl = Math.sin(t * 12 + o.ph) * 2;
+    c.fillStyle = "#ff7a1f"; c.beginPath(); c.moveTo(o.x - 8, fy); c.quadraticCurveTo(o.x - 6, fy - 16 - fl, o.x, fy - 22 - fl); c.quadraticCurveTo(o.x + 6, fy - 16 + fl, o.x + 8, fy); c.closePath(); c.fill();
+    c.fillStyle = "#ffe066"; c.beginPath(); c.moveTo(o.x - 4, fy); c.quadraticCurveTo(o.x, fy - 14 - fl, o.x + 4, fy); c.closePath(); c.fill();
+  }
+}
+function treeTop(o) { return o.kind === "bigtree" ? o.h + 120 : o.kind === "pillar" ? o.h + 30 : o.h + 40; }
+function drawCroc(c, x, y, s, t, dir, open) {
+  c.save(); c.translate(x, y); c.scale(dir * s, s);
+  c.fillStyle = "rgba(0,0,0,0.18)"; c.beginPath(); c.ellipse(0, 12, 40, 7, 0, 0, TAU); c.fill();
+  const wig = Math.sin(t * 8) * 3;
+  c.fillStyle = "#3f9b4a";
+  c.beginPath(); c.moveTo(-28, 0); c.quadraticCurveTo(-46, -2 + wig, -54, 4 + wig); c.quadraticCurveTo(-40, 8, -26, 8); c.closePath(); c.fill();
+  const g = c.createLinearGradient(0, -14, 0, 12); g.addColorStop(0, "#5cc067"); g.addColorStop(1, "#378a40");
+  c.fillStyle = g; c.beginPath(); c.ellipse(-4, 0, 28, 12, 0, 0, TAU); c.fill();
+  c.fillStyle = "#2f7a37";
+  for (let i = -3; i <= 2; i++) { c.beginPath(); c.ellipse(i * 7, -10, 3, 2.4, 0, 0, TAU); c.fill(); }
+  const jaw = open ? 0.35 : 0.08;
+  c.save(); c.translate(20, -2); c.rotate(-jaw);
+  c.fillStyle = "#5cc067"; rr(c, 0, -8, 30, 9, 4); c.fill();
+  c.fillStyle = "#fff"; for (let i = 0; i < 4; i++) { c.beginPath(); c.moveTo(6 + i * 6, 1); c.lineTo(9 + i * 6, 5); c.lineTo(12 + i * 6, 1); c.fill(); }
+  c.restore();
+  c.save(); c.translate(20, 0); c.rotate(jaw * 0.5);
+  c.fillStyle = "#4aab55"; rr(c, 0, 0, 28, 7, 3); c.fill();
+  c.restore();
+  c.fillStyle = "#f5f2c8"; c.beginPath(); c.arc(20, -12, 4.5, 0, TAU); c.fill();
+  c.fillStyle = "#1a1a1a"; c.beginPath(); c.arc(21, -12, 2, 0, TAU); c.fill();
+  c.fillStyle = "#3a8f44";
+  c.fillRect(-20, 8, 6, 7); c.fillRect(8, 8, 6, 7);
+  c.restore();
+}
+
+/* иконки-апельсины в интерфейсе */
+document.querySelectorAll("canvas[data-melon]").forEach((cv) => {
+  const c = cv.getContext("2d"); drawMelon(c, cv.width / 2, cv.height / 2, cv.width * 0.36, 0.25);
+});
+document.querySelectorAll("canvas[data-orange]").forEach((cv) => {
+  const c = cv.getContext("2d"); const r = cv.width * 0.36;
+  drawOrange(c, cv.width / 2, cv.height / 2 + r * 0.12, r, -0.2);
+});
+
+/* ---------- Падающие апельсины в меню ---------- */
+const bg = $("bg"), bgc = bg.getContext("2d");
+let bgDrops = [];
+function sizeBg() {
+  const d = Math.min(devicePixelRatio || 1, 2);
+  bg.width = innerWidth * d; bg.height = innerHeight * d; bgc.setTransform(d, 0, 0, d, 0, 0);
+  const n = Math.round(clamp(innerWidth * innerHeight / 22000, 14, 46));
+  bgDrops = Array.from({ length: n }, () => newDrop(true));
+}
+function newDrop(any) {
+  const r = rand(7, 18);
+  return { x: rand(0, innerWidth), y: any ? rand(-innerHeight, innerHeight) : rand(-120, -30), r, vy: r * rand(2.4, 3.6), rot: rand(0, TAU), vr: rand(-2.5, 2.5), sway: rand(0, TAU), a: r > 14 ? 0.95 : 0.6 };
+}
+function drawBg(dt, t) {
+  bgc.clearRect(0, 0, innerWidth, innerHeight);
+  if (!save.fx) return;
+  for (const d of bgDrops) {
+    d.y += d.vy * dt; d.rot += d.vr * dt; const x = d.x + Math.sin(t * 0.8 + d.sway) * 14;
+    bgc.globalAlpha = d.a; drawOrange(bgc, x, d.y, d.r, d.rot);
+    if (d.y > innerHeight + 40) Object.assign(d, newDrop(false));
+  }
+  bgc.globalAlpha = 1;
+}
+
+/* логотип: капибара с апельсином */
+function drawLogo(t) {
+  const cv = $("logo"), c = cv.getContext("2d");
+  c.clearRect(0, 0, cv.width, cv.height);
+  const cx = cv.width / 2, cy = cv.height * 0.62;
+  const glow = c.createRadialGradient(cx, cy, 10, cx, cy, 230);
+  glow.addColorStop(0, "rgba(255,190,90,0.45)"); glow.addColorStop(1, "rgba(255,190,90,0)");
+  c.fillStyle = glow; c.fillRect(0, 0, cv.width, cv.height);
+  // вода горячего источника
+  c.fillStyle = "rgba(120,220,230,0.55)"; c.beginPath(); c.ellipse(cx, cy + 62, 190, 34, 0, 0, TAU); c.fill();
+  c.fillStyle = "rgba(255,255,255,0.35)"; c.beginPath(); c.ellipse(cx - 60, cy + 56, 60, 8, 0, 0, TAU); c.fill();
+  drawCapy(c, cx - 8, cy, 4.2, { t, sit: true, dir: 1, skin: save.skin });
+  // пар
+  c.strokeStyle = "rgba(255,255,255,0.5)"; c.lineWidth = 6; c.lineCap = "round";
+  for (let i = 0; i < 3; i++) {
+    const sx = cx - 120 + i * 120, ph = t * 1.4 + i;
+    c.beginPath(); c.moveTo(sx, cy + 30);
+    c.bezierCurveTo(sx + Math.sin(ph) * 16, cy - 10, sx - Math.sin(ph) * 16, cy - 40, sx + Math.sin(ph) * 10, cy - 70 - (i % 2) * 10); c.stroke();
+  }
+}
+
+/* ---------- Уровни и темы ---------- */
+const THEMES = {
+  beach:   { water: ["#47c3d4", "#1a87a0"], sand: ["#f6dca6", "#ecca8c"], grass: ["#a5e07a", "#72c45a"], path: "rgba(240,214,160,0.8)", flowers: true, tree: "palm", trees: 22, rocks: 10, bushes: 18, bush: "#3e9e4b", puddles: 3, lava: 0, sea: "#1a7f9a" },
+  jungle:  { water: ["#2fa7a0", "#146f77"], sand: ["#e6cf96", "#d4b878"], grass: ["#4fae4a", "#2f8a3a"], path: "rgba(170,130,80,0.55)", flowers: true, tree: "jtree", trees: 26, rocks: 8, bushes: 30, bush: "#23743a", puddles: 4, lava: 0, sea: "#146f77" },
+  volcano: { water: ["#3a7f8f", "#1d4f5c"], sand: ["#6e5d52", "#5a4a40"], grass: ["#8a7a6c", "#5f524a"], path: "rgba(60,45,40,0.5)", embers: true, tree: "dead", trees: 14, rocks: 20, bushes: 0, bush: "#555", puddles: 0, lava: 7, sea: "#1d4f5c" },
+  swamp:   { water: ["#4f8a6a", "#2b5a48"], sand: ["#9a9a68", "#7d7d50"], grass: ["#7c9a4e", "#566f34"], path: "rgba(110,95,60,0.5)", flowers: false, tree: "willow", trees: 20, rocks: 6, bushes: 26, bush: "#4f6b2e", puddles: 9, lava: 0, sea: "#2b5a48" },
+  castle:  { water: ["#3a6ea0", "#1d3f6a"], sand: ["#b9b2a6", "#a29a8c"], grass: ["#a3a8ae", "#80868e"], path: null, tiles: true, tree: "pillar", trees: 12, rocks: 6, bushes: 0, bush: "#555", puddles: 0, lava: 0, castle: true, sea: "#1d3f6a" },
+};
+const WORLDS = [
+  { id: 1, name: "Пляж", theme: "beach", price: 0 },
+  { id: 2, name: "Джунгли", theme: "jungle", price: 350 },
+  { id: 3, name: "Вулкан", theme: "volcano", price: 700 },
+  { id: 4, name: "Болото", theme: "swamp", price: 1200 },
+  { id: 5, name: "Замок Короля", theme: "castle", price: 1500 },
+];
+const GENERAL = { name: "Генерал Хвост", hp: 70, speed: 64, charge: 400, variant: "general" };
+const KING = { name: "Король Клац", hp: 110, speed: 72, charge: 450, variant: "king" };
+// type: collect - набрать апельсины; rescue - спасти малышей; gold - собрать золотые апельсины; boss - победить босса
+// пороги звезд подобраны по прогону автоигрока: 1 звезда легко, 3 звезды - хорошая игра
+const LEVELS = [
+  { w: 1, name: "Солнечный пляж", type: "collect", goal: 40, s2: 75, s3: 105, time: 90, crocs: 2, chase: 90 },
+  { w: 1, name: "Ракушечный берег", type: "collect", goal: 50, s2: 90, s3: 120, time: 90, crocs: 2, chase: 92 },
+  { w: 1, name: "Золотые дюны", type: "gold", goal: 7, s2: 80, s3: 115, time: 95, crocs: 3, chase: 92 },
+  { w: 1, name: "Пиратская бухта", type: "collect", goal: 60, s2: 95, s3: 125, time: 100, crocs: 3, chase: 95 },
+  { w: 2, name: "Дикие джунгли", type: "rescue", goal: 3, s2: 60, s3: 95, time: 100, crocs: 3, chase: 95 },
+  { w: 2, name: "Тропа лиан", type: "collect", goal: 60, s2: 95, s3: 125, time: 100, crocs: 3, chase: 98 },
+  { w: 2, name: "Цветочная поляна", type: "gold", goal: 8, s2: 90, s3: 125, time: 105, crocs: 4, chase: 98 },
+  { w: 2, name: "Древний храм", type: "rescue", goal: 4, s2: 65, s3: 105, time: 110, crocs: 4, chase: 100 },
+  { w: 3, name: "Огненный вулкан", type: "collect", goal: 60, s2: 100, s3: 130, time: 110, crocs: 3, chase: 100 },
+  { w: 3, name: "Лавовые реки", type: "gold", goal: 10, s2: 105, s3: 145, time: 110, crocs: 3, chase: 102, lava: 11 },
+  { w: 3, name: "Пепельная долина", type: "rescue", goal: 4, s2: 80, s3: 125, time: 115, crocs: 4, chase: 102 },
+  { w: 3, name: "Логово Генерала", type: "boss", boss: GENERAL, goal: 70, s2: 40, s3: 70, time: 130, crocs: 1, chase: 100 },
+  { w: 4, name: "Туманное болото", type: "collect", goal: 65, s2: 105, s3: 140, time: 110, crocs: 5, chase: 102 },
+  { w: 4, name: "Комариная топь", type: "gold", goal: 10, s2: 110, s3: 150, time: 115, crocs: 5, chase: 104 },
+  { w: 4, name: "Гнилые мостки", type: "rescue", goal: 5, s2: 75, s3: 120, time: 120, crocs: 5, chase: 104 },
+  { w: 4, name: "Черная трясина", type: "collect", goal: 70, s2: 110, s3: 145, time: 120, crocs: 6, chase: 105, puddles: 13 },
+  { w: 5, name: "Ворота замка", type: "collect", goal: 70, s2: 110, s3: 145, time: 110, crocs: 4, chase: 105 },
+  { w: 5, name: "Сокровищница", type: "gold", goal: 11, s2: 135, s3: 180, time: 115, crocs: 4, chase: 106 },
+  { w: 5, name: "Темница", type: "rescue", goal: 5, s2: 85, s3: 130, time: 120, crocs: 5, chase: 106 },
+  { w: 5, name: "Тронный зал", type: "boss", boss: KING, goal: 110, s2: 50, s3: 85, time: 150, crocs: 2, chase: 100 },
+];
+LEVELS.forEach((L, i) => {
+  L.id = i + 1; L.crocs = Math.round(L.crocs * 1.5); L.melons = Math.round((L.type === "boss" ? 10 : clamp(5 + Math.round(i * 0.8), 5, 20)) * 1.4); L.theme = WORLDS[L.w - 1].theme; L.bonus = 30 + L.id * 10 + (L.type === "boss" ? 150 : 0);
+  if (L.type === "boss") L.goal = L.boss.hp;
+  L.desc = L.type === "collect" ? "Собери " + L.goal + " апельсинов." + (L.lava ? " Обходи лаву!" : L.puddles ? " В грязи лапы вязнут!" : "")
+    : L.type === "gold" ? "Найди " + L.goal + " золотых апельсинов. Они блестят!" + (L.lava ? " Лавы тут очень много." : "")
+    : L.type === "rescue" ? "Спаси " + L.goal + " капибарят: подбеги к клетке, и она откроется. Розовые стрелки покажут путь."
+    : "Победи: " + L.boss.name + "! Собирай апельсины, рядом с боссом Капа бросает их сама. Уворачивайся от рывков.";
+});
+const worldOf = (L) => WORLDS[L.w - 1];
+const firstOfWorld = (L) => LEVELS.find((x) => x.w === L.w).id === L.id;
+const lastOfWorld = (w) => LEVELS.filter((x) => x.w === w).slice(-1)[0];
+function starHint(L) {
+  if (L.type === "collect") return ["★ " + L.goal, "★★ " + L.s2, "★★★ " + L.s3 + " апельсинов"];
+  if (L.type === "rescue") return ["★ спасти всех", "★★ +" + L.s2, "★★★ +" + L.s3 + " апельсинов"];
+  if (L.type === "gold") return ["★ " + L.goal + " золотых", "★★ +" + L.s2, "★★★ +" + L.s3 + " апельсинов"];
+  return ["★ победить", "★★ за " + (L.time - L.s2) + " с", "★★★ за " + (L.time - L.s3) + " с"];
+}
+
+/* ---------- Сюжет ---------- */
+const SPEAKERS = {
+  capy: { name: "Капа", color: "#f07500" },
+  parrot: { name: "Попугай Кеша", color: "#2a9a48" },
+  turtle: { name: "Дедушка Черепах", color: "#1688b8" },
+  king: { name: "Король Клац", color: "#c0392b" },
+  general: { name: "Генерал Хвост", color: "#5e6b2e" },
+  babies: { name: "Капибарята", color: "#e0508a" },
+};
+const STORY = {
+  intro1: [
+    ["capy", "Какое чудесное утро! Сейчас позавтракаю апельсинчиками..."],
+    ["parrot", "Капа, беда! Король Клац со своими крокодилами украл все апельсины острова!"],
+    ["parrot", "А еще они утащили капибарят и заперли в клетках в джунглях!"],
+    ["capy", "Без апельсинов? И малыши в плену? Ну уж нет. Я все верну!"],
+    ["parrot", "Начни с Пляжа: крокодилы растеряли там часть добычи. Собери 40 апельсинов!"],
+  ],
+  intro3: [
+    ["parrot", "Смотри, в дюнах что-то блестит! Это золотые апельсины, самые ценные."],
+    ["parrot", "Найди пять штук. Каждый стоит десяти обычных!"],
+  ],
+  outro4: [
+    ["parrot", "Отлично, Капа! Пляж свободен!"],
+    ["parrot", "За апельсины в моей лавке можно купить скины, шапки и улучшения."],
+    ["parrot", "А путь в Джунгли откроется за 300 апельсинов. Там ждут малыши!"],
+  ],
+  intro5: [
+    ["turtle", "Здравствуй, Капа. Я Дедушка Черепах, сторож джунглей."],
+    ["turtle", "Капибарята сидят в клетках. Подбеги к клетке, и она откроется. Только крокодилы стерегут их!"],
+    ["capy", "Держитесь, малыши, я иду!"],
+  ],
+  outro8: [
+    ["babies", "Капа! Спасибо! Мы так испугались!"],
+    ["babies", "Король унес главный запас апельсинов к Вулкану!"],
+    ["capy", "Значит, мне туда. Бегите домой, малыши!"],
+  ],
+  intro9: [
+    ["turtle", "На Вулкане течет лава. Не наступай в красные лужи, обожжешься и растеряешь апельсины."],
+    ["turtle", "Зато там есть горячий источник: постой в нем, и апельсины будут считаться за два."],
+    ["capy", "Горячая ванна посреди приключения? Обожаю!"],
+  ],
+  intro12: [
+    ["general", "Стоять! Я Генерал Хвост, правая лапа Короля Клаца. Дальше ты не пройдешь!"],
+    ["capy", "Генерал? А ты сам хоть раз пробовал апельсин?"],
+    ["general", "Отставить разговоры! Крокодилы, в атаку!"],
+    ["turtle", "Капа, собирай апельсины и подбегай ближе: ты будешь бросать их сама. Когда он мигает, уворачивайся!"],
+  ],
+  outro12: [
+    ["general", "Ой-ой... Отступаю! Король будет очень недоволен..."],
+    ["parrot", "Крокодилы бегут в Болото! Там грязь по уши и целая армия зубастиков."],
+    ["capy", "Грязь мне не страшна. Капибары любят грязевые ванны!"],
+  ],
+  intro13: [
+    ["king", "Ха-ха-ха! Мои крокодилы в Болоте тебя не пропустят, пушистая картошка!"],
+    ["capy", "Пушистая картошка? Ну держись, Клац!"],
+  ],
+  outro16: [
+    ["turtle", "Болото пройдено. Впереди Замок Короля Клаца."],
+    ["turtle", "Там сокровищница с апельсинами и темница с последними малышами. Будь осторожна!"],
+  ],
+  intro17: [
+    ["parrot", "Вот и ворота замка! Сколько тут стражи..."],
+    ["capy", "Ничего. Я уже не та капибара, что была на пляже!"],
+  ],
+  intro20: [
+    ["king", "Апельсины мои! Все мои! Никому не отдам!"],
+    ["capy", "Сейчас получишь витаминчиков, Ваше Величество!"],
+  ],
+  outro20: [
+    ["king", "Ой-ой... Сдаюсь! Я просто... ни разу не пробовал апельсин. Все прятал и прятал."],
+    ["capy", "Так попробуй! Делиться вкуснее, чем прятать."],
+    ["king", "М-м-м! Как вкусно! Простите меня, жители острова..."],
+    ["parrot", "Остров спасен! Ура Капе! Теперь собирай звезды на всех уровнях!"],
+  ],
+};
+
+/* ---------- Игровой мир ---------- */
+const cv = $("game"), ctx = cv.getContext("2d");
+let VW = 0, VH = 0, DPR = 1;
+function sizeGame() {
+  DPR = Math.min(devicePixelRatio || 1, 2);
+  VW = innerWidth; VH = innerHeight;
+  cv.width = VW * DPR; cv.height = VH * DPR;
+}
+const WORLD = 2200, CX = WORLD / 2, CY = WORLD / 2, SC = 1.4;
+const islandR = (a) => 900 + Math.sin(a * 3 + 0.6) * 64 + Math.sin(a * 5 + 1.9) * 40 + Math.cos(a * 2) * 42;
+const SPRING = { x: CX + 420, y: CY - 320, r: 70 };
+const START = { x: CX, y: CY + 170 };
+// гора с кратером: вход с восточной стороны, внутри большое апельсиновое дерево
+const MOUNT = { x: CX - 540, y: CY - 60, rIn: 170, rOut: 245, gate: 0, gw: 0.46 };
+const CASTLE_Y = Math.round(CY - islandR(-Math.PI / 2) + 45), CASTLE_LIM = CASTLE_Y + 45;
+const ROCK = { beach: ["#c9b48f", "#9c8664"], jungle: ["#8f9c7c", "#66735a"], volcano: ["#5e4e4a", "#3e3230"], swamp: ["#868670", "#5e5e4a"], castle: ["#a7adb5", "#7b818a"] };
+let ground = null, obstacles = [], puddles = [], decor = [], lavas = [], peaks = [], miniBg = null, TH = THEMES.beach;
+const angDiff = (a, b) => { let d = (a - b) % TAU; if (d > Math.PI) d -= TAU; if (d < -Math.PI) d += TAU; return Math.abs(d); };
+function inMountBand(x, y, pad) { const d = Math.hypot(x - MOUNT.x, y - MOUNT.y); return d < MOUNT.rOut + (pad || 0); }
+// не дает пройти сквозь каменное кольцо горы (кроме входа)
+function mountainCollide(o, rad) {
+  const dx = o.x - MOUNT.x, dy = o.y - MOUNT.y, d = Math.hypot(dx, dy) || 1, a = Math.atan2(dy, dx);
+  if (d <= MOUNT.rIn - rad || d >= MOUNT.rOut + rad) return;
+  const gateHalf = MOUNT.gw - Math.asin(Math.min(0.9, rad / d));
+  if (angDiff(a, MOUNT.gate) < gateHalf) return;
+  const nd = d < (MOUNT.rIn + MOUNT.rOut) / 2 ? MOUNT.rIn - rad : MOUNT.rOut + rad;
+  o.x = MOUNT.x + dx / d * nd; o.y = MOUNT.y + dy / d * nd;
+}
+
+function buildWorld(themeId, L) {
+  TH = Object.assign({}, THEMES[themeId] || THEMES.beach);
+  if (L && L.lava) TH.lava = L.lava;
+  if (L && L.puddles) TH.puddles = L.puddles;
+  ground = document.createElement("canvas"); ground.width = WORLD; ground.height = WORLD;
+  const g = ground.getContext("2d");
+  obstacles = []; decor = []; puddles = []; lavas = [];
+  const wg = g.createRadialGradient(CX, CY, 500, CX, CY, 1100);
+  wg.addColorStop(0, TH.water[0]); wg.addColorStop(1, TH.water[1]);
+  g.fillStyle = wg; g.fillRect(0, 0, WORLD, WORLD);
+  const shape = (pad) => { g.beginPath(); for (let i = 0; i <= 180; i++) { const a = i / 180 * TAU, r = islandR(a) + pad; g.lineTo(CX + Math.cos(a) * r, CY + Math.sin(a) * r); } g.closePath(); };
+  g.fillStyle = "rgba(255,255,255,0.18)"; shape(26); g.fill();
+  g.fillStyle = TH.sand[0]; shape(12); g.fill();
+  g.fillStyle = TH.sand[1]; shape(-14); g.fill();
+  const gg = g.createRadialGradient(CX - 160, CY - 200, 60, CX, CY, 980);
+  gg.addColorStop(0, TH.grass[0]); gg.addColorStop(1, TH.grass[1]);
+  g.fillStyle = gg; shape(-34); g.fill();
+  g.save(); shape(-34); g.clip();
+  if (TH.tiles) {
+    for (let x = 0; x < WORLD; x += 64) for (let y = 0; y < WORLD; y += 64) {
+      g.fillStyle = Math.random() < 0.5 ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)"; g.fillRect(x + 2, y + 2, 60, 60);
+    }
+    g.strokeStyle = "rgba(60,60,70,0.18)"; g.lineWidth = 3;
+    for (let x = 0; x < WORLD; x += 64) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, WORLD); g.stroke(); }
+    for (let y = 0; y < WORLD; y += 64) { g.beginPath(); g.moveTo(0, y); g.lineTo(WORLD, y); g.stroke(); }
+    g.fillStyle = "#b8323a"; g.fillRect(CX - 40, CASTLE_Y, 80, 1300);
+    g.fillStyle = "#e5c07b"; g.fillRect(CX - 40, CASTLE_Y, 6, 1300); g.fillRect(CX + 34, CASTLE_Y, 6, 1300);
+  } else {
+    for (let i = 0; i < 900; i++) {
+      const x = rand(0, WORLD), y = rand(0, WORLD);
+      g.fillStyle = Math.random() < 0.5 ? "rgba(255,255,255,0.06)" : "rgba(30,60,30,0.08)";
+      g.beginPath(); g.ellipse(x, y, rand(10, 34), rand(5, 14), rand(0, 3), 0, TAU); g.fill();
+    }
+  }
+  if (TH.flowers) { const fl = ["#fff3a8", "#ffffff", "#ffb3d1", "#c8b6ff"]; for (let i = 0; i < 260; i++) { g.fillStyle = fl[i % 4]; g.beginPath(); g.arc(rand(0, WORLD), rand(0, WORLD), rand(2, 3.6), 0, TAU); g.fill(); } }
+  if (TH.embers) { for (let i = 0; i < 200; i++) { g.fillStyle = Math.random() < 0.5 ? "rgba(255,140,40,0.5)" : "rgba(40,30,30,0.35)"; g.beginPath(); g.arc(rand(0, WORLD), rand(0, WORLD), rand(1.5, 3.5), 0, TAU); g.fill(); } }
+  if (TH.path) {
+    g.strokeStyle = TH.path; g.lineWidth = 34; g.lineCap = "round";
+    g.beginPath(); g.moveTo(CX - 600, CY + 300); g.bezierCurveTo(CX - 210, CY + 60, CX + 80, CY + 220, SPRING.x, SPRING.y); g.stroke();
+    g.beginPath(); g.moveTo(CX, CY + 740); g.bezierCurveTo(CX - 60, CY + 400, CX + 170, CY + 140, CX - 60, CY - 600); g.stroke();
+    g.beginPath(); g.moveTo(START.x, START.y); g.bezierCurveTo(CX - 120, CY + 60, MOUNT.x + 400, MOUNT.y - 40, MOUNT.x + MOUNT.rOut - 10, MOUNT.y); g.stroke();
+  }
+  g.restore();
+  // горячий источник
+  g.fillStyle = TH.tiles ? "#d8d2c6" : "#c9b28d"; g.beginPath(); g.ellipse(SPRING.x, SPRING.y, SPRING.r + 16, SPRING.r * 0.82 + 14, 0, 0, TAU); g.fill();
+  const sg = g.createRadialGradient(SPRING.x, SPRING.y, 10, SPRING.x, SPRING.y, SPRING.r);
+  sg.addColorStop(0, "#a8f0f2"); sg.addColorStop(1, "#4cc6d6");
+  g.fillStyle = sg; g.beginPath(); g.ellipse(SPRING.x, SPRING.y, SPRING.r, SPRING.r * 0.82, 0, 0, TAU); g.fill();
+  for (let i = 0; i < 14; i++) { const a = i / 14 * TAU; g.fillStyle = i % 2 ? "#b8a17c" : "#d8c6a4"; g.beginPath(); g.arc(SPRING.x + Math.cos(a) * (SPRING.r + 10), SPRING.y + Math.sin(a) * (SPRING.r * 0.82 + 9), 10, 0, TAU); g.fill(); }
+  // лужи грязи
+  drawMountainGround(g, themeId);
+  for (let i = 0; i < Math.round(TH.puddles * 1.6); i++) {
+    const p = freeSpot(70, 480); if (!p) continue;
+    const r = rand(42, 62); puddles.push({ x: p.x, y: p.y, r });
+    g.fillStyle = "#6a4e32"; g.beginPath(); g.ellipse(p.x, p.y, r + 6, r * 0.62 + 5, 0, 0, TAU); g.fill();
+    g.fillStyle = "#86643f"; g.beginPath(); g.ellipse(p.x, p.y, r, r * 0.62, 0, 0, TAU); g.fill();
+    g.fillStyle = "rgba(255,255,255,0.16)"; g.beginPath(); g.ellipse(p.x - r * 0.3, p.y - r * 0.2, r * 0.3, r * 0.1, -0.2, 0, TAU); g.fill();
+  }
+  // лава
+  for (let i = 0; i < Math.round(TH.lava * 1.6); i++) {
+    const p = freeSpot(80, 500); if (!p) continue;
+    const r = rand(40, 58); lavas.push({ x: p.x, y: p.y, r, ph: rand(0, 6) });
+    g.fillStyle = "#2e2422"; g.beginPath(); g.ellipse(p.x, p.y, r + 10, r * 0.62 + 8, 0, 0, TAU); g.fill();
+    const lg = g.createRadialGradient(p.x, p.y, 4, p.x, p.y, r);
+    lg.addColorStop(0, "#ffe066"); lg.addColorStop(0.5, "#ff8a1f"); lg.addColorStop(1, "#d93a1a");
+    g.fillStyle = lg; g.beginPath(); g.ellipse(p.x, p.y, r, r * 0.62, 0, 0, TAU); g.fill();
+    g.strokeStyle = "#3a2a26"; g.lineWidth = 4;
+    for (let k = 0; k < 4; k++) { const a = rand(0, TAU); g.beginPath(); g.moveTo(p.x + Math.cos(a) * r * 0.2, p.y + Math.sin(a) * r * 0.12); g.lineTo(p.x + Math.cos(a + 0.4) * r * 0.75, p.y + Math.sin(a + 0.4) * r * 0.46); g.stroke(); }
+  }
+  // замок на северном берегу
+  if (TH.castle) drawCastle(g, CX, CASTLE_Y);
+  obstacles.push({ x: MOUNT.x, y: MOUNT.y + 10, r: 34, kind: "bigtree", h: 150, ph: 0 });
+  for (let i = 0; i < Math.round(TH.trees * 1.8); i++) { const p = freeSpot(80, 520); if (p) obstacles.push({ x: p.x, y: p.y, r: TH.tree === "pillar" ? 18 : 22, kind: TH.tree, h: TH.tree === "pillar" ? rand(60, 76) : rand(70, 100), ph: rand(0, 6) }); }
+  for (let i = 0; i < Math.round(TH.rocks * 1.8); i++) { const p = freeSpot(60, 560); if (p) obstacles.push({ x: p.x, y: p.y, r: 20, kind: "rock", s: rand(0.8, 1.3) }); }
+  for (let i = 0; i < Math.round(TH.bushes * 1.8); i++) { const p = freeSpot(30, 590); if (p) decor.push({ x: p.x, y: p.y, kind: "bush", s: rand(0.8, 1.3) }); }
+}
+function drawMountainGround(g, themeId) {
+  const [rc, rd] = ROCK[themeId] || ROCK.beach, M = MOUNT;
+  // кольцо скал
+  g.fillStyle = "rgba(0,0,0,0.18)"; g.beginPath(); g.arc(M.x + 6, M.y + 10, M.rOut + 8, 0, TAU); g.fill();
+  g.fillStyle = rd; g.beginPath(); g.arc(M.x, M.y, M.rOut, 0, TAU); g.fill();
+  g.fillStyle = rc; g.beginPath(); g.arc(M.x, M.y - 6, M.rOut - 10, 0, TAU); g.fill();
+  for (let i = 0; i < 70; i++) { const a = rand(0, TAU), d = rand(M.rIn, M.rOut - 8); g.fillStyle = Math.random() < 0.5 ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.12)"; g.beginPath(); g.ellipse(M.x + Math.cos(a) * d, M.y + Math.sin(a) * d, rand(6, 16), rand(4, 9), a, 0, TAU); g.fill(); }
+  // дно кратера
+  const fg = g.createRadialGradient(M.x, M.y, 20, M.x, M.y, M.rIn);
+  fg.addColorStop(0, TH.grass[0]); fg.addColorStop(1, TH.grass[1]);
+  g.fillStyle = fg; g.beginPath(); g.arc(M.x, M.y, M.rIn, 0, TAU); g.fill();
+  g.strokeStyle = "rgba(0,0,0,0.25)"; g.lineWidth = 6; g.beginPath(); g.arc(M.x, M.y, M.rIn, 0, TAU); g.stroke();
+  // вход
+  g.fillStyle = TH.grass[1];
+  g.beginPath(); g.moveTo(M.x + Math.cos(M.gate - M.gw * 0.8) * (M.rIn - 4), M.y + Math.sin(M.gate - M.gw * 0.8) * (M.rIn - 4));
+  g.lineTo(M.x + Math.cos(M.gate - M.gw) * (M.rOut + 6), M.y + Math.sin(M.gate - M.gw) * (M.rOut + 6));
+  g.lineTo(M.x + Math.cos(M.gate + M.gw) * (M.rOut + 6), M.y + Math.sin(M.gate + M.gw) * (M.rOut + 6));
+  g.lineTo(M.x + Math.cos(M.gate + M.gw * 0.8) * (M.rIn - 4), M.y + Math.sin(M.gate + M.gw * 0.8) * (M.rIn - 4)); g.closePath(); g.fill();
+  if (TH.path) { g.strokeStyle = TH.path; g.lineWidth = 30; g.lineCap = "round"; g.beginPath(); g.moveTo(M.x + M.rOut, M.y); g.lineTo(M.x + 40, M.y + 20); g.stroke(); }
+  // цветы и камешки на дне
+  for (let i = 0; i < 40; i++) { const a = rand(0, TAU), d = rand(30, M.rIn - 14); g.fillStyle = ["#fff3a8", "#ffb3d1", "#ffffff", "#ffd08a"][i % 4]; g.beginPath(); g.arc(M.x + Math.cos(a) * d, M.y + Math.sin(a) * d, rand(2, 3.5), 0, TAU); g.fill(); }
+  // вершины скал: рисуются стоя, с сортировкой по глубине
+  peaks = [];
+  for (let a = 0; a < TAU; a += 0.3) {
+    if (angDiff(a, M.gate) < M.gw + 0.12) continue;
+    const d = (M.rIn + M.rOut) / 2 + rand(-10, 10);
+    peaks.push({ x: M.x + Math.cos(a) * d, y: M.y + Math.sin(a) * d * 0.98, w: rand(70, 96), h: rand(70, 120) * (Math.sin(a) < 0 ? 1.2 : 0.8), c: rc, d2: rd, snow: themeId !== "volcano" && themeId !== "beach", lava: themeId === "volcano" });
+  }
+  const ga = M.gate, ar = M.rOut + 4;
+  peaks.push({ arch: true, x: M.x + Math.cos(ga) * ar, y: M.y + Math.sin(ga + M.gw) * ar + 26, x1: M.x + Math.cos(ga - M.gw) * ar, y1: M.y + Math.sin(ga - M.gw) * ar, x2: M.x + Math.cos(ga + M.gw) * ar, y2: M.y + Math.sin(ga + M.gw) * ar, h: 70, w: 0 });
+  // мини-карта
+  miniBg = document.createElement("canvas"); miniBg.width = 200; miniBg.height = 200;
+  const m = miniBg.getContext("2d"); m.save(); m.beginPath(); m.arc(100, 100, 98, 0, TAU); m.clip(); m.drawImage(g.canvas, 0, 0, WORLD, WORLD, 0, 0, 200, 200); m.restore();
+}
+function drawArch(c, pk, t) {
+  // два фонарика по краям входа и указатель
+  for (const [x, y] of [[pk.x1, pk.y1], [pk.x2, pk.y2]]) {
+    c.fillStyle = "rgba(0,0,0,0.18)"; c.beginPath(); c.ellipse(x, y + 4, 10, 4, 0, 0, TAU); c.fill();
+    c.fillStyle = "#6b4423"; c.fillRect(x - 3, y - 46, 6, 50);
+    c.fillStyle = "rgba(255,210,90," + (0.35 + Math.sin(t * 4 + x) * 0.15) + ")"; c.beginPath(); c.arc(x, y - 52, 14, 0, TAU); c.fill();
+    c.fillStyle = "#ffcf3a"; rr(c, x - 6, y - 60, 12, 14, 4); c.fill();
+  }
+  const sx = pk.x2 + 34, sy = pk.y2 + 26;
+  c.fillStyle = "#6b4423"; c.fillRect(sx - 3, sy - 44, 6, 48);
+  c.fillStyle = "#8d5a30"; c.beginPath(); c.moveTo(sx - 58, sy - 48); c.lineTo(sx + 40, sy - 48); c.lineTo(sx + 40, sy - 22); c.lineTo(sx - 58, sy - 22); c.lineTo(sx - 70, sy - 35); c.closePath(); c.fill();
+  c.fillStyle = "#fff3d6"; c.font = "900 13px Rubik, sans-serif"; c.textAlign = "center"; c.fillText("ДЕРЕВО", sx - 4, sy - 30);
+  drawOrange(c, sx + 30, sy - 36 + Math.sin(t * 3) * 1.5, 7, 0);
+}
+function drawPeak(c, pk, t) {
+  if (pk.arch) { drawArch(c, pk, t); return; }
+  const x = pk.x, y = pk.y, w = pk.w, h = pk.h;
+  c.fillStyle = "rgba(0,0,0,0.18)"; c.beginPath(); c.ellipse(x, y + 4, w * 0.55, 12, 0, 0, TAU); c.fill();
+  c.fillStyle = pk.c; c.beginPath(); c.moveTo(x - w / 2, y + 6); c.lineTo(x - 4, y - h); c.lineTo(x + 4, y - h + 4); c.lineTo(x + w / 2, y + 6); c.closePath(); c.fill();
+  c.fillStyle = pk.d2; c.beginPath(); c.moveTo(x + 4, y - h + 4); c.lineTo(x + w / 2, y + 6); c.lineTo(x + w * 0.05, y + 6); c.closePath(); c.fill();
+  if (pk.snow) { c.fillStyle = "#ffffff"; c.beginPath(); c.moveTo(x - 4, y - h); c.lineTo(x - w * 0.16, y - h * 0.68); c.lineTo(x - w * 0.05, y - h * 0.74); c.lineTo(x + w * 0.04, y - h * 0.66); c.lineTo(x + w * 0.14, y - h * 0.7); c.lineTo(x + 4, y - h + 4); c.closePath(); c.fill(); }
+  if (pk.lava) { c.fillStyle = "rgba(255,140,40," + (0.5 + Math.sin(t * 3 + x) * 0.3) + ")"; c.beginPath(); c.moveTo(x - 3, y - h + 2); c.lineTo(x - 8, y - h * 0.75); c.lineTo(x + 2, y - h * 0.8); c.closePath(); c.fill(); }
+}
+function drawCastle(g, x, by) {
+  g.fillStyle = "rgba(0,0,0,0.2)"; g.beginPath(); g.ellipse(x, by + 6, 230, 18, 0, 0, TAU); g.fill();
+  const wall = (x0, y0, w, h) => { g.fillStyle = "#c9c2b6"; g.fillRect(x0, y0, w, h); g.fillStyle = "#b3ab9e"; for (let i = 0; i < w; i += 22) g.fillRect(x0 + i, y0 - 12, 14, 12); g.fillStyle = "rgba(0,0,0,0.08)"; for (let yy = y0 + 14; yy < y0 + h; yy += 18) g.fillRect(x0, yy, w, 2); };
+  wall(x - 200, by - 110, 400, 110);
+  for (const tx of [-210, 150]) { wall(x + tx, by - 170, 60, 170); g.fillStyle = "#c0392b"; g.beginPath(); g.moveTo(x + tx - 6, by - 182); g.lineTo(x + tx + 30, by - 240); g.lineTo(x + tx + 66, by - 182); g.closePath(); g.fill(); g.fillStyle = "#3a3440"; rr(g, x + tx + 22, by - 140, 16, 26, 8); g.fill(); }
+  g.fillStyle = "#4a3a30"; g.beginPath(); g.moveTo(x - 46, by); g.lineTo(x - 46, by - 60); g.arc(x, by - 60, 46, Math.PI, 0); g.lineTo(x + 46, by); g.closePath(); g.fill();
+  g.strokeStyle = "#2a201a"; g.lineWidth = 4; for (let i = -36; i <= 36; i += 14) { g.beginPath(); g.moveTo(x + i, by); g.lineTo(x + i, by - 90 + Math.abs(i) * 0.5); g.stroke(); }
+  g.save(); g.translate(x, by - 128); drawHat(g, "crown", 2.4); g.restore();
+}
+function onIsland(x, y, margin) { const dx = x - CX, dy = y - CY; return Math.hypot(dx, dy) < islandR(Math.atan2(dy, dx)) - (margin || 0); }
+function freeSpot(clear, maxR) {
+  for (let k = 0; k < 60; k++) {
+    const a = rand(0, TAU), d = Math.sqrt(Math.random()) * maxR * SC;
+    const x = CX + Math.cos(a) * d, y = CY + Math.sin(a) * d;
+    if (!onIsland(x, y, 60)) continue;
+    if (TH.castle && y < CASTLE_LIM + 80) continue;
+    if (inMountBand(x, y, clear + 20)) continue;
+    if (Math.hypot(x - SPRING.x, y - SPRING.y) < SPRING.r + clear + 20) continue;
+    if (Math.hypot(x - START.x, y - START.y) < 160) continue;
+    let ok = true;
+    for (const o of obstacles) if (Math.hypot(x - o.x, y - o.y) < o.r + clear) { ok = false; break; }
+    if (ok) for (const p of puddles) if (Math.hypot(x - p.x, y - p.y) < p.r + clear) { ok = false; break; }
+    if (ok) for (const p of lavas) if (Math.hypot(x - p.x, y - p.y) < p.r + clear + 10) { ok = false; break; }
+    if (ok) return { x, y };
+  }
+  return null;
+}
+
+/* мини-остров для карты и карточки уровня */
+function drawIslandIcon(c, w, h, themeId, t, wide) {
+  const th = THEMES[themeId];
+  c.clearRect(0, 0, w, h);
+  const cx = w / 2, cy = h * 0.58, rx = wide ? w * 0.36 : w * 0.44, ry = wide ? h * 0.3 : h * 0.34;
+  if (wide) {
+    const sky = c.createLinearGradient(0, 0, 0, h); sky.addColorStop(0, th.water[0]); sky.addColorStop(1, th.water[1]);
+    c.fillStyle = sky; c.fillRect(0, 0, w, h);
+    c.strokeStyle = "rgba(255,255,255,0.25)"; c.lineWidth = 3;
+    for (let i = 0; i < 4; i++) { c.beginPath(); for (let x = 0; x <= w; x += 10) c.lineTo(x, h * 0.2 + i * h * 0.22 + Math.sin(x * 0.04 + t * 1.5 + i) * 4); c.stroke(); }
+  } else {
+    c.fillStyle = "rgba(255,255,255,0.25)"; c.beginPath(); c.ellipse(cx, cy + 6, rx + 8, ry + 6, 0, 0, TAU); c.fill();
+  }
+  c.fillStyle = th.sand[0]; c.beginPath(); c.ellipse(cx, cy, rx, ry, 0, 0, TAU); c.fill();
+  c.fillStyle = th.grass[1]; c.beginPath(); c.ellipse(cx, cy - ry * 0.12, rx * 0.8, ry * 0.7, 0, 0, TAU); c.fill();
+  c.fillStyle = th.grass[0]; c.beginPath(); c.ellipse(cx - rx * 0.15, cy - ry * 0.25, rx * 0.5, ry * 0.4, 0, 0, TAU); c.fill();
+  const s = wide ? 0.9 : 0.55;
+  c.save(); c.translate(cx, cy); c.scale(s, s); c.translate(-cx, -cy);
+  if (th.castle) drawCastle(c, cx, cy + 10);
+  else {
+    drawTree(c, { x: cx - rx * 0.5 / s * 0.9, y: cy + 4, kind: th.tree, h: 80, ph: 1 }, t);
+    drawTree(c, { x: cx + rx * 0.55 / s * 0.9, y: cy - 6, kind: th.tree, h: 70, ph: 2 }, t);
+    if (th.lava) { c.fillStyle = "#ff8a1f"; c.beginPath(); c.ellipse(cx + 30, cy + 22, 26, 12, 0, 0, TAU); c.fill(); }
+  }
+  c.restore();
+}
+
+/* ---------- Раунд ---------- */
+let G = null, LV = LEVELS[0];
+function upgSpeed() { return 230 * (1 + save.upg.speed * 0.08); }
+function upgMagnet() { return 34 + save.upg.magnet * 22; }
+function upgDashCd() { return 3 - save.upg.dash * 0.4; }
+const VALUE = { orange: 1, melon: 5, gold: 10 };
+const AMMO = { orange: 1, melon: 2, gold: 3 };
+
+function startRound(id) {
+  LV = LEVELS.find((l) => l.id === id) || LEVELS[0];
+  buildWorld(LV.theme, LV);
+  G = {
+    t: LV.time, score: 0, running: true, paused: false, ending: 0, won: false,
+    p: { x: START.x, y: START.y, vx: 0, vy: 0, dir: 1, dash: 0, dashCd: 0, inv: 3, sitT: 0, sitting: false, anim: 0 },
+    fruits: [], crocs: [], fx: [], relax: 0, springCd: 0, cam: { x: START.x, y: START.y },
+    cages: [], babies: [], freed: 0, golds: 0, shake: 0, fly: [], rainT: 2, mel: 0, treeT: 1.5, trail: [], trailT: 0, dustT: 0, zoom: 1, boss: null, shots: [], ammo: 0, throwCd: 0, goalDone: false,
+  };
+  for (let i = 0; i < 85; i++) spawnFruit();
+  for (let i = 0; i < LV.melons; i++) spawnFruit(undefined, undefined, "melon");
+  const crocN = LV.crocs;
+  for (let i = 0, k = 0; i < crocN && k < 120; k++) {
+    const p = freeSpot(40, 560); if (!p || Math.hypot(p.x - START.x, p.y - START.y) < 340) continue;
+    i++; G.crocs.push({ x: p.x, y: p.y, vx: 0, vy: 0, dir: 1, tx: p.x, ty: p.y, think: 0, open: 0 });
+  }
+  if (LV.type === "rescue") {
+    for (let i = 0, k = 0; i < LV.goal && k < 240; k++) {
+      const p = freeSpot(60, 540); if (!p || Math.hypot(p.x - START.x, p.y - START.y) < 330) continue;
+      if (G.cages.some((cg) => Math.hypot(cg.x - p.x, cg.y - p.y) < (k < 120 ? 260 : 160))) continue;
+      i++; G.cages.push({ x: p.x, y: p.y, freed: false });
+    }
+  }
+  if (LV.type === "boss") G.boss = { cfg: LV.boss, x: CX, y: CY - 260, hp: LV.goal, max: LV.goal, state: "walk", st: 3, vx: 0, vy: 0, dir: -1, flash: 0, cdx: 0, cdy: 0, open: 0 };
+  showScreen(null);
+  $("hud").hidden = false;
+  $("dash").hidden = !isTouch;
+  $("joy-hint").hidden = !isTouch;
+  $("relax").hidden = true;
+  $("bossbar").hidden = LV.type !== "boss";
+  if (LV.boss) $("boss-name").textContent = LV.boss.name;
+  playMusic(LV.type === "boss" ? "boss" : "game");
+  paintGoalIcon();
+  updateHud(true);
+  toast(LV.name);
+}
+function spawnFruit(x, y, kind) {
+  const p = (x !== undefined) ? { x, y } : freeSpot(26, 600);
+  if (!p) return;
+  const roll = Math.random();
+  const gp = LV.type === "gold" ? 0.15 : 0.05;
+  kind = kind || (roll < gp ? "gold" : "orange");
+  G.fruits.push({ x: p.x, y: p.y, kind, ph: rand(0, TAU), vx: 0, vy: 0, life: x !== undefined ? 12 : 0 });
+}
+
+/* ---------- Ввод ---------- */
+const keys = {};
+const isTouch = ("ontouchstart" in window) || (navigator.maxTouchPoints > 0 && matchMedia("(pointer: coarse)").matches);
+addEventListener("keydown", (e) => {
+  keys[e.code] = true;
+  if (e.code === "Space") { e.preventDefault(); if (!$("story").hidden) storyNext(); else tryDash(); }
+  if (e.code === "Enter" && !$("story").hidden) storyNext();
+  if (e.code === "ArrowLeft" && !$("story").hidden) storyBack();
+  if (e.code === "Escape" && G && G.running) togglePause();
+});
+addEventListener("keyup", (e) => { keys[e.code] = false; });
+const joy = { id: null, ox: 0, oy: 0, dx: 0, dy: 0 };
+cv.addEventListener("pointerdown", (e) => {
+  if (!G || !G.running || G.paused) return;
+  if (e.pointerType === "mouse") return;
+  if (e.clientX > innerWidth * 0.6) return;
+  joy.id = e.pointerId; joy.ox = e.clientX; joy.oy = e.clientY; joy.dx = 0; joy.dy = 0;
+  const j = $("joy"); j.style.left = e.clientX + "px"; j.style.top = e.clientY + "px"; j.hidden = false;
+  $("joy-hint").hidden = true;
+  cv.setPointerCapture(e.pointerId);
+});
+cv.addEventListener("pointermove", (e) => {
+  if (e.pointerId !== joy.id) return;
+  let dx = e.clientX - joy.ox, dy = e.clientY - joy.oy;
+  const d = Math.hypot(dx, dy), max = 55;
+  if (d > max) { dx = dx / d * max; dy = dy / d * max; }
+  joy.dx = dx / max; joy.dy = dy / max;
+  $("joy-knob").style.transform = `translate(${dx}px, ${dy}px)`;
+});
+const endJoy = (e) => { if (e.pointerId !== joy.id) return; joy.id = null; joy.dx = joy.dy = 0; $("joy").hidden = true; $("joy-knob").style.transform = ""; };
+cv.addEventListener("pointerup", endJoy); cv.addEventListener("pointercancel", endJoy);
+$("dash").addEventListener("pointerdown", (e) => { e.preventDefault(); tryDash(); });
+function tryDash() {
+  if (!G || !G.running || G.paused || G.p.sitting) return;
+  if (G.p.dashCd > 0) return;
+  G.p.dash = 0.32; G.p.dashCd = upgDashCd(); sfx.dash();
+  for (let i = 0; i < 8; i++) G.fx.push({ type: "dust", x: G.p.x, y: G.p.y + 16, vx: rand(-60, 60), vy: rand(-40, 0), life: 0.5 });
+}
+
+/* ---------- Логика ---------- */
+function toast(msg) {
+  const el = $("toast"); el.textContent = msg; el.classList.add("show");
+  clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("show"), 1400);
+}
+function hurt(fx, fy, label) {
+  const p = G.p;
+  p.inv = 1.6; sfx.hit();
+  const lose = Math.min(G.score, Math.max(1, Math.ceil(G.score * 0.15)));
+  G.score -= lose; bumpCount();
+  const n = Math.min(lose, 12);
+  for (let j = 0; j < n; j++) { const aa = rand(0, TAU); G.fruits.push({ x: p.x, y: p.y, kind: "orange", ph: 0, vx: Math.cos(aa) * rand(160, 300), vy: Math.sin(aa) * rand(160, 300), life: 8 }); }
+  const kx = p.x - fx, ky = p.y - fy, kd = Math.hypot(kx, ky) || 1;
+  p.vx = kx / kd * 520; p.vy = ky / kd * 520;
+  G.shake = 0.35;
+  if (lose > 0) toast((label || "Ай!") + " -" + lose);
+}
+function calcStars() {
+  if (LV.type === "collect") return G.score >= LV.s3 ? 3 : G.score >= LV.s2 ? 2 : G.score >= LV.goal ? 1 : 0;
+  if (LV.type === "rescue") return G.freed < LV.goal ? 0 : G.score >= LV.s3 ? 3 : G.score >= LV.s2 ? 2 : 1;
+  if (LV.type === "gold") return G.golds < LV.goal ? 0 : G.score >= LV.s3 ? 3 : G.score >= LV.s2 ? 2 : 1;
+  return G.boss.hp > 0 ? 0 : G.t >= LV.s3 ? 3 : G.t >= LV.s2 ? 2 : 1;
+}
+function finish(msg) { if (G.ending > 0) return; G.ending = 1.3; G.won = true; G.p.inv = 9; sfx.win(); toast(msg); }
+
+function update(dt) {
+  const p = G.p;
+  if (G.ending > 0) { G.ending -= dt; if (G.ending <= 0) { endRound(); return; } }
+  else { G.t -= dt; if (G.t <= 0) { G.t = 0; endRound(); return; } }
+  if (G.relax > 0) G.relax = Math.max(0, G.relax - dt);
+  if (G.springCd > 0) G.springCd -= dt;
+  p.anim += dt; p.inv = Math.max(0, p.inv - dt); p.dashCd = Math.max(0, p.dashCd - dt); p.dash = Math.max(0, p.dash - dt);
+
+  let ix = 0, iy = 0;
+  if (keys.KeyA || keys.ArrowLeft) ix -= 1;
+  if (keys.KeyD || keys.ArrowRight) ix += 1;
+  if (keys.KeyW || keys.ArrowUp) iy -= 1;
+  if (keys.KeyS || keys.ArrowDown) iy += 1;
+  if (joy.id !== null) { ix = joy.dx; iy = joy.dy; }
+  const il = Math.hypot(ix, iy); if (il > 1) { ix /= il; iy /= il; }
+
+  // горячий источник
+  const inSpring = Math.hypot((p.x - SPRING.x) / SPRING.r, (p.y - SPRING.y) / (SPRING.r * 0.82)) < 0.75;
+  if (inSpring && il < 0.15 && G.springCd <= 0) {
+    p.sitT += dt;
+    if (p.sitT > 0.6 && !p.sitting) p.sitting = true;
+    if (p.sitT > 1.6 && G.relax <= 0) { G.relax = 30; G.springCd = 45; sfx.relax(); toast("Релакс! Апельсины x2"); }
+  } else { p.sitT = 0; if (il > 0.15) p.sitting = false; }
+  if (!inSpring) p.sitting = false;
+
+  let speed = upgSpeed();
+  for (const pd of puddles) if (Math.hypot((p.x - pd.x) / pd.r, (p.y - pd.y) / (pd.r * 0.62)) < 1) speed *= 0.5;
+  if (inSpring) speed *= 0.6;
+  if (p.dash > 0) speed *= 2.3;
+  const k = 1 - Math.exp(-dt * 12);
+  p.vx += (ix * speed - p.vx) * k; p.vy += (iy * speed - p.vy) * k;
+  if (p.dash > 0 && il < 0.1) p.vx += p.dir * 400 * dt;
+  p.x += p.vx * dt; p.y += p.vy * dt;
+  G.dustT -= dt;
+  if (Math.hypot(p.vx, p.vy) > 140 && G.dustT <= 0) { G.dustT = p.dash > 0 ? 0.03 : 0.1; G.fx.push({ type: "dust", x: p.x - p.dir * 14, y: p.y + 18, vx: -p.vx * 0.1 + rand(-15, 15), vy: rand(-30, -10), life: 0.35 }); }
+  const mud = puddles.some((pd) => Math.hypot((p.x - pd.x) / pd.r, (p.y - pd.y) / (pd.r * 0.62)) < 1);
+  if (mud && !p.inMud) { for (let j = 0; j < 10; j++) G.fx.push({ type: "spark", x: p.x, y: p.y + 12, vx: rand(-110, 110), vy: rand(-170, -60), life: 0.5, color: "#7a5a3a" }); beep(260, 0.08, "sine", 0.05, 140); }
+  p.inMud = mud;
+  if (Math.abs(p.vx) > 8) p.dir = p.vx > 0 ? 1 : -1;
+  const dx = p.x - CX, dy = p.y - CY, a = Math.atan2(dy, dx), maxR = islandR(a) - 46, d = Math.hypot(dx, dy);
+  if (d > maxR) { p.x = CX + Math.cos(a) * maxR; p.y = CY + Math.sin(a) * maxR; }
+  if (TH.castle && p.y < CASTLE_LIM) p.y = CASTLE_LIM;
+  for (const o of obstacles) {
+    const ox = p.x - o.x, oy = p.y - o.y, od = Math.hypot(ox, oy), min = o.r + 20;
+    if (od < min && od > 0.01) { p.x = o.x + ox / od * min; p.y = o.y + oy / od * min; }
+  }
+  mountainCollide(p, 20);
+  // лава
+  for (const l of lavas) if (p.inv <= 0 && Math.hypot((p.x - l.x) / l.r, (p.y - l.y) / (l.r * 0.62)) < 0.85) hurt(l.x, l.y, "Горячо!");
+
+  // фрукты
+  const mag = upgMagnet();
+  for (let i = G.fruits.length - 1; i >= 0; i--) {
+    const f = G.fruits[i];
+    f.ph += dt;
+    if (f.vx || f.vy) { f.x += f.vx * dt; f.y += f.vy * dt; f.vx *= 0.9; f.vy *= 0.9; if (Math.abs(f.vx) + Math.abs(f.vy) < 4) f.vx = f.vy = 0; }
+    if (f.life) { f.life -= dt; if (f.life <= 0) { G.fruits.splice(i, 1); continue; } }
+    if (f.z > 0) {
+      f.z -= 560 * dt;
+      if (f.z <= 0) { f.z = 0; f.land = 0.35; beep(f.kind === "melon" ? 140 : 520, 0.1, "sine", f.kind === "melon" ? 0.06 : 0.03, f.kind === "melon" ? 70 : 300); for (let j = 0; j < 6; j++) G.fx.push({ type: "dust", x: f.x + rand(-10, 10), y: f.y + 6, vx: rand(-70, 70), vy: rand(-50, -10), life: 0.4 }); }
+      continue;
+    }
+    if (f.land > 0) f.land -= dt;
+    const fd = Math.hypot(f.x - p.x, f.y - (p.y - 6));
+    if (fd < mag * 2.2 && save.upg.magnet > 0) { f.x += (p.x - f.x) * dt * 4; f.y += (p.y - 6 - f.y) * dt * 4; }
+    if (fd < mag) {
+      const isMel = f.kind === "melon";
+      const v = isMel ? 5 : VALUE[f.kind] * (G.relax > 0 ? 2 : 1);
+      if (isMel) G.mel += 5; else G.score += v;
+      if (G.boss) G.ammo += AMMO[f.kind];
+      if (f.kind === "gold" && LV.type === "gold") { G.golds++; if (G.golds <= LV.goal) toast("Золотой! " + Math.min(G.golds, LV.goal) + "/" + LV.goal); setTimeout(() => { if (G && G.running) spawnFruit(undefined, undefined, "gold"); }, 1500); }
+      G.fx.push({ type: "pop", x: f.x, y: f.y - 10, text: "+" + v, life: 0.8, color: f.kind === "gold" ? "#ffe066" : isMel ? "#ff8a98" : "#fff" });
+      for (let j = 0; j < 6; j++) G.fx.push({ type: "spark", x: f.x, y: f.y, vx: rand(-90, 90), vy: rand(-120, -20), life: 0.45, color: f.kind === "melon" ? "#6bd06b" : "#ffb347" });
+      G.fruits.splice(i, 1);
+      if (f.kind === "orange") sfx.pick(); else sfx.big();
+      G.fly.push({ sx: (f.x - G.cam.x) * G.zoom + VW / 2, sy: (f.y - G.cam.y) * G.zoom + VH / 2, kind: f.kind, t: 0 });
+      if (!f.life && !f.tree) { const k2 = f.kind === "melon" ? "melon" : undefined; setTimeout(() => { if (G && G.running) spawnFruit(undefined, undefined, k2); }, rand(600, 2400)); }
+      bumpCount();
+    }
+  }
+  // клетки и капибарята
+  for (const cg of G.cages) {
+    if (cg.freed) continue;
+    if (Math.hypot(p.x - cg.x, p.y - cg.y) < 46) {
+      cg.freed = true; G.freed++; sfx.free();
+      G.babies.push({ x: cg.x, y: cg.y, vx: 0, dir: 1, anim: rand(0, 3), moving: false });
+      for (let j = 0; j < 14; j++) G.fx.push({ type: "heart", x: cg.x + rand(-20, 20), y: cg.y - 20, vx: rand(-40, 40), vy: rand(-80, -30), life: 1 });
+      toast(G.freed >= LV.goal ? "Все малыши спасены!" : "Малыш спасен! " + G.freed + "/" + LV.goal);
+    }
+  }
+  let lead = p;
+  for (const b of G.babies) {
+    const bx = lead.x - lead.dir * 26, by = lead.y + 4, bd = Math.hypot(bx - b.x, by - b.y);
+    b.moving = bd > 8;
+    if (b.moving) { const sp = Math.min(bd * 6, 420); b.x += (bx - b.x) / bd * sp * dt; b.y += (by - b.y) / bd * sp * dt; if (Math.abs(bx - b.x) > 2) b.dir = bx > b.x ? 1 : -1; }
+    b.anim += dt; lead = b;
+  }
+  // крокодилы
+  for (const c of G.crocs) {
+    c.think -= dt; c.open = Math.max(0, c.open - dt);
+    const pd = Math.hypot(p.x - c.x, p.y - c.y);
+    const chase = pd < 230 && !p.sitting && p.inv <= 0;
+    if (chase) { c.tx = p.x; c.ty = p.y; }
+    else if (c.think <= 0) { const s = freeSpot(30, 600); if (s) { c.tx = s.x; c.ty = s.y; } c.think = rand(2, 5); }
+    const ddx = c.tx - c.x, ddy = c.ty - c.y, dd = Math.hypot(ddx, ddy);
+    let sp = chase ? LV.chase : 55;
+    for (const pd2 of puddles) if (Math.hypot((c.x - pd2.x) / pd2.r, (c.y - pd2.y) / (pd2.r * 0.62)) < 1) sp *= 0.8;
+    if (dd > 4) { c.vx += (ddx / dd * sp - c.vx) * k; c.vy += (ddy / dd * sp - c.vy) * k; } else { c.vx *= 0.9; c.vy *= 0.9; }
+    c.x += c.vx * dt; c.y += c.vy * dt;
+    if (Math.abs(c.vx) > 5) c.dir = c.vx > 0 ? 1 : -1;
+    if (!onIsland(c.x, c.y, 60)) { c.x -= c.vx * dt * 2; c.y -= c.vy * dt * 2; c.think = 0; }
+    if (inMountBand(c.x, c.y, 24)) { const aa = Math.atan2(c.y - MOUNT.y, c.x - MOUNT.x); c.x = MOUNT.x + Math.cos(aa) * (MOUNT.rOut + 24); c.y = MOUNT.y + Math.sin(aa) * (MOUNT.rOut + 24); c.think = 0; }
+    if (Math.hypot(c.x - SPRING.x, c.y - SPRING.y) < SPRING.r + 40) { const aa = Math.atan2(c.y - SPRING.y, c.x - SPRING.x); c.x = SPRING.x + Math.cos(aa) * (SPRING.r + 40); c.y = SPRING.y + Math.sin(aa) * (SPRING.r + 40); }
+    if (pd < 42 && p.inv <= 0 && !p.sitting) { c.open = 0.5; hurt(c.x, c.y); }
+  }
+  // босс
+  const B = G.boss;
+  if (B && B.hp > 0) {
+    B.flash = Math.max(0, B.flash - dt); B.open = Math.max(0, B.open - dt); B.st -= dt;
+    const bx = p.x - B.x, by = p.y - B.y, bd = Math.hypot(bx, by) || 1;
+    if (B.state === "walk") {
+      const sp = B.cfg.speed; B.vx += (bx / bd * sp - B.vx) * k; B.vy += (by / bd * sp - B.vy) * k;
+      if (B.st <= 0) { B.state = "wind"; B.st = 0.9; B.vx = B.vy = 0; }
+    } else if (B.state === "wind") {
+      if (B.st <= 0) { B.state = "charge"; B.st = 0.75; B.cdx = bx / bd; B.cdy = by / bd; B.open = 0.75; sfx.dash(); }
+    } else if (B.state === "charge") {
+      B.vx = B.cdx * B.cfg.charge; B.vy = B.cdy * B.cfg.charge;
+      if (B.st <= 0 || !onIsland(B.x + B.vx * dt * 3, B.y + B.vy * dt * 3, 70)) { B.state = "stun"; B.st = 1.6; B.vx = B.vy = 0; toast((B.cfg.variant === "king" ? "Король" : "Генерал") + " устал! Урон x2"); }
+    } else if (B.state === "stun") {
+      B.vx *= 0.9; B.vy *= 0.9;
+      if (B.st <= 0) { B.state = "walk"; B.st = rand(2.4, 3.8); }
+    }
+    B.x += B.vx * dt; B.y += B.vy * dt;
+    if (TH.castle && B.y < CASTLE_LIM + 20) B.y = CASTLE_LIM + 20;
+    if (inMountBand(B.x, B.y, 50)) { const aa = Math.atan2(B.y - MOUNT.y, B.x - MOUNT.x); B.x = MOUNT.x + Math.cos(aa) * (MOUNT.rOut + 50); B.y = MOUNT.y + Math.sin(aa) * (MOUNT.rOut + 50); if (B.state === "charge") { B.state = "stun"; B.st = 1.6; } }
+    if (Math.abs(B.vx) > 5) B.dir = B.vx > 0 ? 1 : -1;
+    if (bd < 66 && p.inv <= 0 && !p.sitting) { B.open = 0.5; hurt(B.x, B.y, B.cfg.variant === "king" ? "Клац!" : "Хвать!"); }
+    G.throwCd = Math.max(0, G.throwCd - dt);
+    if (G.ammo > 0 && bd < 340 && G.throwCd <= 0 && !p.sitting) {
+      G.ammo--; G.throwCd = 0.6;
+      G.shots.push({ x: p.x, y: p.y - 18, rot: 0 });
+    }
+  }
+  if (B && B.hp > 0) {
+    G.rainT -= dt;
+    if (G.rainT <= 0) {
+      G.rainT = rand(1.1, 2);
+      const melons = G.fruits.filter((f) => f.kind === "melon").length;
+      if (melons < 28) for (let k2 = 0; k2 < 10; k2++) {
+        const a2 = rand(0, TAU), d2 = rand(70, 320), x2 = p.x + Math.cos(a2) * d2, y2 = p.y + Math.sin(a2) * d2;
+        if (!onIsland(x2, y2, 70) || (TH.castle && y2 < CASTLE_LIM + 20) || inMountBand(x2, y2, 20) || obstacles.some((o) => Math.hypot(o.x - x2, o.y - y2) < o.r + 14) || lavas.some((l) => Math.hypot(l.x - x2, l.y - y2) < l.r + 24)) continue;
+        G.fruits.push({ x: x2, y: y2, kind: "melon", ph: rand(0, 6), vx: 0, vy: 0, life: 14, z: 460, rain: true }); break;
+      }
+    }
+  }
+  for (let i = G.shots.length - 1; i >= 0; i--) {
+    const s = G.shots[i];
+    if (!B || B.hp <= 0) { G.shots.splice(i, 1); continue; }
+    const sx = B.x - s.x, sy = B.y - 20 - s.y, sd = Math.hypot(sx, sy) || 1;
+    s.x += sx / sd * 600 * dt; s.y += sy / sd * 600 * dt; s.rot += dt * 12;
+    if (sd < 34) {
+      G.shots.splice(i, 1);
+      const dmg = B.state === "stun" ? 2 : 1;
+      B.hp = Math.max(0, B.hp - dmg); B.flash = 0.18; sfx.bonk(); G.shake = Math.max(G.shake, 0.12);
+      G.fx.push({ type: "pop", x: B.x, y: B.y - 60, text: "-" + dmg, life: 0.8, color: "#ff8a8a" });
+      for (let j = 0; j < 8; j++) G.fx.push({ type: "spark", x: B.x, y: B.y - 20, vx: rand(-120, 120), vy: rand(-160, -20), life: 0.5, color: "#ffb347" });
+      if (B.hp <= 0) { G.crocs.length = 0; finish(B.cfg.name + " повержен!"); }
+    }
+  }
+  // цель
+  if (!G.goalDone && calcStars() >= 1) { G.goalDone = true; if (LV.type !== "boss") { sfx.star(0); toast("Цель выполнена! Собирай еще ради звезд"); } }
+  if (LV.type !== "boss" && calcStars() >= 3) finish("Три звезды!");
+  // апельсиновое дерево в горе: новый апельсин раз в 3 секунды
+  G.treeT -= dt;
+  if (G.treeT <= 0) {
+    G.treeT = 3;
+    if (G.fruits.filter((f) => f.tree).length < 10) {
+      const a2 = rand(0, TAU), d2 = rand(60, MOUNT.rIn - 30);
+      G.fruits.push({ x: MOUNT.x + Math.cos(a2) * d2, y: MOUNT.y + 10 + Math.sin(a2) * d2 * 0.9, kind: Math.random() < 0.08 ? "gold" : "orange", ph: rand(0, 6), vx: 0, vy: 0, life: 0, z: 150, tree: true });
+    }
+  }
+  // шлейф особых скинов
+  const tskin = save.skin;
+  if (tskin === "rainbow" || tskin === "fire") {
+    G.trailT -= dt;
+    if (G.trailT <= 0 && Math.hypot(p.vx, p.vy) > 60) { G.trailT = 0.035; G.trail.push({ x: p.x - p.dir * 18, y: p.y + 4, life: 0.6, h: (performance.now() / 4) % 360 }); }
+  }
+  for (let i = G.trail.length - 1; i >= 0; i--) { G.trail[i].life -= dt; if (G.trail[i].life <= 0) G.trail.splice(i, 1); }
+  // эффекты
+  for (let i = G.fx.length - 1; i >= 0; i--) {
+    const e = G.fx[i]; e.life -= dt;
+    if (e.vx !== undefined) { e.x += e.vx * dt; e.y += e.vy * dt; e.vy += 260 * dt; }
+    if (e.type === "pop") e.y -= 40 * dt;
+    if (e.life <= 0) G.fx.splice(i, 1);
+  }
+  if (G.relax > 0 && Math.random() < dt * 6) G.fx.push({ type: "heart", x: p.x + rand(-20, 20), y: p.y - 40, vx: rand(-10, 10), vy: -30, life: 1 });
+  G.shake = Math.max(0, G.shake - dt);
+  for (let i = G.fly.length - 1; i >= 0; i--) { G.fly[i].t += dt * 1.8; if (G.fly[i].t >= 1) { G.fly.splice(i, 1); bumpCount(); } }
+  G.cam.x += (p.x - G.cam.x) * (1 - Math.exp(-dt * 6));
+  G.cam.y += (p.y - G.cam.y) * (1 - Math.exp(-dt * 6));
+  updateHud(false);
+}
+
+/* ---------- Отрисовка ---------- */
+function render(t) {
+  const c = ctx;
+  c.setTransform(DPR, 0, 0, DPR, 0, 0);
+  c.fillStyle = TH.sea; c.fillRect(0, 0, VW, VH);
+  const zoom = clamp(Math.min(VW, VH) / 620, 0.75, 1.4);
+  c.save();
+  G.zoom = zoom;
+  const sh = G.shake > 0 ? G.shake * 22 : 0;
+  c.translate(VW / 2 + rand(-sh, sh), VH / 2 + rand(-sh, sh)); c.scale(zoom, zoom);
+  c.translate(-G.cam.x, -G.cam.y);
+  const sg2 = c.createRadialGradient(CX, CY, 500, CX, CY, 1100); sg2.addColorStop(0, TH.water[0]); sg2.addColorStop(1, TH.water[1]);
+  c.fillStyle = sg2; c.fillRect(-1200, -1200, WORLD + 2400, WORLD + 2400);
+  c.drawImage(ground, 0, 0);
+  c.strokeStyle = "rgba(255,255,255,0.22)"; c.lineWidth = 3;
+  for (let i = 0; i < 3; i++) {
+    c.beginPath();
+    for (let j = 0; j <= 120; j++) { const a = j / 120 * TAU; const r = islandR(a) + 40 + i * 30 + Math.sin(t * 1.5 + a * 6 + i) * 6; c.lineTo(CX + Math.cos(a) * r, CY + Math.sin(a) * r); }
+    c.closePath(); c.stroke();
+  }
+  for (const l of lavas) {
+    c.fillStyle = `rgba(255,200,80,${0.18 + Math.sin(t * 3 + l.ph) * 0.12})`;
+    c.beginPath(); c.ellipse(l.x, l.y, l.r * 0.8, l.r * 0.48, 0, 0, TAU); c.fill();
+    if (Math.sin(t * 2 + l.ph * 3) > 0.92) { c.fillStyle = "#ffe066"; c.beginPath(); c.arc(l.x + Math.sin(l.ph * 7) * l.r * 0.4, l.y - 6, 4, 0, TAU); c.fill(); }
+  }
+  c.strokeStyle = "rgba(255,255,255,0.45)"; c.lineWidth = 5; c.lineCap = "round";
+  for (let i = 0; i < 3; i++) {
+    const sx = SPRING.x - 30 + i * 30, ph = t * 1.3 + i * 1.7;
+    c.beginPath(); c.moveTo(sx, SPRING.y); c.bezierCurveTo(sx + Math.sin(ph) * 10, SPRING.y - 30, sx - Math.sin(ph) * 10, SPRING.y - 50, sx + Math.sin(ph) * 6, SPRING.y - 80); c.stroke();
+  }
+  c.font = "800 16px Rubik, sans-serif"; c.textAlign = "center";
+  if (G.springCd > 0 && G.relax <= 0) { c.fillStyle = "rgba(0,0,0,0.35)"; c.fillText("остывает " + Math.ceil(G.springCd) + "с", SPRING.x, SPRING.y - SPRING.r - 22); }
+  else if (G.relax <= 0) { c.fillStyle = "rgba(255,255,255,0.9)"; c.fillText("♨ Постой здесь", SPRING.x, SPRING.y - SPRING.r - 22); }
+
+  const list = [];
+  for (const f of G.fruits) list.push({ y: f.y, f });
+  for (const o of obstacles) list.push({ y: o.y, o });
+  for (const pk of peaks) list.push({ y: pk.y, pk });
+  for (const d of decor) list.push({ y: d.y, d });
+  for (const cr of G.crocs) list.push({ y: cr.y, cr });
+  for (const cg of G.cages) if (!cg.freed) list.push({ y: cg.y, cg });
+  for (const b of G.babies) list.push({ y: b.y, b });
+  if (G.boss && G.boss.hp > 0) list.push({ y: G.boss.y, boss: true });
+  list.push({ y: G.p.y, p: true });
+  list.sort((a, b) => a.y - b.y);
+  for (const it of list) {
+    if (it.f) {
+      const f = it.f, z = f.z || 0, bob = z > 0 ? -z : Math.sin(f.ph * 3) * 3;
+      const ss = z > 0 ? 0.4 + 0.6 * (1 - z / 460) : 1;
+      c.fillStyle = "rgba(0,0,0," + (0.15 + (z > 0 ? 0.1 : 0)) + ")"; c.beginPath(); c.ellipse(f.x, f.y + 8, 10 * ss + (f.kind === "melon" ? 4 : 0), 4 * ss, 0, 0, TAU); c.fill();
+      if (f.life && f.life < 2 && Math.floor(t * 8) % 2) continue;
+      if (f.kind === "melon") {
+        const sq = f.land > 0 ? Math.sin(f.land / 0.35 * Math.PI) * 0.3 : 0;
+        c.save(); c.translate(f.x, f.y - 4 + bob); c.scale(1 + sq, 1 - sq); drawMelon(c, 0, 0, 15, z > 0 ? f.ph * 3 : Math.sin(f.ph) * 0.2); c.restore();
+      }
+      else drawOrange(c, f.x, f.y - 4 + bob, f.kind === "gold" ? 12 : 10, Math.sin(f.ph * 1.3) * 0.3, f.kind);
+      if (f.kind === "gold") { c.fillStyle = "rgba(255,240,150," + (0.4 + Math.sin(t * 6) * 0.3) + ")"; star(c, f.x + 12, f.y - 18, 4); }
+    } else if (it.pk) {
+      const pk = it.pk, behind = G.p.y < pk.y + 4 && G.p.y > pk.y - pk.h - 30 && Math.abs(G.p.x - pk.x) < pk.w * 0.55;
+      if (behind) c.globalAlpha = 0.45;
+      drawPeak(c, pk, t); c.globalAlpha = 1;
+    } else if (it.o) {
+      const o = it.o;
+      if (o.kind === "rock") {
+        const s = o.s;
+        c.fillStyle = "rgba(0,0,0,0.16)"; c.beginPath(); c.ellipse(o.x, o.y + 8, 26 * s, 8 * s, 0, 0, TAU); c.fill();
+        c.fillStyle = TH.embers ? "#5a5050" : "#9aa3ad"; c.beginPath(); c.ellipse(o.x, o.y - 6 * s, 24 * s, 18 * s, 0, 0, TAU); c.fill();
+        c.fillStyle = TH.embers ? "#776a68" : "#b7c0c9"; c.beginPath(); c.ellipse(o.x - 6 * s, o.y - 12 * s, 14 * s, 9 * s, -0.3, 0, TAU); c.fill();
+      } else {
+        const behind = G.p.y < o.y + 4 && G.p.y > o.y - treeTop(o) && Math.abs(G.p.x - o.x) < (o.kind === "bigtree" ? 120 : 60);
+        if (behind) c.globalAlpha = 0.4;
+        drawTree(c, o, t);
+        c.globalAlpha = 1;
+      }
+    } else if (it.d) {
+      const d = it.d, s = d.s;
+      c.fillStyle = TH.bush; c.beginPath(); c.arc(d.x - 10 * s, d.y, 12 * s, 0, TAU); c.arc(d.x + 10 * s, d.y, 12 * s, 0, TAU); c.arc(d.x, d.y - 8 * s, 14 * s, 0, TAU); c.fill();
+      c.fillStyle = "rgba(255,255,255,0.15)"; c.beginPath(); c.arc(d.x - 4 * s, d.y - 12 * s, 6 * s, 0, TAU); c.fill();
+    } else if (it.cr) {
+      const cr = it.cr; drawCroc(c, cr.x, cr.y, 1.1, t + cr.x, cr.dir, cr.open > 0 || Math.sin(t * 3 + cr.y) > 0.85);
+    } else if (it.cg) {
+      drawCage(c, it.cg.x, it.cg.y, t);
+    } else if (it.b) {
+      const b = it.b; drawBaby(c, b.x, b.y, 1, b.anim, b.moving, b.dir);
+    } else if (it.boss) {
+      const B = G.boss, shake = B.state === "wind" ? Math.sin(t * 60) * 3 : 0;
+      drawKing(c, B.x + shake, B.y, B.cfg.variant === "king" ? 2.2 : 1.9, t, B.dir, B.open > 0, B.flash, B.cfg.variant);
+      if (B.state === "wind") { c.fillStyle = "#ff4d4d"; c.font = "900 40px Rubik, sans-serif"; c.textAlign = "center"; c.fillText("!", B.x, B.y - 80); }
+      if (B.state === "stun") { for (let i = 0; i < 3; i++) { const a = t * 4 + i * TAU / 3; c.fillStyle = "#ffe066"; star(c, B.x + Math.cos(a) * 34, B.y - 70 + Math.sin(a) * 8, 7); } }
+    } else if (it.p) {
+      const p = G.p;
+      for (const tr of G.trail) {
+        c.globalAlpha = tr.life * 0.9;
+        if (save.skin === "rainbow") { c.fillStyle = "hsl(" + tr.h + ",95%,65%)"; c.beginPath(); c.arc(tr.x, tr.y, 9 * tr.life + 3, 0, TAU); c.fill(); }
+        else { c.fillStyle = tr.life > 0.35 ? "#ffd23f" : "#ff6a1f"; c.beginPath(); c.arc(tr.x, tr.y - (0.6 - tr.life) * 30, 8 * tr.life + 2, 0, TAU); c.fill(); }
+      }
+      c.globalAlpha = 1;
+      if (p.inv > 0 && p.inv < 8 && Math.floor(t * 12) % 2) continue;
+      if (p.dash > 0) { c.globalAlpha = 0.3; drawCapy(c, p.x - p.vx * 0.05, p.y - p.vy * 0.05, 1, { t: p.anim, moving: true, dir: p.dir, hat: save.hat, skin: save.skin }); c.globalAlpha = 1; }
+      const moving = Math.hypot(p.vx, p.vy) > 20;
+      if (p.sitting) { c.fillStyle = "rgba(120,220,230,0.6)"; c.beginPath(); c.ellipse(p.x, p.y + 12, 34, 9, 0, 0, TAU); c.fill(); }
+      c.strokeStyle = "rgba(255,255,255,0.7)"; c.lineWidth = 3; c.beginPath(); c.ellipse(p.x, p.y + 12, 26, 9, 0, 0, TAU); c.stroke();
+      drawCapy(c, p.x, p.y, 1, { t: p.anim, moving, dir: p.dir, hat: save.hat, sit: p.sitting, skin: save.skin });
+    }
+  }
+  for (const s of G.shots) drawOrange(c, s.x, s.y, 9, s.rot);
+  for (const e of G.fx) {
+    c.globalAlpha = clamp(e.life * 2, 0, 1);
+    if (e.type === "pop") { c.font = "900 22px Rubik, sans-serif"; c.textAlign = "center"; c.lineWidth = 4; c.strokeStyle = "rgba(60,30,0,0.55)"; c.strokeText(e.text, e.x, e.y); c.fillStyle = e.color; c.fillText(e.text, e.x, e.y); }
+    else if (e.type === "spark") { c.fillStyle = e.color; c.beginPath(); c.arc(e.x, e.y, 3.5, 0, TAU); c.fill(); }
+    else if (e.type === "dust") { c.fillStyle = "rgba(240,220,180,0.8)"; c.beginPath(); c.arc(e.x, e.y, 6 * e.life + 2, 0, TAU); c.fill(); }
+    else if (e.type === "heart") { c.fillStyle = "#ff7aa8"; c.font = "18px sans-serif"; c.textAlign = "center"; c.fillText("♥", e.x, e.y); }
+  }
+  c.globalAlpha = 1;
+  // стрелки к клеткам за краем экрана
+  const halfW = VW / 2 / zoom - 30, halfH = VH / 2 / zoom - 40;
+  for (const cg of G.cages) {
+    if (cg.freed) continue;
+    const ax = cg.x - G.cam.x, ay = cg.y - G.cam.y;
+    if (Math.abs(ax) < halfW && Math.abs(ay) < halfH) continue;
+    const sc = Math.min(halfW / Math.abs(ax || 1), halfH / Math.abs(ay || 1));
+    const px = G.cam.x + ax * sc, py = G.cam.y + ay * sc, ang = Math.atan2(ay, ax);
+    c.save(); c.translate(px, py); c.rotate(ang);
+    c.fillStyle = "#ff7aa8"; c.strokeStyle = "#fff"; c.lineWidth = 3;
+    c.beginPath(); c.moveTo(16, 0); c.lineTo(-10, -12); c.lineTo(-4, 0); c.lineTo(-10, 12); c.closePath(); c.fill(); c.stroke();
+    c.restore();
+  }
+  c.restore();
+  if (G.fly.length) {
+    const r = $("hud-count").getBoundingClientRect(), r2 = $("hud-mel").getBoundingClientRect();
+    for (const fl of G.fly) {
+      const mel = fl.kind === "melon", tx = (mel ? r2 : r).left + 22, ty = (mel ? r2 : r).top + (mel ? r2 : r).height / 2;
+      const k = fl.t * fl.t, x = fl.sx + (tx - fl.sx) * k, y = fl.sy + (ty - fl.sy) * k - Math.sin(fl.t * Math.PI) * 60, sc = 1 - fl.t * 0.4;
+      if (fl.kind === "melon") drawMelon(c, x, y, 11 * sc, fl.t * 6); else drawOrange(c, x, y, 10 * sc, fl.t * 6, fl.kind);
+    }
+  }
+  drawMinimap(t);
+}
+
+function drawMinimap(t) {
+  const mc = $("minimap").getContext("2d"), k = 200 / WORLD;
+  mc.clearRect(0, 0, 200, 200);
+  if (miniBg) mc.drawImage(miniBg, 0, 0);
+  const dot = (x, y, r, col, ring) => { mc.fillStyle = col; mc.beginPath(); mc.arc(x * k, y * k, r, 0, TAU); mc.fill(); if (ring) { mc.strokeStyle = "#fff"; mc.lineWidth = 3; mc.stroke(); } };
+  dot(MOUNT.x, MOUNT.y, 9, "#ff9a1f", true);
+  dot(SPRING.x, SPRING.y, 7, "#7fe6ee", true);
+  for (const c of G.crocs) dot(c.x, c.y, 6, "#2f7a37");
+  for (const cg of G.cages) if (!cg.freed) dot(cg.x, cg.y, 8 + Math.sin(t * 6) * 2, "#ff7aa8", true);
+  if (G.boss && G.boss.hp > 0) dot(G.boss.x, G.boss.y, 11, "#e5484d", true);
+  dot(G.p.x, G.p.y, 9, "#ffffff"); dot(G.p.x, G.p.y, 6, "#f07500");
+}
+
+/* ---------- HUD ---------- */
+let shownScore = -1;
+function bumpCount() { const el = $("hud-count"); el.animate && el.animate([{ transform: "scale(1.15)" }, { transform: "scale(1)" }], { duration: 220 }); }
+function paintGoalIcon() {
+  const cvv = $("goal-ico"), c = cvv.getContext("2d"); c.clearRect(0, 0, 52, 52);
+  if (LV.type === "rescue") drawBaby(c, 24, 30, 1.25, 0, false, 1);
+  else if (LV.type === "boss") { c.save(); c.translate(26, 34); drawHat(c, "crown", 1.4); c.restore(); }
+  else if (LV.type === "gold") drawOrange(c, 26, 29, 17, -0.2, "gold");
+  else drawStar5(c, 26, 28, 20, "#ffcf3a", "#b86a00");
+}
+function goalText() {
+  if (LV.type === "rescue") return G.freed + "/" + LV.goal;
+  if (LV.type === "boss") return "Снаряды: " + G.ammo;
+  if (LV.type === "gold") return Math.min(G.golds, LV.goal) + "/" + LV.goal;
+  return Math.min(G.score, LV.goal) + "/" + LV.goal;
+}
+function updateHud(force) {
+  if (!G) return;
+  if (force || shownScore !== G.score) { shownScore = G.score; $("count").textContent = G.score; }
+  $("mcount").textContent = G.mel;
+  const s = Math.ceil(G.t), m = Math.floor(s / 60), ss = s % 60;
+  $("timer").textContent = m + ":" + String(ss).padStart(2, "0");
+  $("timer").classList.toggle("low", s <= 15);
+  $("goal-t").textContent = goalText();
+  $("goal").classList.toggle("done", G.goalDone && LV.type !== "boss");
+  if (G.boss) $("boss-fill").style.width = (G.boss.hp / G.boss.max * 100) + "%";
+  const r = $("relax");
+  if (G.relax > 0) { r.hidden = false; $("relax-t").textContent = Math.ceil(G.relax); } else r.hidden = true;
+  $("dash-cd").style.height = (G.p.dashCd / upgDashCd() * 100) + "%";
+}
+
+/* ---------- Экраны ---------- */
+const screens = ["menu", "map", "level", "shop", "settings", "paused", "results", "confirm", "story", "drawer"];
+function showScreen(id, under) { under = under || []; for (const s of screens) $(s).hidden = !(s === id || under.includes(s)); }
+let shopReturn = "menu";
+function totalStars() { return LEVELS.reduce((a, l) => a + (save.stars[l.id] || 0), 0); }
+let shownWallet = null;
+function setWallets() {
+  const changed = shownWallet !== null && shownWallet !== save.wallet; shownWallet = save.wallet;
+  ["menu-mel", "map-mel", "shop-mel"].forEach((id) => ($(id).textContent = save.melons));
+  ["menu-wallet", "map-wallet", "shop-wallet"].forEach((id) => {
+    const el = $(id); el.textContent = save.wallet;
+    if (changed) { const w = el.parentElement; w.classList.remove("bump"); void w.offsetWidth; w.classList.add("bump"); }
+  });
+}
+/* ---------- Конфетти ---------- */
+const fxc = $("fxc"), fx2 = fxc.getContext("2d"); let confetti = [];
+function sizeFx() { const d = Math.min(devicePixelRatio || 1, 2); fxc.width = innerWidth * d; fxc.height = innerHeight * d; fx2.setTransform(d, 0, 0, d, 0, 0); }
+function burst(x, y, n, spread) {
+  if (reduceMotion) return;
+  const cols = ["#ff9a1f", "#ffd54a", "#4fe0a0", "#3fc8e8", "#ff7aa8", "#ffffff"];
+  for (let i = 0; i < n; i++) {
+    const a = rand(0, TAU), v = rand(150, 520) * (spread || 1);
+    confetti.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 260, rot: rand(0, 6), vr: rand(-10, 10), w: rand(6, 11), h: rand(4, 7), c: cols[i % cols.length], life: rand(1.2, 2), orange: i % 7 === 0 });
+  }
+}
+function burstAt(el, n) { const r = el.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, n || 30, 0.6); }
+function drawConfetti(dt) {
+  fx2.clearRect(0, 0, innerWidth, innerHeight);
+  for (let i = confetti.length - 1; i >= 0; i--) {
+    const p = confetti[i]; p.life -= dt; if (p.life <= 0) { confetti.splice(i, 1); continue; }
+    p.vy += 900 * dt; p.vx *= 0.985; p.x += p.vx * dt; p.y += p.vy * dt; p.rot += p.vr * dt;
+    fx2.globalAlpha = Math.min(1, p.life * 2);
+    if (p.orange) drawOrange(fx2, p.x, p.y, 7, p.rot);
+    else { fx2.save(); fx2.translate(p.x, p.y); fx2.rotate(p.rot); fx2.fillStyle = p.c; fx2.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * Math.abs(Math.cos(p.rot * 2))); fx2.restore(); }
+  }
+  fx2.globalAlpha = 1;
+}
+function refreshMenu() {
+  setWallets();
+  $("best-line").textContent = isTouch ? "Джойстик слева, рывок справа" : "WASD или стрелки, пробел - рывок";
+}
+function hideHud() { $("hud").hidden = true; $("dash").hidden = true; $("joy").hidden = true; $("joy-hint").hidden = true; }
+function goMenu() { G = null; hideHud(); refreshMenu(); showScreen("menu"); playMusic("menu"); }
+function togglePause() {
+  if (!G || !G.running || G.ending > 0) return;
+  G.paused = !G.paused; $("paused").hidden = !G.paused;
+  $("pause-goal").textContent = LV.name + ": " + LV.desc;
+}
+
+/* ---------- Карта ---------- */
+const NODE_GAP = 150, HEAD_H = 90;
+let mapNodes = [];
+const worldOpen = (w) => save.unlocked.includes(w);
+const prevWorldDone = (w) => w === 1 || (save.stars[lastOfWorld(w - 1).id] || 0) > 0;
+function levelPlayable(L) { return worldOpen(L.w) && (firstOfWorld(L) || (save.stars[L.id - 1] || 0) > 0); }
+function currentLevel() { for (const l of LEVELS) if (!(save.stars[l.id] > 0)) return l.id; return LEVELS.length; }
+function orangeIcon(size) { const oc = document.createElement("canvas"); oc.width = size; oc.height = size; drawOrange(oc.getContext("2d"), size / 2, size * 0.55, size * 0.34, -0.2); return oc; }
+const iconCache = {};
+function islandIcon(theme) {
+  if (!iconCache[theme]) { const c = document.createElement("canvas"); c.width = 200; c.height = 168; drawIslandIcon(c.getContext("2d"), 200, 168, theme, 0); iconCache[theme] = c; }
+  const out = document.createElement("canvas"); out.width = 200; out.height = 168; out.getContext("2d").drawImage(iconCache[theme], 0, 0); return out;
+}
+function openMap(focusId) {
+  G = null; hideHud(); setWallets(); playMusic("menu");
+  const track = $("map-track");
+  track.querySelectorAll(".node, .world-head").forEach((n) => n.remove());
+  mapNodes = [];
+  const cur = currentLevel(), cols = [26, 50, 74, 50];
+  let y = 24, focusY = 0;
+  for (const W of WORLDS) {
+    const lv = LEVELS.filter((l) => l.w === W.id);
+    const head = document.createElement("div"); head.className = "world-head"; head.style.top = y + "px";
+    const got = lv.reduce((a, l) => a + (save.stars[l.id] || 0), 0);
+    const hb = document.createElement("b"); hb.textContent = "Мир " + W.id + ": " + W.name;
+    const hs = document.createElement("span");
+    if (worldOpen(W.id)) hs.textContent = "★ " + got + "/" + lv.length * 3;
+    else { hs.append(orangeIcon(40), document.createTextNode(String(W.price))); }
+    head.append(hb, hs); track.append(head);
+    y += HEAD_H;
+    lv.forEach((L, i) => {
+      const play = levelPlayable(L);
+      const b = document.createElement("button");
+      b.className = "node small" + (play ? "" : " locked") + (L.id === cur ? " current" : "");
+      const xPct = cols[i % 4];
+      b.style.left = xPct + "%"; b.style.top = (y - 10) + "px";
+      const num = document.createElement("div"); num.className = "node-num"; num.textContent = L.id;
+      const nm = document.createElement("div"); nm.className = "node-name"; nm.textContent = L.name;
+      b.append(islandIcon(L.theme), num, nm);
+      if (play) {
+        const st = document.createElement("div"); st.className = "node-stars"; const n = save.stars[L.id] || 0;
+        st.innerHTML = "<b>" + "★".repeat(n) + "</b>" + "★".repeat(3 - n); b.append(st);
+      }
+      b.setAttribute("aria-label", "Уровень " + L.id + ": " + L.name + (play ? "" : ", закрыт"));
+      b.addEventListener("click", () => { sfx.click(); openLevel(L.id); });
+      track.append(b); mapNodes.push({ x: xPct, y: y + 30, id: L.id });
+      if (L.id === (focusId || cur)) focusY = y;
+      y += NODE_GAP;
+    });
+    y += 10;
+  }
+  track.style.height = (y + 40) + "px";
+  showScreen("map");
+  drawMapPath();
+  requestAnimationFrame(() => { $("map-scroll").scrollTop = Math.max(0, focusY - innerHeight * 0.35); });
+}
+function drawMapPath() {
+  const cvp = $("map-path"), track = $("map-track"), w = track.clientWidth, h = track.clientHeight;
+  if (!w) return;
+  const d = Math.min(devicePixelRatio || 1, 2);
+  cvp.width = w * d; cvp.height = h * d;
+  const c = cvp.getContext("2d"); c.setTransform(d, 0, 0, d, 0, 0); c.clearRect(0, 0, w, h);
+  for (let i = 0; i < mapNodes.length - 1; i++) {
+    const a = mapNodes[i], b = mapNodes[i + 1], ax = a.x / 100 * w, bx = b.x / 100 * w;
+    const done = (save.stars[a.id] || 0) > 0;
+    c.setLineDash([2, 14]); c.lineCap = "round"; c.lineWidth = 8;
+    c.strokeStyle = done ? "rgba(255,207,58,0.9)" : "rgba(255,255,255,0.3)";
+    c.beginPath(); c.moveTo(ax, a.y + 20); c.bezierCurveTo(ax, a.y + 70, bx, b.y - 50, bx, b.y - 10); c.stroke();
+  }
+  c.setLineDash([]);
+}
+
+/* ---------- Карточка уровня ---------- */
+let cardLevel = 1;
+function openLevel(id) {
+  const L = LEVELS[id - 1]; cardLevel = id;
+  $("lvl-title").textContent = L.id + ". " + L.name;
+  $("lvl-goal").textContent = L.desc;
+  const chips = $("lvl-chips"); chips.innerHTML = "";
+  const add = (txt, cls) => { const s = document.createElement("span"); s.className = "chip" + (cls ? " " + cls : ""); s.textContent = txt; chips.append(s); };
+  add("Мир " + L.w + ": " + worldOf(L).name); add("Время: " + L.time + " с"); add("Крокодилы: " + L.crocs + (L.boss ? " + босс" : ""));
+  starHint(L).forEach((sx) => add(sx, "star"));
+  const btn = $("lvl-go"), note = $("lvl-note");
+  btn.className = "btn"; note.hidden = true; btn.innerHTML = "";
+  const W = worldOf(L);
+  if (levelPlayable(L)) { btn.classList.add("btn-primary"); btn.textContent = (save.stars[id] || 0) > 0 ? "Играть снова" : "Играть"; }
+  else if (!worldOpen(L.w)) {
+    btn.classList.add("btn-orange");
+    const oc = orangeIcon(60); oc.className = "ico";
+    btn.append(document.createTextNode("Открыть мир за"), oc, document.createTextNode(String(W.price)));
+    if (!prevWorldDone(L.w)) { note.hidden = false; note.textContent = "Сначала пройди уровень " + lastOfWorld(L.w - 1).id + " «" + lastOfWorld(L.w - 1).name + "»"; }
+    else if (save.wallet < W.price) { note.hidden = false; note.textContent = "Не хватает " + (W.price - save.wallet) + " апельсинов. Собирай их на открытых уровнях!"; }
+  } else {
+    btn.classList.add("btn-ghost"); btn.style.color = "var(--ink)"; btn.textContent = "Закрыто";
+    note.hidden = false; note.textContent = "Сначала пройди уровень " + (id - 1) + " «" + LEVELS[id - 2].name + "»";
+  }
+  showScreen("level", ["map"]);
+}
+$("lvl-go").addEventListener("click", () => {
+  const L = LEVELS[cardLevel - 1], btn = $("lvl-go"), W = worldOf(L);
+  btn.style.color = "";
+  if (levelPlayable(L)) { sfx.click(); playStory("intro" + L.id, () => startRound(L.id), ["map"]); return; }
+  if (worldOpen(L.w) || !prevWorldDone(L.w) || save.wallet < W.price) { btn.animate && btn.animate([{ transform: "translateX(-6px)" }, { transform: "translateX(6px)" }, { transform: "translateX(0)" }], { duration: 240 }); return; }
+  save.wallet -= W.price; save.unlocked.push(L.w); persist(); sfx.buy(); burst(innerWidth / 2, innerHeight / 2, 100, 1.2);
+  openMap(L.id); openLevel(L.id); toast("Мир «" + W.name + "» открыт!");
+});
+
+/* ---------- Сюжет ---------- */
+const story = { lines: null, i: 0, shown: 0, typing: null, done: null, who: "capy" };
+function playStory(key, done, under) {
+  if ((save.seen[key] && !save.storyAgain) || !STORY[key]) { done(); return; }
+  story.lines = STORY[key]; story.i = 0; story.done = () => { save.seen[key] = true; persist(); done(); };
+  showScreen("story", under || []);
+  showLine();
+}
+function showLine() {
+  const [who, text] = story.lines[story.i]; story.who = who;
+  const sp = SPEAKERS[who]; $("speaker").textContent = sp.name; $("speaker").style.background = sp.color;
+  $("next").textContent = story.i === story.lines.length - 1 ? "Поехали!" : "Далее ›";
+  $("back").disabled = story.i === 0;
+  story.shown = 0; clearInterval(story.typing);
+  const el = $("say"); el.textContent = "";
+  story.typing = setInterval(() => {
+    story.shown += 1; el.textContent = text.slice(0, story.shown);
+    if (story.shown >= text.length) { clearInterval(story.typing); story.typing = null; }
+  }, reduceMotion ? 1 : 28);
+}
+function storyNext() {
+  if (!story.lines) return;
+  const text = story.lines[story.i][1];
+  if (story.typing) { clearInterval(story.typing); story.typing = null; $("say").textContent = text; return; }
+  story.i++;
+  if (story.i >= story.lines.length) endStory(); else showLine();
+}
+function storyBack() { if (!story.lines || story.i === 0) return; story.i--; sfx.click(); showLine(); }
+function endStory() { clearInterval(story.typing); story.typing = null; story.lines = null; $("story").hidden = true; const d = story.done; story.done = null; d && d(); }
+$("dialog").addEventListener("click", (e) => { if (e.target.closest("#skip, #back")) return; storyNext(); });
+$("skip").addEventListener("click", (e) => { e.stopPropagation(); endStory(); });
+$("back").addEventListener("click", (e) => { e.stopPropagation(); storyBack(); });
+function drawPortrait(t) {
+  const c = $("portrait").getContext("2d"); c.clearRect(0, 0, 300, 300);
+  const g = c.createRadialGradient(150, 170, 10, 150, 170, 140); g.addColorStop(0, "rgba(255,230,170,0.95)"); g.addColorStop(1, "rgba(255,230,170,0)");
+  c.fillStyle = g; c.beginPath(); c.arc(150, 170, 140, 0, TAU); c.fill();
+  const w = story.who, talk = !!story.typing && Math.sin(t * 22) > 0;
+  if (w === "capy") drawCapy(c, 130, 190, 3.4, { t, dir: 1, hat: save.hat, skin: save.skin });
+  else if (w === "parrot") drawParrot(c, 150, 170, 3, t);
+  else if (w === "turtle") drawTurtle(c, 130, 190, 3.2, t);
+  else if (w === "king") drawKing(c, 140, 190, 3, t, 1, talk, 0, "king");
+  else if (w === "general") drawKing(c, 140, 190, 3, t, 1, talk, 0, "general");
+  else if (w === "babies") { drawBaby(c, 90, 200, 3, t, true, 1); drawBaby(c, 170, 190, 3, t + 1, true, 1); drawBaby(c, 230, 215, 2.6, t + 2, true, -1); }
+}
+
+/* ---------- Итог ---------- */
+let lastStars = 0, lastExtra = { mel: 0, extra: 0, mult: 1 };
+function endRound() {
+  G.running = false;
+  const stars = calcStars(), score = G.score, id = LV.id;
+  const first = stars > 0 && !(save.stars[id] > 0);
+  const bonus = first ? LV.bonus : 0;
+  const mult = (SKIN_MAP[save.skin] && SKIN_MAP[save.skin].mult) || 1, extra = Math.round(score * (mult - 1));
+  save.wallet += score + extra + bonus; save.melons += G.mel;
+  lastExtra = { mel: G.mel, extra, mult };
+  if (stars > (save.stars[id] || 0)) save.stars[id] = stars;
+  persist(); lastStars = stars;
+  hideHud();
+  const show = () => showResults(stars, score, bonus);
+  if (stars > 0) playStory("outro" + id, show, []); else show();
+}
+function showResults(stars, score, bonus) {
+  const win = stars > 0, id = LV.id;
+  playMusic("menu");
+  $("res-title").textContent = win ? (id === LEVELS.length ? "Остров спасен!" : "Уровень пройден!") : (LV.type === "boss" ? LV.boss.name + " устоял..." : "Время вышло!");
+  $("res-sub").textContent = (win ? "апельсинов собрано" : "апельсинов собрано, они твои. Попробуй еще!") + " · в копилке " + save.wallet;
+  const ex = $("res-extra"); ex.innerHTML = "";
+  const chip = (cvKind, txt, cls) => { const sp = document.createElement("span"); if (cls) sp.className = cls; if (cvKind) { const cc = document.createElement("canvas"); cc.width = 44; cc.height = 44; const x2 = cc.getContext("2d"); cvKind === "melon" ? drawMelon(x2, 22, 22, 16, 0.25) : drawOrange(x2, 22, 24, 15, -0.2); sp.append(cc); } sp.append(document.createTextNode(txt)); ex.append(sp); };
+  chip("melon", "+" + lastExtra.mel + " арбузов");
+  if (lastExtra.extra > 0) chip("orange", "+" + lastExtra.extra + " скин x" + lastExtra.mult, "mult");
+  const bz = $("res-bonus"); bz.hidden = !bonus; bz.textContent = "+" + bonus + " за первое прохождение";
+  const cvs = $("res-stars").querySelectorAll("canvas");
+  cvs.forEach((cvv) => { paintStar(cvv, false); cvv.style.transform = ""; });
+  showScreen("results");
+  cvs.forEach((cvv, i) => {
+    if (i < stars) setTimeout(() => { paintStar(cvv, true); sfx.star(i); cvv.animate && cvv.animate([{ transform: "scale(0.2) rotate(-40deg)" }, { transform: "scale(1.25)" }, { transform: "scale(1)" }], { duration: 420, easing: "ease-out" }); }, 350 + i * 300);
+  });
+  if (!win) sfx.fail(); else { burst(innerWidth / 2, innerHeight * 0.3, 90, 1.2); setTimeout(() => burst(innerWidth * 0.25, innerHeight * 0.35, 40), 400); setTimeout(() => burst(innerWidth * 0.75, innerHeight * 0.35, 40), 700); }
+  const next = LEVELS.find((l) => l.id === id + 1);
+  const nb = $("btn-next");
+  nb.hidden = !(win && next);
+  if (next) nb.textContent = levelPlayable(next) ? "Следующий уровень" : "Открыть мир «" + worldOf(next).name + "»";
+  const t0 = performance.now(), dur = 900;
+  const step = (now) => { const k = Math.min(1, (now - t0) / dur); $("res-num").textContent = Math.round(score * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+$("btn-next").addEventListener("click", () => { sfx.click(); const nid = LV.id + 1; const N = LEVELS[nid - 1]; if (levelPlayable(N)) playStory("intro" + nid, () => startRound(nid), []); else { openMap(nid); openLevel(nid); } });
+$("btn-again").addEventListener("click", () => { sfx.click(); startRound(LV.id); });
+$("btn-map").addEventListener("click", () => { sfx.click(); openMap(LV.id); });
+
+/* ---------- Магазин ---------- */
+const UPGS = [
+  { id: "speed", name: "Быстрые лапки", desc: "+8% к скорости за уровень", base: 60 },
+  { id: "magnet", name: "Магнит для фруктов", desc: "Притягивает фрукты издалека", base: 75 },
+  { id: "dash", name: "Мощный рывок", desc: "Перезарядка рывка короче", base: 60 },
+];
+const MAXLVL = 5;
+const shake = (b) => b.animate && b.animate([{ transform: "translateX(-5px)" }, { transform: "translateX(5px)" }, { transform: "translateX(0)" }], { duration: 220 });
+function priceBtn(b, price) {
+  if (save.wallet < price) b.classList.add("locked");
+  const ic = document.createElement("canvas"); ic.width = 36; ic.height = 36; drawOrange(ic.getContext("2d"), 18, 20, 12, -0.2);
+  b.append(ic, document.createTextNode(String(price)));
+}
+function subHead(grid, text, melon) {
+  const h = document.createElement("div"); h.className = "shop-sub" + (melon ? "" : " plain");
+  if (melon) { const cc = document.createElement("canvas"); cc.width = 48; cc.height = 48; drawMelon(cc.getContext("2d"), 24, 24, 18, 0.25); h.append(cc); }
+  h.append(document.createTextNode(text)); grid.append(h);
+}
+function itemGrid(gridId, items, ownedKey, curKey, draw) {
+  const grid = $(gridId); grid.innerHTML = "";
+  let section = null;
+  for (const it of items) {
+    if (gridId === "skins-grid" && section !== (it.cur || "orange")) { section = it.cur || "orange"; subHead(grid, section === "melon" ? "Особые скины за арбузы: больше апельсинов!" : "Скины за апельсины", section === "melon"); }
+    const mel = it.cur === "melon", purse = mel ? "melons" : "wallet";
+    const owned = save[ownedKey].includes(it.id), on = save[curKey] === it.id;
+    const card = document.createElement("div"); card.className = "card" + (on ? " equipped" : "") + (mel ? " melon-card" : "");
+    const pc = document.createElement("canvas"); pc.width = 240; pc.height = 240; draw(pc.getContext("2d"), it.id);
+    const nm = document.createElement("div"); nm.className = "card-name"; nm.textContent = it.name;
+    const b = document.createElement("button"); b.className = "buy";
+    if (on) { b.classList.add("on"); b.textContent = "Выбрано"; }
+    else if (owned) { b.classList.add("owned"); b.textContent = "Выбрать"; }
+    else if (mel) { b.classList.add("mel"); if (save.melons < it.price) b.classList.add("locked"); const ic = document.createElement("canvas"); ic.width = 36; ic.height = 36; drawMelon(ic.getContext("2d"), 18, 18, 13, 0.25); b.append(ic, document.createTextNode(String(it.price))); }
+    else priceBtn(b, it.price);
+    b.addEventListener("click", () => {
+      if (on) return;
+      if (owned) { save[curKey] = it.id; sfx.click(); }
+      else if (save[purse] >= it.price) { save[purse] -= it.price; save[ownedKey].push(it.id); save[curKey] = it.id; sfx.buy(); burstAt(b, 40); }
+      else { shake(b); return; }
+      persist(); renderShop(); refreshMenu();
+    });
+    card.append(pc, nm);
+    if (it.mult) { const mb = document.createElement("div"); mb.className = "mult-badge"; mb.textContent = "x" + it.mult + " апельсинов"; card.append(mb); }
+    card.append(b); grid.append(card);
+  }
+}
+function renderShop() {
+  setWallets();
+  itemGrid("skins-grid", SKINS, "skins", "skin", (c, id) => drawCapy(c, 104, 156, 3.1, { t: 0, hat: save.hat, skin: id, dir: 1 }));
+  itemGrid("hats-grid", HATS, "hats", "hat", (c, id) => drawCapy(c, 104, 156, 3.1, { t: 0, hat: id, skin: save.skin, dir: 1 }));
+  const list = $("upg-list"); list.innerHTML = "";
+  for (const u of UPGS) {
+    const lvl = save.upg[u.id] || 0, price = Math.round(u.base * Math.pow(lvl + 1, 1.6) / 5) * 5;
+    const row = document.createElement("div"); row.className = "upg-row";
+    const ic = document.createElement("canvas"); ic.width = 112; ic.height = 112;
+    const c3 = ic.getContext("2d");
+    if (u.id === "speed") { drawCapy(c3, 52, 70, 1.6, { t: 0.3, moving: true, dir: 1, skin: save.skin }); c3.strokeStyle = "#19b877"; c3.lineWidth = 5; c3.lineCap = "round"; [30, 46, 62].forEach((y) => { c3.beginPath(); c3.moveTo(6, y); c3.lineTo(22, y); c3.stroke(); }); }
+    else if (u.id === "magnet") { c3.strokeStyle = "#e5484d"; c3.lineWidth = 14; c3.beginPath(); c3.arc(56, 52, 26, Math.PI, 0); c3.stroke(); c3.fillStyle = "#cfd6dc"; c3.fillRect(23, 50, 14, 16); c3.fillRect(75, 50, 14, 16); drawOrange(c3, 56, 92, 11, 0); }
+    else { c3.fillStyle = "#19b877"; c3.beginPath(); c3.moveTo(30, 30); c3.lineTo(58, 56); c3.lineTo(30, 82); c3.closePath(); c3.fill(); c3.beginPath(); c3.moveTo(58, 30); c3.lineTo(86, 56); c3.lineTo(58, 82); c3.closePath(); c3.fill(); }
+    const mid = document.createElement("div");
+    mid.innerHTML = `<div class="upg-title"></div><div class="upg-desc"></div><div class="pips"></div>`;
+    mid.querySelector(".upg-title").textContent = u.name;
+    mid.querySelector(".upg-desc").textContent = u.desc;
+    const pips = mid.querySelector(".pips");
+    for (let i = 0; i < MAXLVL; i++) { const pp = document.createElement("div"); pp.className = "pip" + (i < lvl ? " on" : ""); pips.append(pp); }
+    const b = document.createElement("button"); b.className = "buy";
+    if (lvl >= MAXLVL) { b.classList.add("on"); b.textContent = "Максимум"; }
+    else {
+      priceBtn(b, price);
+      b.addEventListener("click", () => {
+        if (save.wallet < price) { shake(b); return; }
+        save.wallet -= price; save.upg[u.id] = lvl + 1; sfx.buy(); burstAt(b, 30); persist(); renderShop(); refreshMenu();
+      });
+    }
+    row.append(ic, mid, b); list.append(row);
+  }
+}
+document.querySelectorAll(".tab").forEach((tb) => tb.addEventListener("click", () => {
+  document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected", x === tb ? "true" : "false"));
+  $("skins-grid").hidden = tb.dataset.tab !== "skins"; $("hats-grid").hidden = tb.dataset.tab !== "hats"; $("upg-list").hidden = tb.dataset.tab !== "upg"; sfx.click();
+}));
+function openShop(from) {
+  shopReturn = from; const body = document.querySelector("#shop .panel-body"); body.classList.add("anim");
+  renderShop(); showScreen("shop", [from]); setTimeout(() => body.classList.remove("anim"), 700);
+}
+
+/* ---------- Кнопки ---------- */
+$("btn-play").addEventListener("click", () => { sfx.click(); openMap(); });
+$("btn-shop").addEventListener("click", () => { sfx.click(); openShop("menu"); });
+let settingsFrom = "menu";
+function openSettings(from) { settingsFrom = from; syncToggles(); showScreen("settings", [from]); }
+$("btn-settings").addEventListener("click", () => openSettings("menu"));
+document.querySelectorAll("[data-close]").forEach((b) => b.addEventListener("click", () => {
+  const to = b.dataset.close === "shop" ? shopReturn : b.closest("#settings") ? settingsFrom : b.dataset.close;
+  if (to === "map") openMap(cardLevel); else goMenu();
+}));
+/* меню-гамбургер */
+let drawerFrom = "map";
+function openDrawer(from) {
+  drawerFrom = from;
+  const c = $("drawer-art").getContext("2d"); c.clearRect(0, 0, 120, 96); drawCapy(c, 52, 64, 1.5, { t: 0, dir: 1, skin: save.skin, hat: save.hat });
+  showScreen("drawer", from === "level" ? ["map", "level"] : ["map"]);
+}
+$("map-menu").addEventListener("click", () => openDrawer("map"));
+$("lvl-menu").addEventListener("click", () => openDrawer("level"));
+document.querySelectorAll(".drawer-item").forEach((b) => b.addEventListener("click", () => {
+  const go = b.dataset.go;
+  if (go === "menu") goMenu();
+  else if (go === "map") openMap(cardLevel);
+  else if (go === "shop") { openMap(cardLevel); openShop("map"); }
+  else if (go === "settings") { openMap(cardLevel); openSettings("map"); }
+  else showScreen(drawerFrom === "level" ? "level" : "map", drawerFrom === "level" ? ["map"] : []);
+}));
+// закрытие по тапу мимо окна
+$("drawer").addEventListener("click", (e) => { if (e.target.id === "drawer") showScreen(drawerFrom === "level" ? "level" : "map", drawerFrom === "level" ? ["map"] : []); });
+$("level").addEventListener("click", (e) => { if (e.target.id === "level") openMap(cardLevel); });
+$("shop").addEventListener("click", (e) => { if (e.target.id === "shop") { if (shopReturn === "map") openMap(cardLevel); else goMenu(); } });
+$("settings").addEventListener("click", (e) => { if (e.target.id === "settings") { if (settingsFrom === "map") openMap(cardLevel); else goMenu(); } });
+$("pause").addEventListener("click", togglePause);
+$("btn-resume").addEventListener("click", togglePause);
+$("btn-quit").addEventListener("click", () => { $("paused").hidden = true; openMap(LV.id); });
+function syncToggles() { $("t-music").setAttribute("aria-checked", String(save.music)); $("t-sound").setAttribute("aria-checked", String(save.sound)); $("t-fx").setAttribute("aria-checked", String(save.fx)); $("t-story").setAttribute("aria-checked", String(!!save.storyAgain)); }
+$("t-sound").addEventListener("click", () => { save.sound = !save.sound; persist(); syncToggles(); sfx.click(); });
+$("t-music").addEventListener("click", () => { save.music = !save.music; persist(); syncToggles(); if (save.music) { Music.cur = null; playMusic("menu"); } else stopMusic(); });
+$("t-fx").addEventListener("click", () => { save.fx = !save.fx; persist(); syncToggles(); });
+$("t-story").addEventListener("click", () => { save.storyAgain = !save.storyAgain; persist(); syncToggles(); sfx.click(); });
+$("reset").addEventListener("click", () => showScreen("confirm", [settingsFrom, "settings"]));
+$("conf-yes").addEventListener("click", () => { save = JSON.parse(JSON.stringify(defaults)); persist(); refreshMenu(); setWallets(); syncToggles(); showScreen("settings", [settingsFrom]); });
+$("conf-no").addEventListener("click", () => showScreen("settings", [settingsFrom]));
+document.addEventListener("visibilitychange", () => { if (document.hidden && G && G.running && !G.paused) togglePause(); });
+
+/* ---------- Цикл ---------- */
+addEventListener("resize", () => { sizeGame(); sizeBg(); sizeFx(); if (!$("map").hidden) drawMapPath(); });
+sizeGame(); sizeBg(); sizeFx(); buildWorld("beach"); refreshMenu(); syncToggles(); playMusic("menu");
+let last = performance.now(), T = 0;
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now; T += dt;
+  if (!$("menu").hidden) { drawBg(dt, T); drawLogo(T); }
+  if (!$("story").hidden) drawPortrait(T);
+  if (confetti.length || fxc.dataset.dirty) { drawConfetti(dt); fxc.dataset.dirty = confetti.length ? "1" : ""; }
+  if (!$("level").hidden) { const L = LEVELS[cardLevel - 1]; const c = $("lvl-art").getContext("2d"); drawIslandIcon(c, 520, 220, L.theme, T, true); drawCapy(c, 90, 170, 1.4, { t: T, moving: true, dir: 1, skin: save.skin, hat: save.hat }); }
+  if (G) {
+    if (G.running && !G.paused && $("story").hidden) update(dt);
+    if (G) render(T);
+  } else {
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = "#06303a"; ctx.fillRect(0, 0, cv.width, cv.height);
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+
+<script>
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); });
+}
+</script>

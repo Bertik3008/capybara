@@ -1,5 +1,5 @@
 // офлайн-режим: игра сохраняется на телефоне после первого открытия
-const CACHE = "capy-v5";
+const CACHE = "capy-v6";
 const CORE = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png", "favicon.png"];
 self.addEventListener("install", (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", (e) => {
@@ -13,6 +13,7 @@ self.addEventListener("fetch", (e) => {
     return;
   }
   // сама игра: сначала сеть (чтобы приходили обновления), без сети - из кэша
-  e.respondWith(fetch(req).then((res) => { if (res.ok && url.origin === location.origin) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); } return res; })
+  const fresh = url.origin === location.origin ? fetch(req, { cache: "no-store" }) : fetch(req);
+  e.respondWith(fresh.then((res) => { if (res.ok && url.origin === location.origin) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); } return res; })
     .catch(() => caches.match(req).then((hit) => hit || caches.match("index.html"))));
 });

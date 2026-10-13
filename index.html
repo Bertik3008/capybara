@@ -3313,6 +3313,14 @@ requestAnimationFrame(frame);
 
 <script>
 if ("serviceWorker" in navigator && location.protocol === "https:") {
-  addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); });
+  addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((r) => r.update()).catch(() => {});
+  });
+  // пришла новая версия игры: один раз перезагружаемся, если не идет уровень
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (reloaded) return; reloaded = true;
+    if (document.getElementById("hud").hidden) location.reload();
+  });
 }
 </script>

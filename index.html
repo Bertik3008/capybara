@@ -2645,7 +2645,7 @@ function questLevel(n) {
     melons: clamp(7 + n, 7, 24), quests: questCache[n], reward: Math.min(80, 20 + n * 2), bonus: 0,
   };
 }
-const questPlayable = (n) => n === 0 || (save.qstars[n - 1] || 0) > 0;
+const questPlayable = (n) => !!save.allOpen || n === 0 || (save.qstars[n - 1] || 0) > 0;
 function questTick() {
   let changed = false;
   for (const q of G.quests) {
@@ -2831,9 +2831,9 @@ function togglePause() {
 /* ---------- Карта ---------- */
 const NODE_GAP = 150, HEAD_H = 122;
 let mapNodes = [];
-const worldOpen = (w) => save.unlocked.includes(w);
+const worldOpen = (w) => !!save.allOpen || save.unlocked.includes(w);
 const prevWorldDone = (w) => w === 1 || (save.stars[lastOfWorld(w - 1).id] || 0) > 0;
-function levelPlayable(L) { return worldOpen(L.w) && (firstOfWorld(L) || (save.stars[L.id - 1] || 0) > 0); }
+function levelPlayable(L) { return !!save.allOpen || worldOpen(L.w) && (firstOfWorld(L) || (save.stars[L.id - 1] || 0) > 0); }
 function currentLevel() { for (const l of LEVELS) if (!(save.stars[l.id] > 0)) return l.id; return LEVELS.length; }
 function orangeIcon(size) { const oc = document.createElement("canvas"); oc.width = size; oc.height = size; drawCitrusCoin(oc.getContext("2d"), size / 2, size / 2, size * 0.42); return oc; }
 const iconCache = {};
@@ -3221,6 +3221,7 @@ $("btn-settings").addEventListener("click", () => openSettings("menu"));
 /* ---------- Промокоды ---------- */
 const PROMOS = {
   skins: { text: "Открыты все скины!", apply: () => { save.skins = SKINS.map((s2) => s2.id); } },
+  fullmap: { text: "Открыты все уровни и квесты!", apply: () => { save.allOpen = true; save.unlocked = WORLDS.map((w) => w.id); } },
   upgradefull: { text: "Все улучшения на максимуме!", apply: () => { save.upg = { speed: MAXLVL, magnet: MAXLVL, dash: MAXLVL }; } },
 };
 function promoMsg(text, ok) { const m = $("promo-msg"); m.textContent = text; m.className = "promo-msg " + (ok ? "ok" : "bad"); }

@@ -181,7 +181,7 @@ canvas { display: block; }
 .card .buy:focus-visible { outline: 3px solid var(--teal-2); }
 .upg { display: flex; flex-direction: column; gap: 12px; }
 .upg-row { background: #fff; border-radius: 20px; padding: 14px; display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 12px; align-items: center; box-shadow: 0 4px 0 rgba(160, 110, 40, 0.18); }
-.upg-row canvas { width: 56px; height: 56px; border-radius: 16px; background: radial-gradient(circle at 50% 40%, #fff3dc, #ffe1b0); }
+.upg-row > canvas { width: 56px; height: 56px; border-radius: 16px; background: radial-gradient(circle at 50% 40%, #fff3dc, #ffe1b0); }
 .upg-title { font: 800 17px/1.1 var(--font-display); color: var(--ink); }
 .upg-desc { font: 700 13px/1.3 var(--font-body); color: var(--ink-soft); margin-top: 2px; }
 .pips { display: flex; gap: 4px; margin-top: 7px; }
@@ -438,6 +438,66 @@ canvas { display: block; }
 .card .buy.mel.locked { background: linear-gradient(180deg, #e8c6cb, #c9a2a8); box-shadow: 0 3px 0 #a98a8f; }
 .mult-badge { font: 900 13px/1 var(--font-display); color: #fff; background: linear-gradient(90deg, #b03aa8, #e0405a); padding: 5px 9px; border-radius: 999px; margin-top: -2px; }
 .card { position: relative; }
+/* Производительность: размытие под HUD заставляет телефон перерисовывать игру дважды, поэтому в игре его нет */
+#hud .pill, #hud .pause-btn, #minimap, .relax { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+#hud .pill, #hud .pause-btn { background: rgba(6, 40, 46, 0.82); }
+.wallet, .btn-ghost { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+.wallet { background: rgba(0, 0, 0, 0.35); }
+#menu .btn-ghost { background: rgba(255, 255, 255, 0.16); }
+/* Вкладки карты */
+.map-tabs { display: flex; gap: 6px; margin: 0 14px 6px; padding: 5px; border-radius: 18px; background: rgba(0, 0, 0, 0.28); flex: none; width: min(452px, calc(100% - 28px)); box-sizing: border-box; align-self: center; }
+.map-tab { flex: 1; border: 0; cursor: pointer; padding: 11px 8px; border-radius: 14px; background: transparent; color: rgba(255, 255, 255, 0.75); font: 800 16px/1 var(--font-display); position: relative; }
+.map-tab[aria-selected="true"] { background: linear-gradient(180deg, #ffbb4d, var(--orange-deep)); color: #fff; box-shadow: 0 4px 0 #b24f00; }
+.map-tab:focus-visible { outline: 3px solid #fff; }
+.new-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #ff5a7a; margin-left: 4px; vertical-align: 2px; box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7); }
+.new-dot[hidden] { display: none !important; }
+.world-head.quest-head { background: linear-gradient(90deg, rgba(176, 58, 168, 0.55), rgba(224, 64, 90, 0.45)); }
+/* Панель квестов (только в квестовых уровнях) */
+.quests { pointer-events: auto; width: 204px; border-radius: 18px; overflow: hidden; background: linear-gradient(180deg, rgba(14, 70, 78, 0.94), rgba(6, 40, 46, 0.94)); border: 1px solid rgba(255, 255, 255, 0.25); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3); }
+.q-head { width: 100%; display: flex; align-items: center; gap: 8px; border: 0; background: rgba(255, 255, 255, 0.07); color: #fff; padding: 9px 12px; cursor: pointer; font: 900 14px/1 var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; }
+.q-title { flex: 1; text-align: left; }
+.q-count { background: linear-gradient(90deg, #ffbb4d, var(--orange-deep)); padding: 4px 8px; border-radius: 999px; font-size: 13px; letter-spacing: 0; }
+.q-chev { transition: transform 0.2s; }
+.quests.collapsed .q-chev { transform: rotate(-90deg); }
+.quests.collapsed .q-list { display: none; }
+.q-list { display: flex; flex-direction: column; gap: 6px; padding: 8px; }
+.q-row { display: grid; grid-template-columns: 18px 26px minmax(0, 1fr) auto; gap: 6px; align-items: center; padding: 7px 8px; border-radius: 12px; background: rgba(255, 255, 255, 0.07); transition: background 0.3s; }
+.q-row canvas { width: 26px; height: 26px; }
+.q-check { width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.45); box-sizing: border-box; }
+.q-txt b { display: block; font: 800 12px/1.2 var(--font-body); color: #fff; }
+.q-bar { height: 5px; border-radius: 3px; background: rgba(255, 255, 255, 0.15); margin-top: 4px; overflow: hidden; }
+.q-bar i { display: block; height: 100%; width: 0; border-radius: 3px; background: linear-gradient(90deg, #ffbb4d, var(--orange-deep)); transition: width 0.25s; }
+.q-num { font: 900 12px/1 var(--font-display); color: #ffe2b0; font-variant-numeric: tabular-nums; }
+.q-row.done { background: rgba(79, 224, 160, 0.2); }
+.q-row.done .q-check { border: 0; background: var(--mint-2); box-shadow: inset 0 0 0 3px #b8f5d8; }
+.q-row.done .q-bar i { background: linear-gradient(90deg, var(--mint-1), var(--mint-2)); }
+.q-row.done .q-num { color: #8ff0c4; }
+.q-row.done b { color: #d6ffee; }
+.q-row.fail { background: rgba(255, 90, 90, 0.16); }
+.q-row.fail .q-num { color: #ff9a9a; }
+.q-row.pop { animation: qpop 0.6s ease-out; }
+@keyframes qpop { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(79, 224, 160, 0.8); } 35% { transform: scale(1.06); } 100% { transform: scale(1); box-shadow: 0 0 0 14px rgba(79, 224, 160, 0); } }
+.quests:not([hidden]) ~ #minimap { width: 78px; height: 78px; }
+@media (max-width: 380px) { .quests { width: 176px; } .q-txt b { font-size: 11px; } }
+/* Список квестов в карточке уровня */
+.q-preview { display: flex; flex-direction: column; gap: 8px; }
+.q-prev { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 14px; padding: 8px 12px; box-shadow: 0 3px 0 rgba(160, 110, 40, 0.15); font: 800 15px/1.25 var(--font-body); color: var(--ink); }
+.q-prev canvas { width: 30px; height: 30px; flex: none; }
+.q-prev span { margin-left: auto; font: 900 13px/1 var(--font-display); color: #b25a00; white-space: nowrap; }
+.reroll { align-self: center; border: 0; background: none; cursor: pointer; font: 800 15px/1 var(--font-display); color: var(--teal-2); padding: 8px 12px; }
+.reroll:focus-visible { outline: 3px solid var(--teal-2); border-radius: 10px; }
+/* Улучшения: аккуратные карточки, цена по центру кнопки */
+.upg-row { grid-template-columns: 60px minmax(0, 1fr) 104px; padding: 12px; }
+.upg-row > canvas { width: 60px; height: 60px; }
+.upg-lvl { font: 800 12px/1 var(--font-display); color: var(--ink-soft); margin-top: 6px; }
+.upg-row .buy { width: 100%; min-width: 0; height: 52px; padding: 0 10px; border: 0; cursor: pointer; border-radius: 16px; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; font: 900 19px/1 var(--font-display); color: #fff; background: linear-gradient(180deg, var(--mint-1), var(--mint-2)); box-shadow: 0 4px 0 #0d8a57; font-variant-numeric: tabular-nums; }
+.upg-row .buy:active { transform: translateY(2px); box-shadow: 0 2px 0 #0d8a57; }
+.upg-row .buy.locked { background: linear-gradient(180deg, #d6cbb8, #b9ac96); box-shadow: 0 4px 0 #94876f; }
+.upg-row .buy.on { background: #e8f8f0; color: var(--mint-2); box-shadow: none; font-size: 15px; }
+.upg-row .buy:focus-visible { outline: 3px solid var(--teal-2); }
+.buy span { line-height: 1; }
+.upg-row .buy canvas, .card .buy canvas { width: 22px; height: 22px; flex: none; display: block; background: none; border-radius: 0; }
+.card .buy { min-height: 40px; }
 /* Звезды итога */
 .stars-row { display: flex; gap: 6px; align-items: flex-end; margin: 2px 0 4px; }
 .stars-row canvas { width: 64px; height: 64px; }
@@ -466,6 +526,10 @@ canvas { display: block; }
       </div>
       <div class="stack right-stack">
         <button class="pause-btn" id="pause" aria-label="Пауза">II</button>
+        <div class="quests" id="quests" hidden>
+          <button class="q-head" id="q-head" aria-label="Свернуть или развернуть квесты"><span class="q-title">Квесты</span><span class="q-count" id="q-count">0/3</span><span class="q-chev">▾</span></button>
+          <div class="q-list" id="q-list"></div>
+        </div>
         <canvas id="minimap" width="200" height="200" aria-label="Мини-карта"></canvas>
       </div>
     </div>
@@ -494,8 +558,12 @@ canvas { display: block; }
   <section class="screen" id="map" hidden>
     <div class="map-head">
       <button class="icon-btn burger" id="map-menu" aria-label="Меню"><span></span><span></span><span></span></button>
-      <h2>Карта островов</h2>
+      <h2>Карта</h2>
       <div class="wallets static"><div class="wallet"><canvas width="60" height="60" data-orange></canvas><span id="map-wallet">0</span></div><div class="wallet wallet-mel"><canvas width="60" height="60" data-melon></canvas><span id="map-mel">0</span></div></div>
+    </div>
+    <div class="map-tabs" role="tablist">
+      <button class="map-tab" role="tab" aria-selected="true" data-track="main">Приключение</button>
+      <button class="map-tab" role="tab" aria-selected="false" data-track="quest">Квесты <span class="new-dot" id="quest-dot"></span></button>
     </div>
     <div class="map-scroll" id="map-scroll">
       <div class="map-track" id="map-track"><canvas id="map-path"></canvas></div>
@@ -511,9 +579,11 @@ canvas { display: block; }
       <div class="lvl-body">
         <h2 id="lvl-title" style="margin:0;font:900 26px/1.05 var(--font-display);color:var(--ink)">Остров</h2>
         <div class="lvl-goal" id="lvl-goal"></div>
+        <div class="q-preview" id="lvl-quests" hidden></div>
         <div class="chips" id="lvl-chips"></div>
         <div class="lvl-note" id="lvl-note" hidden></div>
         <button class="btn btn-primary" id="lvl-go">Играть</button>
+        <button class="reroll" id="lvl-reroll" hidden>↻ Другие квесты</button>
       </div>
     </div>
   </section>
@@ -545,6 +615,7 @@ canvas { display: block; }
         <div class="setting">Музыка<button class="toggle" id="t-music" role="switch" aria-checked="true" aria-label="Музыка"></button></div>
         <div class="setting">Звуки<button class="toggle" id="t-sound" role="switch" aria-checked="true" aria-label="Звуки"></button></div>
         <div class="setting">Падающие апельсины<button class="toggle" id="t-fx" role="switch" aria-checked="true" aria-label="Падающие апельсины"></button></div>
+        <div class="setting">Экономия батареи<button class="toggle" id="t-saver" role="switch" aria-checked="false" aria-label="Экономия батареи"></button></div>
         <div class="setting">Показывать сюжет снова<button class="toggle" id="t-story" role="switch" aria-checked="false" aria-label="Показывать сюжет снова"></button></div>
         <button class="danger-link" id="reset">Сбросить прогресс</button>
       </div>
@@ -633,7 +704,7 @@ const SAVE_KEY = "capy-orange-save-v1";
 const defaults = {
   wallet: 0, melons: 0, hats: ["none"], hat: "none", skins: ["classic"], skin: "classic",
   upg: { speed: 0, magnet: 0, dash: 0 }, sound: true, fx: !reduceMotion,
-  stars: {}, unlocked: [1], seen: {}, storyAgain: false, music: true, voice: true, ver: 2,
+  stars: {}, unlocked: [1], seen: {}, storyAgain: false, music: true, voice: true, ver: 3, qstars: {}, saver: false,
 };
 let save = JSON.parse(JSON.stringify(defaults));
 try {
@@ -654,6 +725,16 @@ try {
       if (save.seen.outro1) seen.outro4 = true; if (save.seen.outro5) seen.outro20 = true;
       save.stars = st; save.seen = seen; save.ver = 2;
     }
+    if (save.ver === 2) {
+      // переход на миры по 3 уровня (20 уровней -> 18 + новый снежный мир)
+      const map = { 1: 1, 3: 2, 4: 3, 5: 4, 7: 5, 8: 6, 9: 7, 10: 8, 12: 9, 13: 10, 15: 11, 16: 12, 17: 16, 18: 17, 20: 18 }, st = {};
+      for (const k in map) if (save.stars[k]) st[map[k]] = save.stars[k];
+      const sm = { intro1: "intro1", intro3: "intro2", outro4: "outro3", intro5: "intro4", outro8: "outro6", intro9: "intro7", intro12: "intro9", outro12: "outro9", intro13: "intro10", outro16: "outro15", intro17: "intro16", intro20: "intro18", outro20: "outro18" }, seen = {};
+      for (const k in sm) if (save.seen[k]) seen[sm[k]] = true;
+      const un = save.unlocked.map((w) => (w === 5 ? 6 : w)); if (un.includes(6)) un.push(5);
+      save.stars = st; save.seen = seen; save.unlocked = [...new Set(un)]; save.ver = 3;
+    }
+    if (!save.qstars || typeof save.qstars !== "object") save.qstars = {};
     if (save.music === undefined) save.music = true;
     if (save.voice === undefined) save.voice = true;
   }
@@ -1193,6 +1274,17 @@ function drawTree(c, o, t) {
     c.beginPath(); c.moveTo(o.x, o.y - o.h * 0.55); c.lineTo(o.x - 22, o.y - o.h * 0.8); c.lineTo(o.x - 30, o.y - o.h * 0.78); c.stroke();
     c.beginPath(); c.moveTo(o.x + 1, o.y - o.h * 0.75); c.lineTo(o.x + 22, o.y - o.h * 0.98); c.stroke();
     c.fillStyle = "rgba(255,120,30," + (0.35 + Math.sin(t * 4 + o.ph) * 0.2) + ")"; c.beginPath(); c.arc(o.x + 22, o.y - o.h * 0.98, 3, 0, TAU); c.fill();
+  } else if (o.kind === "pine") {
+    c.fillStyle = "#6b4a2e"; c.fillRect(o.x - 6, o.y - 22, 12, 26);
+    const layers = 3;
+    for (let i = 0; i < layers; i++) {
+      const w2 = 46 - i * 11, base = o.y - 14 - i * o.h * 0.24, top = base - o.h * 0.42;
+      c.fillStyle = i % 2 ? "#2f7d5a" : "#276b4c";
+      c.beginPath(); c.moveTo(o.x - w2, base); c.lineTo(o.x, top); c.lineTo(o.x + w2, base); c.closePath(); c.fill();
+      c.fillStyle = "#f4f9ff"; c.beginPath(); c.moveTo(o.x - w2 * 0.45, top + (base - top) * 0.45); c.lineTo(o.x, top); c.lineTo(o.x + w2 * 0.45, top + (base - top) * 0.45);
+      c.quadraticCurveTo(o.x + w2 * 0.2, top + (base - top) * 0.55, o.x, top + (base - top) * 0.4); c.quadraticCurveTo(o.x - w2 * 0.2, top + (base - top) * 0.55, o.x - w2 * 0.45, top + (base - top) * 0.45); c.fill();
+    }
+    c.fillStyle = "rgba(255,255,255,0.85)"; c.beginPath(); c.ellipse(o.x, o.y + 4, 30, 8, 0, 0, TAU); c.fill();
   } else if (o.kind === "bigtree") {
     c.fillStyle = "rgba(0,0,0,0.2)"; c.beginPath(); c.ellipse(o.x, o.y + 8, 70, 20, 0, 0, TAU); c.fill();
     c.fillStyle = "#7a4a26";
@@ -1213,7 +1305,29 @@ function drawTree(c, o, t) {
     c.fillStyle = "#ffe066"; c.beginPath(); c.moveTo(o.x - 4, fy); c.quadraticCurveTo(o.x, fy - 14 - fl, o.x + 4, fy); c.closePath(); c.fill();
   }
 }
-function treeTop(o) { return o.kind === "bigtree" ? o.h + 120 : o.kind === "pillar" ? o.h + 30 : o.h + 40; }
+function treeTop(o) { return o.kind === "bigtree" ? o.h + 120 : o.kind === "pillar" ? o.h + 30 : o.kind === "pine" ? o.h * 0.9 + 20 : o.h + 40; }
+
+/* ---------- Спрайты: сложные рисунки рисуются один раз и потом копируются (сильно легче для телефона) ---------- */
+const SPR = {};
+function sprite(key, w, h, ax, ay, fn) {
+  let s2 = SPR[key];
+  if (!s2) {
+    const cvs = document.createElement("canvas"), k = 2;
+    cvs.width = Math.ceil(w * k); cvs.height = Math.ceil(h * k);
+    const g = cvs.getContext("2d"); g.scale(k, k); g.translate(ax, ay); fn(g);
+    s2 = SPR[key] = { cv: cvs, w, h, ax, ay };
+  }
+  return s2;
+}
+function blit(c, s2, x, y) { c.drawImage(s2.cv, x - s2.ax, y - s2.ay, s2.w, s2.h); }
+function blitRot(c, s2, x, y, rot) { if (!rot) { blit(c, s2, x, y); return; } c.save(); c.translate(x, y); c.rotate(rot); c.drawImage(s2.cv, -s2.ax, -s2.ay, s2.w, s2.h); c.restore(); }
+const orangeSpr = (r, kind) => sprite("o" + (kind || "") + r, r * 2.6, r * 2.9, r * 1.3, r * 1.6, (g) => drawOrange(g, 0, 0, r, 0, kind));
+const melonSpr = (r) => sprite("m" + r, r * 2.4, r * 2.4, r * 1.2, r * 1.2, (g) => drawMelon(g, 0, 0, r, 0));
+function treeSpr(o, themeId) {
+  const big = o.kind === "bigtree", w = big ? 300 : 200, top = treeTop(o) + 14, h = top + 30;
+  const key = "t" + themeId + o.kind + Math.round(o.h / 6);
+  return sprite(key, w, h, w / 2, top, (g) => drawTree(g, { kind: o.kind, x: 0, y: 0, h: Math.round(o.h / 6) * 6, ph: 0 }, 0));
+}
 function drawCroc(c, x, y, s, t, dir, open) {
   c.save(); c.translate(x, y); c.scale(dir * s, s);
   c.fillStyle = "rgba(0,0,0,0.18)"; c.beginPath(); c.ellipse(0, 12, 40, 7, 0, 0, TAU); c.fill();
@@ -1252,13 +1366,13 @@ document.querySelectorAll("canvas[data-orange]").forEach((cv) => {
 const bg = $("bg"), bgc = bg.getContext("2d");
 let bgDrops = [];
 function sizeBg() {
-  const d = Math.min(devicePixelRatio || 1, 2);
+  const d = Math.min(devicePixelRatio || 1, 1.5);
   bg.width = innerWidth * d; bg.height = innerHeight * d; bgc.setTransform(d, 0, 0, d, 0, 0);
   const n = Math.round(clamp(innerWidth * innerHeight / 22000, 14, 46));
   bgDrops = Array.from({ length: n }, () => newDrop(true));
 }
 function newDrop(any) {
-  const r = rand(7, 18);
+  const r = Math.round(rand(7, 18));
   return { x: rand(0, innerWidth), y: any ? rand(-innerHeight, innerHeight) : rand(-120, -30), r, vy: r * rand(2.4, 3.6), rot: rand(0, TAU), vr: rand(-2.5, 2.5), sway: rand(0, TAU), a: r > 14 ? 0.95 : 0.6 };
 }
 function drawBg(dt, t) {
@@ -1266,7 +1380,7 @@ function drawBg(dt, t) {
   if (!save.fx) return;
   for (const d of bgDrops) {
     d.y += d.vy * dt; d.rot += d.vr * dt; const x = d.x + Math.sin(t * 0.8 + d.sway) * 14;
-    bgc.globalAlpha = d.a; drawOrange(bgc, x, d.y, d.r, d.rot);
+    bgc.globalAlpha = d.a; blitRot(bgc, orangeSpr(d.r, ""), x, d.y, d.rot);
     if (d.y > innerHeight + 40) Object.assign(d, newDrop(false));
   }
   bgc.globalAlpha = 1;
@@ -1299,40 +1413,40 @@ const THEMES = {
   jungle:  { water: ["#2fa7a0", "#146f77"], sand: ["#e6cf96", "#d4b878"], grass: ["#4fae4a", "#2f8a3a"], path: "rgba(170,130,80,0.55)", flowers: true, tree: "jtree", trees: 26, rocks: 8, bushes: 30, bush: "#23743a", puddles: 4, lava: 0, sea: "#146f77" },
   volcano: { water: ["#3a7f8f", "#1d4f5c"], sand: ["#6e5d52", "#5a4a40"], grass: ["#8a7a6c", "#5f524a"], path: "rgba(60,45,40,0.5)", embers: true, tree: "dead", trees: 14, rocks: 20, bushes: 0, bush: "#555", puddles: 0, lava: 7, sea: "#1d4f5c" },
   swamp:   { water: ["#4f8a6a", "#2b5a48"], sand: ["#9a9a68", "#7d7d50"], grass: ["#7c9a4e", "#566f34"], path: "rgba(110,95,60,0.5)", flowers: false, tree: "willow", trees: 20, rocks: 6, bushes: 26, bush: "#4f6b2e", puddles: 9, lava: 0, sea: "#2b5a48" },
+  snow:    { water: ["#7cc3e3", "#2f6f99"], sand: ["#e9f1f8", "#cfdbe7"], grass: ["#f7fbff", "#dce7f2"], path: "rgba(170,195,220,0.55)", snowy: true, tree: "pine", trees: 22, rocks: 12, bushes: 10, bush: "#c9dbe8", puddles: 0, lava: 0, ice: 7, snowfall: true, sea: "#2f6f99" },
   castle:  { water: ["#3a6ea0", "#1d3f6a"], sand: ["#b9b2a6", "#a29a8c"], grass: ["#a3a8ae", "#80868e"], path: null, tiles: true, tree: "pillar", trees: 12, rocks: 6, bushes: 0, bush: "#555", puddles: 0, lava: 0, castle: true, sea: "#1d3f6a" },
 };
 const WORLDS = [
   { id: 1, name: "Пляж", theme: "beach", price: 0 },
-  { id: 2, name: "Джунгли", theme: "jungle", price: 350 },
-  { id: 3, name: "Вулкан", theme: "volcano", price: 700 },
-  { id: 4, name: "Болото", theme: "swamp", price: 1200 },
-  { id: 5, name: "Замок Короля", theme: "castle", price: 1500 },
+  { id: 2, name: "Джунгли", theme: "jungle", price: 300 },
+  { id: 3, name: "Вулкан", theme: "volcano", price: 600 },
+  { id: 4, name: "Болото", theme: "swamp", price: 1000 },
+  { id: 5, name: "Снежные вершины", theme: "snow", price: 1100 },
+  { id: 6, name: "Замок Короля", theme: "castle", price: 1300 },
 ];
 const GENERAL = { name: "Генерал Хвост", hp: 70, speed: 64, charge: 400, variant: "general" };
 const KING = { name: "Король Клац", hp: 110, speed: 72, charge: 450, variant: "king" };
 // type: collect - набрать апельсины; rescue - спасти малышей; gold - собрать золотые апельсины; boss - победить босса
-// пороги звезд подобраны по прогону автоигрока: 1 звезда легко, 3 звезды - хорошая игра
+// в каждом мире по 3 уровня; пороги звезд подобраны по прогону автоигрока
 const LEVELS = [
   { w: 1, name: "Солнечный пляж", type: "collect", goal: 40, s2: 75, s3: 105, time: 90, crocs: 2, chase: 90 },
-  { w: 1, name: "Ракушечный берег", type: "collect", goal: 50, s2: 90, s3: 120, time: 90, crocs: 2, chase: 92 },
-  { w: 1, name: "Золотые дюны", type: "gold", goal: 7, s2: 80, s3: 115, time: 95, crocs: 3, chase: 92 },
-  { w: 1, name: "Пиратская бухта", type: "collect", goal: 60, s2: 95, s3: 125, time: 100, crocs: 3, chase: 95 },
+  { w: 1, name: "Золотые дюны", type: "gold", goal: 6, s2: 110, s3: 160, time: 95, crocs: 2, chase: 92 },
+  { w: 1, name: "Пиратская бухта", type: "collect", goal: 55, s2: 95, s3: 125, time: 100, crocs: 3, chase: 95 },
   { w: 2, name: "Дикие джунгли", type: "rescue", goal: 3, s2: 60, s3: 95, time: 100, crocs: 3, chase: 95 },
-  { w: 2, name: "Тропа лиан", type: "collect", goal: 60, s2: 95, s3: 125, time: 100, crocs: 3, chase: 98 },
-  { w: 2, name: "Цветочная поляна", type: "gold", goal: 8, s2: 90, s3: 125, time: 105, crocs: 4, chase: 98 },
+  { w: 2, name: "Цветочная поляна", type: "gold", goal: 8, s2: 120, s3: 175, time: 105, crocs: 4, chase: 98 },
   { w: 2, name: "Древний храм", type: "rescue", goal: 4, s2: 65, s3: 105, time: 110, crocs: 4, chase: 100 },
   { w: 3, name: "Огненный вулкан", type: "collect", goal: 60, s2: 100, s3: 130, time: 110, crocs: 3, chase: 100 },
-  { w: 3, name: "Лавовые реки", type: "gold", goal: 10, s2: 105, s3: 145, time: 110, crocs: 3, chase: 102, lava: 11 },
-  { w: 3, name: "Пепельная долина", type: "rescue", goal: 4, s2: 80, s3: 125, time: 115, crocs: 4, chase: 102 },
+  { w: 3, name: "Лавовые реки", type: "gold", goal: 9, s2: 135, s3: 195, time: 110, crocs: 3, chase: 102, lava: 11 },
   { w: 3, name: "Логово Генерала", type: "boss", boss: GENERAL, goal: 70, s2: 40, s3: 70, time: 130, crocs: 1, chase: 100 },
   { w: 4, name: "Туманное болото", type: "collect", goal: 65, s2: 105, s3: 140, time: 110, crocs: 5, chase: 102 },
-  { w: 4, name: "Комариная топь", type: "gold", goal: 10, s2: 110, s3: 150, time: 115, crocs: 5, chase: 104 },
   { w: 4, name: "Гнилые мостки", type: "rescue", goal: 5, s2: 75, s3: 120, time: 120, crocs: 5, chase: 104 },
   { w: 4, name: "Черная трясина", type: "collect", goal: 70, s2: 110, s3: 145, time: 120, crocs: 6, chase: 105, puddles: 13 },
-  { w: 5, name: "Ворота замка", type: "collect", goal: 70, s2: 110, s3: 145, time: 110, crocs: 4, chase: 105 },
-  { w: 5, name: "Сокровищница", type: "gold", goal: 11, s2: 135, s3: 180, time: 115, crocs: 4, chase: 106 },
-  { w: 5, name: "Темница", type: "rescue", goal: 5, s2: 85, s3: 130, time: 120, crocs: 5, chase: 106 },
-  { w: 5, name: "Тронный зал", type: "boss", boss: KING, goal: 110, s2: 50, s3: 85, time: 150, crocs: 2, chase: 100 },
+  { w: 5, name: "Ледяной берег", type: "collect", goal: 65, s2: 105, s3: 140, time: 110, crocs: 4, chase: 100 },
+  { w: 5, name: "Снежная метель", type: "gold", goal: 9, s2: 140, s3: 200, time: 115, crocs: 5, chase: 102 },
+  { w: 5, name: "Ледяная пещера", type: "rescue", goal: 5, s2: 80, s3: 125, time: 120, crocs: 5, chase: 104 },
+  { w: 6, name: "Ворота замка", type: "collect", goal: 70, s2: 110, s3: 145, time: 110, crocs: 4, chase: 105 },
+  { w: 6, name: "Сокровищница", type: "gold", goal: 11, s2: 160, s3: 220, time: 115, crocs: 4, chase: 106 },
+  { w: 6, name: "Тронный зал", type: "boss", boss: KING, goal: 110, s2: 50, s3: 85, time: 150, crocs: 2, chase: 100 },
 ];
 LEVELS.forEach((L, i) => {
   L.id = i + 1; L.crocs = Math.round(L.crocs * 1.5); L.melons = Math.round((L.type === "boss" ? 10 : clamp(5 + Math.round(i * 0.8), 5, 20)) * 1.4); L.theme = WORLDS[L.w - 1].theme; L.bonus = 30 + L.id * 10 + (L.type === "boss" ? 150 : 0);
@@ -1369,62 +1483,71 @@ const STORY = {
     ["capy", "Без апельсинов? И малыши в плену? Ну уж нет. Я все верну!"],
     ["parrot", "Начни с Пляжа: крокодилы растеряли там часть добычи. Собери 40 апельсинов!"],
   ],
-  intro3: [
+  intro2: [
     ["parrot", "Смотри, в дюнах что-то блестит! Это золотые апельсины, самые ценные."],
-    ["parrot", "Найди пять штук. Каждый стоит десяти обычных!"],
+    ["parrot", "Найди их! Каждый стоит десяти обычных."],
   ],
-  outro4: [
+  outro3: [
     ["parrot", "Отлично, Капа! Пляж свободен!"],
     ["parrot", "За апельсины в моей лавке можно купить скины, шапки и улучшения."],
     ["parrot", "А путь в Джунгли откроется за 300 апельсинов. Там ждут малыши!"],
   ],
-  intro5: [
+  intro4: [
     ["turtle", "Здравствуй, Капа. Я Дедушка Черепах, сторож джунглей."],
     ["turtle", "Капибарята сидят в клетках. Подбеги к клетке, и она откроется. Только крокодилы стерегут их!"],
     ["capy", "Держитесь, малыши, я иду!"],
   ],
-  outro8: [
+  outro6: [
     ["babies", "Капа! Спасибо! Мы так испугались!"],
     ["babies", "Король унес главный запас апельсинов к Вулкану!"],
     ["capy", "Значит, мне туда. Бегите домой, малыши!"],
   ],
-  intro9: [
+  intro7: [
     ["turtle", "На Вулкане течет лава. Не наступай в красные лужи, обожжешься и растеряешь апельсины."],
     ["turtle", "Зато там есть горячий источник: постой в нем, и апельсины будут считаться за два."],
     ["capy", "Горячая ванна посреди приключения? Обожаю!"],
   ],
-  intro12: [
+  intro9: [
     ["general", "Стоять! Я Генерал Хвост, правая лапа Короля Клаца. Дальше ты не пройдешь!"],
     ["capy", "Генерал? А ты сам хоть раз пробовал апельсин?"],
     ["general", "Отставить разговоры! Крокодилы, в атаку!"],
     ["turtle", "Капа, собирай апельсины и подбегай ближе: ты будешь бросать их сама. Когда он мигает, уворачивайся!"],
   ],
-  outro12: [
+  outro9: [
     ["general", "Ой-ой... Отступаю! Король будет очень недоволен..."],
     ["parrot", "Крокодилы бегут в Болото! Там грязь по уши и целая армия зубастиков."],
     ["capy", "Грязь мне не страшна. Капибары любят грязевые ванны!"],
   ],
-  intro13: [
+  intro10: [
     ["king", "Ха-ха-ха! Мои крокодилы в Болоте тебя не пропустят, пушистая картошка!"],
     ["capy", "Пушистая картошка? Ну держись, Клац!"],
   ],
-  outro16: [
-    ["turtle", "Болото пройдено. Впереди Замок Короля Клаца."],
-    ["turtle", "Там сокровищница с апельсинами и темница с последними малышами. Будь осторожна!"],
+  outro12: [
+    ["parrot", "Болото пройдено! Крокодилы удирают в Снежные вершины."],
+    ["capy", "В снег? Крокодилы? Им же там холодно!"],
   ],
-  intro17: [
+  intro13: [
+    ["parrot", "Брр! Снежные вершины! Крокодилы спрятали тут часть апельсинов."],
+    ["turtle", "Осторожно, на голубом льду лапы скользят. Тормози заранее!"],
+    ["capy", "Зато можно лепить снежных капибар!"],
+  ],
+  outro15: [
+    ["turtle", "Вершины пройдены. Впереди Замок Короля Клаца."],
+    ["turtle", "Там сокровищница с апельсинами и сам Король. Будь осторожна!"],
+  ],
+  intro16: [
     ["parrot", "Вот и ворота замка! Сколько тут стражи..."],
     ["capy", "Ничего. Я уже не та капибара, что была на пляже!"],
   ],
-  intro20: [
+  intro18: [
     ["king", "Апельсины мои! Все мои! Никому не отдам!"],
     ["capy", "Сейчас получишь витаминчиков, Ваше Величество!"],
   ],
-  outro20: [
+  outro18: [
     ["king", "Ой-ой... Сдаюсь! Я просто... ни разу не пробовал апельсин. Все прятал и прятал."],
     ["capy", "Так попробуй! Делиться вкуснее, чем прятать."],
     ["king", "М-м-м! Как вкусно! Простите меня, жители острова..."],
-    ["parrot", "Остров спасен! Ура Капе! Теперь собирай звезды на всех уровнях!"],
+    ["parrot", "Остров спасен! Ура Капе! А на вкладке «Квесты» тебя ждут новые испытания!"],
   ],
 };
 
@@ -1432,18 +1555,21 @@ const STORY = {
 const cv = $("game"), ctx = cv.getContext("2d");
 let VW = 0, VH = 0, DPR = 1;
 function sizeGame() {
-  DPR = Math.min(devicePixelRatio || 1, 2);
+  DPR = Math.min(devicePixelRatio || 1, save.saver ? 1 : 1.5);
   VW = innerWidth; VH = innerHeight;
   cv.width = VW * DPR; cv.height = VH * DPR;
 }
 const WORLD = 2200, CX = WORLD / 2, CY = WORLD / 2, SC = 1.4;
-const islandR = (a) => 900 + Math.sin(a * 3 + 0.6) * 64 + Math.sin(a * 5 + 1.9) * 40 + Math.cos(a * 2) * 42;
+// форма острова: каждый раунд новые «гармоники», поэтому остров каждый раз другой
+const ISL = { base: 900, h: [[3, 64, 0.6], [5, 40, 1.9], [2, 42, 1.57]] };
+const islandR = (a) => { let r = ISL.base; for (const q of ISL.h) r += q[1] * Math.sin(a * q[0] + q[2]); return r; };
 const SPRING = { x: CX + 420, y: CY - 320, r: 70 };
 const START = { x: CX, y: CY + 170 };
+let ponds = [], ices = [], snowFlakes = [];
 // гора с кратером: вход с восточной стороны, внутри большое апельсиновое дерево
 const MOUNT = { x: CX - 540, y: CY - 60, rIn: 170, rOut: 245, gate: 0, gw: 0.46 };
-const CASTLE_Y = Math.round(CY - islandR(-Math.PI / 2) + 45), CASTLE_LIM = CASTLE_Y + 45;
-const ROCK = { beach: ["#c9b48f", "#9c8664"], jungle: ["#8f9c7c", "#66735a"], volcano: ["#5e4e4a", "#3e3230"], swamp: ["#868670", "#5e5e4a"], castle: ["#a7adb5", "#7b818a"] };
+let CASTLE_Y = 250, CASTLE_LIM = 295;
+const ROCK = { beach: ["#c9b48f", "#9c8664"], jungle: ["#8f9c7c", "#66735a"], volcano: ["#5e4e4a", "#3e3230"], swamp: ["#868670", "#5e5e4a"], castle: ["#a7adb5", "#7b818a"], snow: ["#c3cfdb", "#8d9bab"] };
 let ground = null, obstacles = [], puddles = [], decor = [], lavas = [], peaks = [], miniBg = null, TH = THEMES.beach;
 const angDiff = (a, b) => { let d = (a - b) % TAU; if (d > Math.PI) d -= TAU; if (d < -Math.PI) d += TAU; return Math.abs(d); };
 function inMountBand(x, y, pad) { const d = Math.hypot(x - MOUNT.x, y - MOUNT.y); return d < MOUNT.rOut + (pad || 0); }
@@ -1457,14 +1583,44 @@ function mountainCollide(o, rad) {
   o.x = MOUNT.x + dx / d * nd; o.y = MOUNT.y + dy / d * nd;
 }
 
+// случайная раскладка: форма острова, гора, источник, старт
+function generateLayout(themeId) {
+  for (let tries = 0; tries < 40; tries++) {
+    ISL.base = rand(870, 930);
+    ISL.h = [[2, rand(0, 95), rand(0, TAU)], [3, rand(0, 70), rand(0, TAU)], [4, rand(0, 40), rand(0, TAU)], [5, rand(0, 36), rand(0, TAU)], [7, rand(0, 16), rand(0, TAU)]];
+    let mn = 1e9, mx = 0; for (let i = 0; i < 72; i++) { const r = islandR(i / 72 * TAU); mn = Math.min(mn, r); mx = Math.max(mx, r); }
+    if (mn > 720 && mx < 1050) break;
+  }
+  CASTLE_Y = Math.round(CY - islandR(-Math.PI / 2) + 45); CASTLE_LIM = CASTLE_Y + 45;
+  // гора: в случайной стороне острова (в замке - не на севере), вход смотрит к центру
+  let ma;
+  do { ma = rand(0, TAU); } while (themeId === "castle" && angDiff(ma, -Math.PI / 2) < 1.1);
+  const md = islandR(ma) * rand(0.5, 0.6);
+  MOUNT.x = CX + Math.cos(ma) * md; MOUNT.y = CY + Math.sin(ma) * md; MOUNT.gate = Math.atan2(CY - MOUNT.y, CX - MOUNT.x);
+  // источник: на другой стороне острова
+  let sa, ok = false;
+  for (let k = 0; k < 50 && !ok; k++) {
+    sa = rand(0, TAU); const sd = islandR(sa) * rand(0.32, 0.55);
+    SPRING.x = CX + Math.cos(sa) * sd; SPRING.y = CY + Math.sin(sa) * sd;
+    ok = angDiff(sa, ma) > 1.5 && Math.hypot(SPRING.x - MOUNT.x, SPRING.y - MOUNT.y) > MOUNT.rOut + 220 && (themeId !== "castle" || SPRING.y > CASTLE_LIM + 150);
+  }
+  // старт: недалеко от центра, подальше от горы и источника
+  for (let k = 0; k < 50; k++) {
+    const a = rand(0, TAU), d = rand(0, 180);
+    START.x = CX + Math.cos(a) * d; START.y = CY + Math.sin(a) * d;
+    if (Math.hypot(START.x - SPRING.x, START.y - SPRING.y) > 240 && Math.hypot(START.x - MOUNT.x, START.y - MOUNT.y) > MOUNT.rOut + 140) break;
+  }
+}
 function buildWorld(themeId, L) {
-  TH = Object.assign({}, THEMES[themeId] || THEMES.beach);
+  TH = Object.assign({ id: themeId }, THEMES[themeId] || THEMES.beach);
+  generateLayout(themeId);
+  ponds = []; ices = [];
   if (L && L.lava) TH.lava = L.lava;
   if (L && L.puddles) TH.puddles = L.puddles;
   ground = document.createElement("canvas"); ground.width = WORLD; ground.height = WORLD;
   const g = ground.getContext("2d");
   obstacles = []; decor = []; puddles = []; lavas = [];
-  const wg = g.createRadialGradient(CX, CY, 500, CX, CY, 1100);
+  const wg = g.createRadialGradient(CX, CY, 600, CX, CY, 1080);
   wg.addColorStop(0, TH.water[0]); wg.addColorStop(1, TH.water[1]);
   g.fillStyle = wg; g.fillRect(0, 0, WORLD, WORLD);
   const shape = (pad) => { g.beginPath(); for (let i = 0; i <= 180; i++) { const a = i / 180 * TAU, r = islandR(a) + pad; g.lineTo(CX + Math.cos(a) * r, CY + Math.sin(a) * r); } g.closePath(); };
@@ -1484,6 +1640,9 @@ function buildWorld(themeId, L) {
     for (let y = 0; y < WORLD; y += 64) { g.beginPath(); g.moveTo(0, y); g.lineTo(WORLD, y); g.stroke(); }
     g.fillStyle = "#b8323a"; g.fillRect(CX - 40, CASTLE_Y, 80, 1300);
     g.fillStyle = "#e5c07b"; g.fillRect(CX - 40, CASTLE_Y, 6, 1300); g.fillRect(CX + 34, CASTLE_Y, 6, 1300);
+  } else if (TH.snowy) {
+    for (let i = 0; i < 700; i++) { g.fillStyle = Math.random() < 0.6 ? "rgba(255,255,255,0.7)" : "rgba(150,180,210,0.12)"; g.beginPath(); g.ellipse(rand(0, WORLD), rand(0, WORLD), rand(10, 40), rand(5, 14), rand(0, 3), 0, TAU); g.fill(); }
+    for (let i = 0; i < 300; i++) { g.fillStyle = "rgba(170,200,230,0.5)"; g.beginPath(); g.arc(rand(0, WORLD), rand(0, WORLD), rand(1.5, 3), 0, TAU); g.fill(); }
   } else {
     for (let i = 0; i < 900; i++) {
       const x = rand(0, WORLD), y = rand(0, WORLD);
@@ -1495,9 +1654,13 @@ function buildWorld(themeId, L) {
   if (TH.embers) { for (let i = 0; i < 200; i++) { g.fillStyle = Math.random() < 0.5 ? "rgba(255,140,40,0.5)" : "rgba(40,30,30,0.35)"; g.beginPath(); g.arc(rand(0, WORLD), rand(0, WORLD), rand(1.5, 3.5), 0, TAU); g.fill(); } }
   if (TH.path) {
     g.strokeStyle = TH.path; g.lineWidth = 34; g.lineCap = "round";
-    g.beginPath(); g.moveTo(CX - 600, CY + 300); g.bezierCurveTo(CX - 210, CY + 60, CX + 80, CY + 220, SPRING.x, SPRING.y); g.stroke();
-    g.beginPath(); g.moveTo(CX, CY + 740); g.bezierCurveTo(CX - 60, CY + 400, CX + 170, CY + 140, CX - 60, CY - 600); g.stroke();
-    g.beginPath(); g.moveTo(START.x, START.y); g.bezierCurveTo(CX - 120, CY + 60, MOUNT.x + 400, MOUNT.y - 40, MOUNT.x + MOUNT.rOut - 10, MOUNT.y); g.stroke();
+    const gx = MOUNT.x + Math.cos(MOUNT.gate) * (MOUNT.rOut - 10), gy = MOUNT.y + Math.sin(MOUNT.gate) * (MOUNT.rOut - 10);
+    const wob = () => rand(-220, 220);
+    g.beginPath(); g.moveTo(START.x, START.y); g.bezierCurveTo(START.x + wob(), START.y + wob(), SPRING.x + wob(), SPRING.y + wob(), SPRING.x, SPRING.y); g.stroke();
+    g.beginPath(); g.moveTo(START.x, START.y); g.bezierCurveTo(START.x + wob(), START.y + wob(), gx + Math.cos(MOUNT.gate) * 200, gy + Math.sin(MOUNT.gate) * 200, gx, gy); g.stroke();
+    // длинная тропа через весь остров
+    const pa = rand(0, TAU), p1 = islandR(pa) * 0.85, p2 = islandR(pa + Math.PI) * 0.85;
+    g.beginPath(); g.moveTo(CX + Math.cos(pa) * p1, CY + Math.sin(pa) * p1); g.bezierCurveTo(CX + wob(), CY + wob(), CX + wob(), CY + wob(), CX + Math.cos(pa + Math.PI) * p2, CY + Math.sin(pa + Math.PI) * p2); g.stroke();
   }
   g.restore();
   // горячий источник
@@ -1506,8 +1669,27 @@ function buildWorld(themeId, L) {
   sg.addColorStop(0, "#a8f0f2"); sg.addColorStop(1, "#4cc6d6");
   g.fillStyle = sg; g.beginPath(); g.ellipse(SPRING.x, SPRING.y, SPRING.r, SPRING.r * 0.82, 0, 0, TAU); g.fill();
   for (let i = 0; i < 14; i++) { const a = i / 14 * TAU; g.fillStyle = i % 2 ? "#b8a17c" : "#d8c6a4"; g.beginPath(); g.arc(SPRING.x + Math.cos(a) * (SPRING.r + 10), SPRING.y + Math.sin(a) * (SPRING.r * 0.82 + 9), 10, 0, TAU); g.fill(); }
-  // лужи грязи
   drawMountainGround(g, themeId);
+  // озера: вода, в которую Капа не заходит (а крокодилы плавают)
+  const nP = Math.floor(rand(0, 3.2));
+  for (let i = 0; i < nP; i++) {
+    const p = freeSpot(140, 520); if (!p) continue;
+    const r = rand(60, 95); ponds.push({ x: p.x, y: p.y, r });
+    g.fillStyle = TH.sand[1]; g.beginPath(); g.ellipse(p.x, p.y, r + 16, r * 0.75 + 14, 0, 0, TAU); g.fill();
+    const pg = g.createRadialGradient(p.x, p.y, 8, p.x, p.y, r); pg.addColorStop(0, TH.water[0]); pg.addColorStop(1, TH.water[1]);
+    g.fillStyle = pg; g.beginPath(); g.ellipse(p.x, p.y, r, r * 0.75, 0, 0, TAU); g.fill();
+    g.strokeStyle = "rgba(255,255,255,0.35)"; g.lineWidth = 3; g.beginPath(); g.ellipse(p.x - r * 0.2, p.y - r * 0.15, r * 0.4, r * 0.18, 0, 0, TAU); g.stroke();
+    if (!TH.snowy && !TH.embers) for (let k = 0; k < 3; k++) { const a = rand(0, TAU); g.fillStyle = "#4cb85a"; g.beginPath(); g.ellipse(p.x + Math.cos(a) * r * 0.5, p.y + Math.sin(a) * r * 0.35, 9, 6, a, 0, TAU); g.fill(); }
+  }
+  // лед: на нем лапы скользят
+  for (let i = 0; i < Math.round((TH.ice || 0) * 1.6); i++) {
+    const p = freeSpot(70, 520); if (!p) continue;
+    const r = rand(70, 120); ices.push({ x: p.x, y: p.y, r });
+    const ig = g.createLinearGradient(p.x - r, p.y - r, p.x + r, p.y + r); ig.addColorStop(0, "#d6f1ff"); ig.addColorStop(1, "#8fd0f2");
+    g.fillStyle = ig; g.beginPath(); g.ellipse(p.x, p.y, r, r * 0.62, 0, 0, TAU); g.fill();
+    g.strokeStyle = "rgba(255,255,255,0.8)"; g.lineWidth = 3; for (let k = 0; k < 3; k++) { g.beginPath(); g.moveTo(p.x - r * 0.5 + k * 20, p.y - r * 0.2); g.lineTo(p.x - r * 0.2 + k * 20, p.y - r * 0.4); g.stroke(); }
+  }
+  // лужи грязи
   for (let i = 0; i < Math.round(TH.puddles * 1.6); i++) {
     const p = freeSpot(70, 480); if (!p) continue;
     const r = rand(42, 62); puddles.push({ x: p.x, y: p.y, r });
@@ -1529,7 +1711,10 @@ function buildWorld(themeId, L) {
   // замок на северном берегу
   if (TH.castle) drawCastle(g, CX, CASTLE_Y);
   obstacles.push({ x: MOUNT.x, y: MOUNT.y + 10, r: 34, kind: "bigtree", h: 150, ph: 0 });
-  for (let i = 0; i < Math.round(TH.trees * 1.8); i++) { const p = freeSpot(80, 520); if (p) obstacles.push({ x: p.x, y: p.y, r: TH.tree === "pillar" ? 18 : 22, kind: TH.tree, h: TH.tree === "pillar" ? rand(60, 76) : rand(70, 100), ph: rand(0, 6) }); }
+  // деревья растут рощами в случайных местах
+  const groves = []; for (let i = 0; i < 4; i++) { const p = freeSpot(60, 520); if (p) groves.push(p); }
+  const treeN = Math.round(TH.trees * 1.8 * rand(0.75, 1.25));
+  for (let i = 0; i < treeN; i++) { let p = null; if (groves.length && Math.random() < 0.6) { const gc = groves[i % groves.length]; for (let k = 0; k < 12 && !p; k++) { const a = rand(0, TAU), d = rand(30, 190), x = gc.x + Math.cos(a) * d, y = gc.y + Math.sin(a) * d; if (spotOk(x, y, 70)) p = { x, y }; } } if (!p) p = freeSpot(80, 520); if (p) obstacles.push({ x: p.x, y: p.y, r: TH.tree === "pillar" ? 18 : 22, kind: TH.tree, h: TH.tree === "pillar" ? rand(60, 76) : rand(70, 100), ph: rand(0, 6) }); }
   for (let i = 0; i < Math.round(TH.rocks * 1.8); i++) { const p = freeSpot(60, 560); if (p) obstacles.push({ x: p.x, y: p.y, r: 20, kind: "rock", s: rand(0.8, 1.3) }); }
   for (let i = 0; i < Math.round(TH.bushes * 1.8); i++) { const p = freeSpot(30, 590); if (p) decor.push({ x: p.x, y: p.y, kind: "bush", s: rand(0.8, 1.3) }); }
 }
@@ -1559,7 +1744,9 @@ function drawMountainGround(g, themeId) {
   for (let a = 0; a < TAU; a += 0.3) {
     if (angDiff(a, M.gate) < M.gw + 0.12) continue;
     const d = (M.rIn + M.rOut) / 2 + rand(-10, 10);
-    peaks.push({ x: M.x + Math.cos(a) * d, y: M.y + Math.sin(a) * d * 0.98, w: rand(70, 96), h: rand(70, 120) * (Math.sin(a) < 0 ? 1.2 : 0.8), c: rc, d2: rd, snow: themeId !== "volcano" && themeId !== "beach", lava: themeId === "volcano" });
+    const pk = { x: M.x + Math.cos(a) * d, y: M.y + Math.sin(a) * d * 0.98, w: rand(70, 96), h: rand(70, 120) * (Math.sin(a) < 0 ? 1.2 : 0.8), c: rc, d2: rd, snow: themeId !== "volcano" && themeId !== "beach", lava: themeId === "volcano" };
+    pk.spr = sprite("pk" + themeId + Math.round(pk.w / 8) + "_" + Math.round(pk.h / 8), pk.w + 24, pk.h + 30, pk.w / 2 + 12, pk.h + 12, (gg) => drawPeak(gg, Object.assign({}, pk, { x: 0, y: 0, lava: false }), 0));
+    peaks.push(pk);
   }
   const ga = M.gate, ar = M.rOut + 4;
   peaks.push({ arch: true, x: M.x + Math.cos(ga) * ar, y: M.y + Math.sin(ga + M.gw) * ar + 26, x1: M.x + Math.cos(ga - M.gw) * ar, y1: M.y + Math.sin(ga - M.gw) * ar, x2: M.x + Math.cos(ga + M.gw) * ar, y2: M.y + Math.sin(ga + M.gw) * ar, h: 70, w: 0 });
@@ -1575,7 +1762,7 @@ function drawArch(c, pk, t) {
     c.fillStyle = "rgba(255,210,90," + (0.35 + Math.sin(t * 4 + x) * 0.15) + ")"; c.beginPath(); c.arc(x, y - 52, 14, 0, TAU); c.fill();
     c.fillStyle = "#ffcf3a"; rr(c, x - 6, y - 60, 12, 14, 4); c.fill();
   }
-  const sx = pk.x2 + 34, sy = pk.y2 + 26;
+  const ga = MOUNT.gate, sx = pk.x2 + Math.cos(ga) * 40 + 20, sy = pk.y2 + Math.sin(ga) * 40 + 26;
   c.fillStyle = "#6b4423"; c.fillRect(sx - 3, sy - 44, 6, 48);
   c.fillStyle = "#8d5a30"; c.beginPath(); c.moveTo(sx - 58, sy - 48); c.lineTo(sx + 40, sy - 48); c.lineTo(sx + 40, sy - 22); c.lineTo(sx - 58, sy - 22); c.lineTo(sx - 70, sy - 35); c.closePath(); c.fill();
   c.fillStyle = "#fff3d6"; c.font = "900 13px Rubik, sans-serif"; c.textAlign = "center"; c.fillText("ДЕРЕВО", sx - 4, sy - 30);
@@ -1599,6 +1786,15 @@ function drawCastle(g, x, by) {
   g.strokeStyle = "#2a201a"; g.lineWidth = 4; for (let i = -36; i <= 36; i += 14) { g.beginPath(); g.moveTo(x + i, by); g.lineTo(x + i, by - 90 + Math.abs(i) * 0.5); g.stroke(); }
   g.save(); g.translate(x, by - 128); drawHat(g, "crown", 2.4); g.restore();
 }
+function spotOk(x, y, clear) {
+  if (!onIsland(x, y, 60) || inMountBand(x, y, clear + 20)) return false;
+  if (TH.castle && y < CASTLE_LIM + 80) return false;
+  if (Math.hypot(x - SPRING.x, y - SPRING.y) < SPRING.r + clear + 20 || Math.hypot(x - START.x, y - START.y) < 160) return false;
+  for (const o of obstacles) if (Math.hypot(x - o.x, y - o.y) < o.r + clear) return false;
+  for (const p of ponds) if (Math.hypot(x - p.x, y - p.y) < p.r + clear) return false;
+  for (const p of lavas) if (Math.hypot(x - p.x, y - p.y) < p.r + clear + 10) return false;
+  return true;
+}
 function onIsland(x, y, margin) { const dx = x - CX, dy = y - CY; return Math.hypot(dx, dy) < islandR(Math.atan2(dy, dx)) - (margin || 0); }
 function freeSpot(clear, maxR) {
   for (let k = 0; k < 60; k++) {
@@ -1613,6 +1809,7 @@ function freeSpot(clear, maxR) {
     for (const o of obstacles) if (Math.hypot(x - o.x, y - o.y) < o.r + clear) { ok = false; break; }
     if (ok) for (const p of puddles) if (Math.hypot(x - p.x, y - p.y) < p.r + clear) { ok = false; break; }
     if (ok) for (const p of lavas) if (Math.hypot(x - p.x, y - p.y) < p.r + clear + 10) { ok = false; break; }
+    if (ok) for (const p of ponds) if (Math.hypot(x - p.x, y - p.y) < p.r + clear) { ok = false; break; }
     if (ok) return { x, y };
   }
   return null;
@@ -1654,14 +1851,17 @@ const VALUE = { orange: 1, melon: 5, gold: 10 };
 const AMMO = { orange: 1, melon: 2, gold: 3 };
 
 function startRound(id) {
-  LV = LEVELS.find((l) => l.id === id) || LEVELS[0];
+  LV = typeof id === "object" ? id : (LEVELS.find((l) => l.id === id) || LEVELS[0]);
   buildWorld(LV.theme, LV);
+  snowFlakes = [];
   G = {
     t: LV.time, score: 0, running: true, paused: false, ending: 0, won: false,
     p: { x: START.x, y: START.y, vx: 0, vy: 0, dir: 1, dash: 0, dashCd: 0, inv: 3, sitT: 0, sitting: false, anim: 0 },
     fruits: [], crocs: [], fx: [], relax: 0, springCd: 0, cam: { x: START.x, y: START.y },
     cages: [], babies: [], freed: 0, golds: 0, shake: 0, fly: [], rainT: 2, mel: 0, treeT: 1.5, trail: [], trailT: 0, dustT: 0, zoom: 1, boss: null, shots: [], ammo: 0, throwCd: 0, goalDone: false,
+    melCount: 0, goldCount: 0, dashes: 0, treeCount: 0, relaxed: 0, noBiteT: 0, bestNoBite: 0, bites: 0, quests: null,
   };
+  if (LV.quest) G.quests = LV.quests.map((q) => Object.assign({}, q, { prog: 0, done: false }));
   for (let i = 0; i < 85; i++) spawnFruit();
   for (let i = 0; i < LV.melons; i++) spawnFruit(undefined, undefined, "melon");
   const crocN = LV.crocs;
@@ -1669,20 +1869,24 @@ function startRound(id) {
     const p = freeSpot(40, 560); if (!p || Math.hypot(p.x - START.x, p.y - START.y) < 340) continue;
     i++; G.crocs.push({ x: p.x, y: p.y, vx: 0, vy: 0, dir: 1, tx: p.x, ty: p.y, think: 0, open: 0 });
   }
-  if (LV.type === "rescue") {
-    for (let i = 0, k = 0; i < LV.goal && k < 240; k++) {
+  const cageN = LV.type === "rescue" ? LV.goal : (G.quests && G.quests.find((q) => q.type === "rescue") || { n: 0 }).n;
+  if (cageN) {
+    for (let i = 0, k = 0; i < cageN && k < 240; k++) {
       const p = freeSpot(60, 540); if (!p || Math.hypot(p.x - START.x, p.y - START.y) < 330) continue;
       if (G.cages.some((cg) => Math.hypot(cg.x - p.x, cg.y - p.y) < (k < 120 ? 260 : 160))) continue;
       i++; G.cages.push({ x: p.x, y: p.y, freed: false });
     }
   }
-  if (LV.type === "boss") G.boss = { cfg: LV.boss, x: CX, y: CY - 260, hp: LV.goal, max: LV.goal, state: "walk", st: 3, vx: 0, vy: 0, dir: -1, flash: 0, cdx: 0, cdy: 0, open: 0 };
+  const bs = LV.type === "boss" ? (function () { for (let k = 0; k < 60; k++) { const p = freeSpot(60, 520); if (p && Math.hypot(p.x - START.x, p.y - START.y) > 420) return p; } return { x: CX, y: CY - 260 }; })() : null;
+  if (LV.type === "boss") G.boss = { cfg: LV.boss, x: bs.x, y: bs.y, hp: LV.goal, max: LV.goal, state: "walk", st: 3, vx: 0, vy: 0, dir: -1, flash: 0, cdx: 0, cdy: 0, open: 0 };
   showScreen(null);
   $("hud").hidden = false;
   $("dash").hidden = !isTouch;
   $("joy-hint").hidden = !isTouch;
   $("relax").hidden = true;
   $("bossbar").hidden = LV.type !== "boss";
+  $("goal").hidden = !!LV.quest; $("quests").hidden = !LV.quest;
+  if (LV.quest) renderQuestPanel(true);
   if (LV.boss) $("boss-name").textContent = LV.boss.name;
   playMusic(LV.type === "boss" ? "boss" : "game");
   paintGoalIcon();
@@ -1693,7 +1897,7 @@ function spawnFruit(x, y, kind) {
   const p = (x !== undefined) ? { x, y } : freeSpot(26, 600);
   if (!p) return;
   const roll = Math.random();
-  const gp = LV.type === "gold" ? 0.15 : 0.05;
+  const gp = LV.type === "gold" ? 0.15 : (G.quests && G.quests.some((q) => q.type === "gold")) ? 0.09 : 0.05;
   kind = kind || (roll < gp ? "gold" : "orange");
   G.fruits.push({ x: p.x, y: p.y, kind, ph: rand(0, TAU), vx: 0, vy: 0, life: x !== undefined ? 12 : 0 });
 }
@@ -1733,7 +1937,7 @@ $("dash").addEventListener("pointerdown", (e) => { e.preventDefault(); tryDash()
 function tryDash() {
   if (!G || !G.running || G.paused || G.p.sitting) return;
   if (G.p.dashCd > 0) return;
-  G.p.dash = 0.32; G.p.dashCd = upgDashCd(); sfx.dash();
+  G.p.dash = 0.32; G.p.dashCd = upgDashCd(); sfx.dash(); G.dashes++;
   for (let i = 0; i < 8; i++) G.fx.push({ type: "dust", x: G.p.x, y: G.p.y + 16, vx: rand(-60, 60), vy: rand(-40, 0), life: 0.5 });
 }
 
@@ -1751,10 +1955,11 @@ function hurt(fx, fy, label) {
   for (let j = 0; j < n; j++) { const aa = rand(0, TAU); G.fruits.push({ x: p.x, y: p.y, kind: "orange", ph: 0, vx: Math.cos(aa) * rand(160, 300), vy: Math.sin(aa) * rand(160, 300), life: 8 }); }
   const kx = p.x - fx, ky = p.y - fy, kd = Math.hypot(kx, ky) || 1;
   p.vx = kx / kd * 520; p.vy = ky / kd * 520;
-  G.shake = 0.35;
+  G.shake = 0.35; G.noBiteT = 0; G.bites++;
   if (lose > 0) toast((label || "Ай!") + " -" + lose);
 }
 function calcStars() {
+  if (LV.quest) return G.quests.filter((q) => q.done).length;
   if (LV.type === "collect") return G.score >= LV.s3 ? 3 : G.score >= LV.s2 ? 2 : G.score >= LV.goal ? 1 : 0;
   if (LV.type === "rescue") return G.freed < LV.goal ? 0 : G.score >= LV.s3 ? 3 : G.score >= LV.s2 ? 2 : 1;
   if (LV.type === "gold") return G.golds < LV.goal ? 0 : G.score >= LV.s3 ? 3 : G.score >= LV.s2 ? 2 : 1;
@@ -1767,6 +1972,8 @@ function update(dt) {
   if (G.ending > 0) { G.ending -= dt; if (G.ending <= 0) { endRound(); return; } }
   else { G.t -= dt; if (G.t <= 0) { G.t = 0; endRound(); return; } }
   if (G.relax > 0) G.relax = Math.max(0, G.relax - dt);
+  G.noBiteT += dt; if (G.noBiteT > G.bestNoBite) G.bestNoBite = G.noBiteT;
+  if (G.quests) questTick();
   if (G.springCd > 0) G.springCd -= dt;
   p.anim += dt; p.inv = Math.max(0, p.inv - dt); p.dashCd = Math.max(0, p.dashCd - dt); p.dash = Math.max(0, p.dash - dt);
 
@@ -1783,7 +1990,7 @@ function update(dt) {
   if (inSpring && il < 0.15 && G.springCd <= 0) {
     p.sitT += dt;
     if (p.sitT > 0.6 && !p.sitting) p.sitting = true;
-    if (p.sitT > 1.6 && G.relax <= 0) { G.relax = 30; G.springCd = 45; sfx.relax(); toast("Релакс! Апельсины x2"); }
+    if (p.sitT > 1.6 && G.relax <= 0) { G.relax = 30; G.springCd = 45; G.relaxed = 1; sfx.relax(); toast("Релакс! Апельсины x2"); }
   } else { p.sitT = 0; if (il > 0.15) p.sitting = false; }
   if (!inSpring) p.sitting = false;
 
@@ -1791,8 +1998,10 @@ function update(dt) {
   for (const pd of puddles) if (Math.hypot((p.x - pd.x) / pd.r, (p.y - pd.y) / (pd.r * 0.62)) < 1) speed *= 0.5;
   if (inSpring) speed *= 0.6;
   if (p.dash > 0) speed *= 2.3;
-  const k = 1 - Math.exp(-dt * 12);
-  p.vx += (ix * speed - p.vx) * k; p.vy += (iy * speed - p.vy) * k;
+  const onIce = ices.some((ic) => Math.hypot((p.x - ic.x) / ic.r, (p.y - ic.y) / (ic.r * 0.62)) < 1);
+  if (onIce) speed *= 1.15;
+  const k = 1 - Math.exp(-dt * 12), kp = onIce ? 1 - Math.exp(-dt * 1.4) : k;
+  p.vx += (ix * speed - p.vx) * kp; p.vy += (iy * speed - p.vy) * kp;
   if (p.dash > 0 && il < 0.1) p.vx += p.dir * 400 * dt;
   p.x += p.vx * dt; p.y += p.vy * dt;
   G.dustT -= dt;
@@ -1809,6 +2018,10 @@ function update(dt) {
     if (od < min && od > 0.01) { p.x = o.x + ox / od * min; p.y = o.y + oy / od * min; }
   }
   mountainCollide(p, 20);
+  for (const pd of ponds) {
+    const ex = (p.x - pd.x) / (pd.r + 16), ey = (p.y - pd.y) / ((pd.r + 16) * 0.75), ed = Math.hypot(ex, ey);
+    if (ed < 1 && ed > 0.001) { p.x = pd.x + ex / ed * (pd.r + 16); p.y = pd.y + ey / ed * (pd.r + 16) * 0.75; }
+  }
   // лава
   for (const l of lavas) if (p.inv <= 0 && Math.hypot((p.x - l.x) / l.r, (p.y - l.y) / (l.r * 0.62)) < 0.85) hurt(l.x, l.y, "Горячо!");
 
@@ -1830,7 +2043,9 @@ function update(dt) {
     if (fd < mag) {
       const isMel = f.kind === "melon";
       const v = isMel ? 5 : VALUE[f.kind] * (G.relax > 0 ? 2 : 1);
-      if (isMel) G.mel += 5; else G.score += v;
+      if (isMel) { G.mel += 5; G.melCount++; } else G.score += v;
+      if (f.kind === "gold") G.goldCount++;
+      if (f.tree) G.treeCount++;
       if (G.boss) G.ammo += AMMO[f.kind];
       if (f.kind === "gold" && LV.type === "gold") { G.golds++; if (G.golds <= LV.goal) toast("Золотой! " + Math.min(G.golds, LV.goal) + "/" + LV.goal); setTimeout(() => { if (G && G.running) spawnFruit(undefined, undefined, "gold"); }, 1500); }
       G.fx.push({ type: "pop", x: f.x, y: f.y - 10, text: "+" + v, life: 0.8, color: f.kind === "gold" ? "#ffe066" : isMel ? "#ff8a98" : "#fff" });
@@ -1932,8 +2147,8 @@ function update(dt) {
     }
   }
   // цель
-  if (!G.goalDone && calcStars() >= 1) { G.goalDone = true; if (LV.type !== "boss") { sfx.star(0); toast("Цель выполнена! Собирай еще ради звезд"); } }
-  if (LV.type !== "boss" && calcStars() >= 3) finish("Три звезды!");
+  if (!LV.quest && !G.goalDone && calcStars() >= 1) { G.goalDone = true; if (LV.type !== "boss") { sfx.star(0); toast("Цель выполнена! Собирай еще ради звезд"); } }
+  if (!LV.quest && LV.type !== "boss" && calcStars() >= 3) finish("Три звезды!");
   // апельсиновое дерево в горе: новый апельсин раз в 3 секунды
   G.treeT -= dt;
   if (G.treeT <= 0) {
@@ -1966,83 +2181,104 @@ function update(dt) {
 }
 
 /* ---------- Отрисовка ---------- */
+// рисуем только то, что попадает в экран, а сложные картинки берем из готовых спрайтов
 function render(t) {
   const c = ctx;
   c.setTransform(DPR, 0, 0, DPR, 0, 0);
-  c.fillStyle = TH.sea; c.fillRect(0, 0, VW, VH);
+  c.fillStyle = TH.water[1]; c.fillRect(0, 0, VW, VH);
   const zoom = clamp(Math.min(VW, VH) / 620, 0.75, 1.4);
-  c.save();
   G.zoom = zoom;
+  const hw = VW / 2 / zoom, hh = VH / 2 / zoom;
+  const x0 = G.cam.x - hw, x1 = G.cam.x + hw, y0 = G.cam.y - hh, y1 = G.cam.y + hh;
+  const vis = (x, y, padX, padTop, padBot) => x > x0 - padX && x < x1 + padX && y > y0 - padBot && y < y1 + padTop;
+  c.save();
   const sh = G.shake > 0 ? G.shake * 22 : 0;
-  c.translate(VW / 2 + rand(-sh, sh), VH / 2 + rand(-sh, sh)); c.scale(zoom, zoom);
+  c.translate(VW / 2 + (sh ? rand(-sh, sh) : 0), VH / 2 + (sh ? rand(-sh, sh) : 0)); c.scale(zoom, zoom);
   c.translate(-G.cam.x, -G.cam.y);
-  const sg2 = c.createRadialGradient(CX, CY, 500, CX, CY, 1100); sg2.addColorStop(0, TH.water[0]); sg2.addColorStop(1, TH.water[1]);
-  c.fillStyle = sg2; c.fillRect(-1200, -1200, WORLD + 2400, WORLD + 2400);
-  c.drawImage(ground, 0, 0);
+  // земля: копируем только видимый кусок большой картинки
+  const gx0 = Math.max(0, Math.floor(x0) - 2), gy0 = Math.max(0, Math.floor(y0) - 2), gx1 = Math.min(WORLD, Math.ceil(x1) + 2), gy1 = Math.min(WORLD, Math.ceil(y1) + 2);
+  if (gx1 > gx0 && gy1 > gy0) c.drawImage(ground, gx0, gy0, gx1 - gx0, gy1 - gy0, gx0, gy0, gx1 - gx0, gy1 - gy0);
+  // волны у берега (только видимые участки)
   c.strokeStyle = "rgba(255,255,255,0.22)"; c.lineWidth = 3;
-  for (let i = 0; i < 3; i++) {
-    c.beginPath();
-    for (let j = 0; j <= 120; j++) { const a = j / 120 * TAU; const r = islandR(a) + 40 + i * 30 + Math.sin(t * 1.5 + a * 6 + i) * 6; c.lineTo(CX + Math.cos(a) * r, CY + Math.sin(a) * r); }
-    c.closePath(); c.stroke();
+  for (let i = 0; i < 2; i++) {
+    c.beginPath(); let pen = false;
+    for (let j = 0; j <= 96; j++) {
+      const a = j / 96 * TAU, r = islandR(a) + 40 + i * 34 + Math.sin(t * 1.5 + a * 6 + i) * 6, px = CX + Math.cos(a) * r, py = CY + Math.sin(a) * r;
+      if (vis(px, py, 80, 80, 80)) { pen ? c.lineTo(px, py) : c.moveTo(px, py); pen = true; } else pen = false;
+    }
+    c.stroke();
   }
   for (const l of lavas) {
+    if (!vis(l.x, l.y, 80, 60, 60)) continue;
     c.fillStyle = `rgba(255,200,80,${0.18 + Math.sin(t * 3 + l.ph) * 0.12})`;
     c.beginPath(); c.ellipse(l.x, l.y, l.r * 0.8, l.r * 0.48, 0, 0, TAU); c.fill();
-    if (Math.sin(t * 2 + l.ph * 3) > 0.92) { c.fillStyle = "#ffe066"; c.beginPath(); c.arc(l.x + Math.sin(l.ph * 7) * l.r * 0.4, l.y - 6, 4, 0, TAU); c.fill(); }
   }
-  c.strokeStyle = "rgba(255,255,255,0.45)"; c.lineWidth = 5; c.lineCap = "round";
-  for (let i = 0; i < 3; i++) {
-    const sx = SPRING.x - 30 + i * 30, ph = t * 1.3 + i * 1.7;
-    c.beginPath(); c.moveTo(sx, SPRING.y); c.bezierCurveTo(sx + Math.sin(ph) * 10, SPRING.y - 30, sx - Math.sin(ph) * 10, SPRING.y - 50, sx + Math.sin(ph) * 6, SPRING.y - 80); c.stroke();
+  if (vis(SPRING.x, SPRING.y, 120, 140, 120)) {
+    c.strokeStyle = "rgba(255,255,255,0.45)"; c.lineWidth = 5; c.lineCap = "round";
+    for (let i = 0; i < 3; i++) {
+      const sx = SPRING.x - 30 + i * 30, ph = t * 1.3 + i * 1.7;
+      c.beginPath(); c.moveTo(sx, SPRING.y); c.bezierCurveTo(sx + Math.sin(ph) * 10, SPRING.y - 30, sx - Math.sin(ph) * 10, SPRING.y - 50, sx + Math.sin(ph) * 6, SPRING.y - 80); c.stroke();
+    }
+    c.font = "800 16px Rubik, sans-serif"; c.textAlign = "center";
+    if (G.springCd > 0 && G.relax <= 0) { c.fillStyle = "rgba(0,0,0,0.35)"; c.fillText("остывает " + Math.ceil(G.springCd) + "с", SPRING.x, SPRING.y - SPRING.r - 22); }
+    else if (G.relax <= 0) { c.fillStyle = "rgba(255,255,255,0.9)"; c.fillText("♨ Постой здесь", SPRING.x, SPRING.y - SPRING.r - 22); }
   }
-  c.font = "800 16px Rubik, sans-serif"; c.textAlign = "center";
-  if (G.springCd > 0 && G.relax <= 0) { c.fillStyle = "rgba(0,0,0,0.35)"; c.fillText("остывает " + Math.ceil(G.springCd) + "с", SPRING.x, SPRING.y - SPRING.r - 22); }
-  else if (G.relax <= 0) { c.fillStyle = "rgba(255,255,255,0.9)"; c.fillText("♨ Постой здесь", SPRING.x, SPRING.y - SPRING.r - 22); }
 
-  const list = [];
-  for (const f of G.fruits) list.push({ y: f.y, f });
-  for (const o of obstacles) list.push({ y: o.y, o });
-  for (const pk of peaks) list.push({ y: pk.y, pk });
-  for (const d of decor) list.push({ y: d.y, d });
-  for (const cr of G.crocs) list.push({ y: cr.y, cr });
-  for (const cg of G.cages) if (!cg.freed) list.push({ y: cg.y, cg });
+  const list = G.drawList || (G.drawList = []); list.length = 0;
+  for (const f of G.fruits) if (vis(f.x, f.y, 40, 40, 500)) list.push({ y: f.y, f });
+  for (const o of obstacles) if (vis(o.x, o.y, o.kind === "bigtree" ? 170 : 110, 40, treeTop(o) + 20)) list.push({ y: o.y, o });
+  for (const pk of peaks) if (vis(pk.x, pk.y, 110, 40, (pk.h || 80) + 40)) list.push({ y: pk.y, pk });
+  for (const d of decor) if (vis(d.x, d.y, 40, 30, 40)) list.push({ y: d.y, d });
+  for (const cr of G.crocs) if (vis(cr.x, cr.y, 70, 30, 40)) list.push({ y: cr.y, cr });
+  for (const cg of G.cages) if (!cg.freed && vis(cg.x, cg.y, 50, 30, 70)) list.push({ y: cg.y, cg });
   for (const b of G.babies) list.push({ y: b.y, b });
   if (G.boss && G.boss.hp > 0) list.push({ y: G.boss.y, boss: true });
   list.push({ y: G.p.y, p: true });
   list.sort((a, b) => a.y - b.y);
+  const blink = Math.floor(t * 8) % 2;
   for (const it of list) {
     if (it.f) {
-      const f = it.f, z = f.z || 0, bob = z > 0 ? -z : Math.sin(f.ph * 3) * 3;
+      const f = it.f, z = f.z || 0, bob = z > 0 ? -z : Math.sin(f.ph * 3) * 3, mel = f.kind === "melon";
       const ss = z > 0 ? 0.4 + 0.6 * (1 - z / 460) : 1;
-      c.fillStyle = "rgba(0,0,0," + (0.15 + (z > 0 ? 0.1 : 0)) + ")"; c.beginPath(); c.ellipse(f.x, f.y + 8, 10 * ss + (f.kind === "melon" ? 4 : 0), 4 * ss, 0, 0, TAU); c.fill();
-      if (f.life && f.life < 2 && Math.floor(t * 8) % 2) continue;
-      if (f.kind === "melon") {
-        const sq = f.land > 0 ? Math.sin(f.land / 0.35 * Math.PI) * 0.3 : 0;
-        c.save(); c.translate(f.x, f.y - 4 + bob); c.scale(1 + sq, 1 - sq); drawMelon(c, 0, 0, 15, z > 0 ? f.ph * 3 : Math.sin(f.ph) * 0.2); c.restore();
+      c.fillStyle = z > 0 ? "rgba(0,0,0,0.25)" : "rgba(0,0,0,0.15)"; c.beginPath(); c.ellipse(f.x, f.y + 8, 10 * ss + (mel ? 4 : 0), 4 * ss, 0, 0, TAU); c.fill();
+      if (f.life && f.life < 2 && blink) continue;
+      if (mel) {
+        const sq = f.land > 0 ? Math.sin(f.land / 0.35 * Math.PI) * 0.3 : 0, sp = melonSpr(15);
+        if (sq || z > 0) { c.save(); c.translate(f.x, f.y - 4 + bob); if (z > 0) c.rotate(f.ph * 3); c.scale(1 + sq, 1 - sq); c.drawImage(sp.cv, -sp.ax, -sp.ay, sp.w, sp.h); c.restore(); }
+        else blit(c, sp, f.x, f.y - 4 + bob);
+      } else {
+        blit(c, orangeSpr(f.kind === "gold" ? 12 : 10, f.kind === "gold" ? "gold" : ""), f.x, f.y - 4 + bob);
+        if (f.kind === "gold") { c.fillStyle = "rgba(255,240,150," + (0.4 + Math.sin(t * 6) * 0.3) + ")"; star(c, f.x + 12, f.y - 18, 4); }
       }
-      else drawOrange(c, f.x, f.y - 4 + bob, f.kind === "gold" ? 12 : 10, Math.sin(f.ph * 1.3) * 0.3, f.kind);
-      if (f.kind === "gold") { c.fillStyle = "rgba(255,240,150," + (0.4 + Math.sin(t * 6) * 0.3) + ")"; star(c, f.x + 12, f.y - 18, 4); }
     } else if (it.pk) {
-      const pk = it.pk, behind = G.p.y < pk.y + 4 && G.p.y > pk.y - pk.h - 30 && Math.abs(G.p.x - pk.x) < pk.w * 0.55;
+      const pk = it.pk;
+      if (pk.arch) { drawArch(c, pk, t); continue; }
+      const behind = G.p.y < pk.y + 4 && G.p.y > pk.y - pk.h - 30 && Math.abs(G.p.x - pk.x) < pk.w * 0.55;
       if (behind) c.globalAlpha = 0.45;
-      drawPeak(c, pk, t); c.globalAlpha = 1;
+      blit(c, pk.spr, pk.x, pk.y);
+      if (pk.lava) { c.fillStyle = "rgba(255,140,40," + (0.5 + Math.sin(t * 3 + pk.x) * 0.3) + ")"; c.beginPath(); c.moveTo(pk.x - 3, pk.y - pk.h + 2); c.lineTo(pk.x - 8, pk.y - pk.h * 0.75); c.lineTo(pk.x + 2, pk.y - pk.h * 0.8); c.closePath(); c.fill(); }
+      c.globalAlpha = 1;
     } else if (it.o) {
       const o = it.o;
       if (o.kind === "rock") {
-        const s = o.s;
-        c.fillStyle = "rgba(0,0,0,0.16)"; c.beginPath(); c.ellipse(o.x, o.y + 8, 26 * s, 8 * s, 0, 0, TAU); c.fill();
-        c.fillStyle = TH.embers ? "#5a5050" : "#9aa3ad"; c.beginPath(); c.ellipse(o.x, o.y - 6 * s, 24 * s, 18 * s, 0, 0, TAU); c.fill();
-        c.fillStyle = TH.embers ? "#776a68" : "#b7c0c9"; c.beginPath(); c.ellipse(o.x - 6 * s, o.y - 12 * s, 14 * s, 9 * s, -0.3, 0, TAU); c.fill();
+        const s = Math.round(o.s * 10) / 10;
+        blit(c, sprite("r" + TH.id + s, 60 * s, 46 * s, 30 * s, 32 * s, (g) => {
+          g.fillStyle = "rgba(0,0,0,0.16)"; g.beginPath(); g.ellipse(0, 8, 26 * s, 8 * s, 0, 0, TAU); g.fill();
+          g.fillStyle = TH.embers ? "#5a5050" : TH.snowy ? "#a9b6c4" : "#9aa3ad"; g.beginPath(); g.ellipse(0, -6 * s, 24 * s, 18 * s, 0, 0, TAU); g.fill();
+          g.fillStyle = TH.embers ? "#776a68" : TH.snowy ? "#ffffff" : "#b7c0c9"; g.beginPath(); g.ellipse(-6 * s, -12 * s, 14 * s, 9 * s, -0.3, 0, TAU); g.fill();
+        }), o.x, o.y);
       } else {
         const behind = G.p.y < o.y + 4 && G.p.y > o.y - treeTop(o) && Math.abs(G.p.x - o.x) < (o.kind === "bigtree" ? 120 : 60);
         if (behind) c.globalAlpha = 0.4;
-        drawTree(c, o, t);
+        blit(c, treeSpr(o, TH.id), o.x, o.y);
         c.globalAlpha = 1;
       }
     } else if (it.d) {
-      const d = it.d, s = d.s;
-      c.fillStyle = TH.bush; c.beginPath(); c.arc(d.x - 10 * s, d.y, 12 * s, 0, TAU); c.arc(d.x + 10 * s, d.y, 12 * s, 0, TAU); c.arc(d.x, d.y - 8 * s, 14 * s, 0, TAU); c.fill();
-      c.fillStyle = "rgba(255,255,255,0.15)"; c.beginPath(); c.arc(d.x - 4 * s, d.y - 12 * s, 6 * s, 0, TAU); c.fill();
+      const d = it.d, s = Math.round(d.s * 10) / 10;
+      blit(c, sprite("b" + TH.id + s, 60 * s, 44 * s, 30 * s, 28 * s, (g) => {
+        g.fillStyle = TH.bush; g.beginPath(); g.arc(-10 * s, 0, 12 * s, 0, TAU); g.arc(10 * s, 0, 12 * s, 0, TAU); g.arc(0, -8 * s, 14 * s, 0, TAU); g.fill();
+        g.fillStyle = "rgba(255,255,255,0.18)"; g.beginPath(); g.arc(-4 * s, -12 * s, 6 * s, 0, TAU); g.fill();
+      }), d.x, d.y);
     } else if (it.cr) {
       const cr = it.cr; drawCroc(c, cr.x, cr.y, 1.1, t + cr.x, cr.dir, cr.open > 0 || Math.sin(t * 3 + cr.y) > 0.85);
     } else if (it.cg) {
@@ -2070,17 +2306,19 @@ function render(t) {
       drawCapy(c, p.x, p.y, 1, { t: p.anim, moving, dir: p.dir, hat: save.hat, sit: p.sitting, skin: save.skin });
     }
   }
-  for (const s of G.shots) drawOrange(c, s.x, s.y, 9, s.rot);
+  const shotSpr = orangeSpr(9, "");
+  for (const s of G.shots) blitRot(c, shotSpr, s.x, s.y, s.rot);
   for (const e of G.fx) {
+    if (!vis(e.x, e.y, 30, 30, 30)) continue;
     c.globalAlpha = clamp(e.life * 2, 0, 1);
     if (e.type === "pop") { c.font = "900 22px Rubik, sans-serif"; c.textAlign = "center"; c.lineWidth = 4; c.strokeStyle = "rgba(60,30,0,0.55)"; c.strokeText(e.text, e.x, e.y); c.fillStyle = e.color; c.fillText(e.text, e.x, e.y); }
-    else if (e.type === "spark") { c.fillStyle = e.color; c.beginPath(); c.arc(e.x, e.y, 3.5, 0, TAU); c.fill(); }
+    else if (e.type === "spark") { c.fillStyle = e.color; c.fillRect(e.x - 3, e.y - 3, 6, 6); }
     else if (e.type === "dust") { c.fillStyle = "rgba(240,220,180,0.8)"; c.beginPath(); c.arc(e.x, e.y, 6 * e.life + 2, 0, TAU); c.fill(); }
     else if (e.type === "heart") { c.fillStyle = "#ff7aa8"; c.font = "18px sans-serif"; c.textAlign = "center"; c.fillText("♥", e.x, e.y); }
   }
   c.globalAlpha = 1;
   // стрелки к клеткам за краем экрана
-  const halfW = VW / 2 / zoom - 30, halfH = VH / 2 / zoom - 40;
+  const halfW = hw - 30, halfH = hh - 40;
   for (const cg of G.cages) {
     if (cg.freed) continue;
     const ax = cg.x - G.cam.x, ay = cg.y - G.cam.y;
@@ -2093,15 +2331,25 @@ function render(t) {
     c.restore();
   }
   c.restore();
-  if (G.fly.length) {
-    const r = $("hud-count").getBoundingClientRect(), r2 = $("hud-mel").getBoundingClientRect();
-    for (const fl of G.fly) {
-      const mel = fl.kind === "melon", tx = (mel ? r2 : r).left + 22, ty = (mel ? r2 : r).top + (mel ? r2 : r).height / 2;
-      const k = fl.t * fl.t, x = fl.sx + (tx - fl.sx) * k, y = fl.sy + (ty - fl.sy) * k - Math.sin(fl.t * Math.PI) * 60, sc = 1 - fl.t * 0.4;
-      if (fl.kind === "melon") drawMelon(c, x, y, 11 * sc, fl.t * 6); else drawOrange(c, x, y, 10 * sc, fl.t * 6, fl.kind);
+  // снегопад (в экранных координатах)
+  if (TH.snowfall && !save.saver) {
+    if (!snowFlakes.length) for (let i = 0; i < 70; i++) snowFlakes.push({ x: rand(0, 1), y: rand(0, 1), r: rand(1.5, 3.8), v: rand(0.04, 0.12), ph: rand(0, 6) });
+    c.fillStyle = "rgba(255,255,255,0.85)";
+    for (const fl of snowFlakes) {
+      fl.y += fl.v / 60; if (fl.y > 1.02) { fl.y = -0.02; fl.x = rand(0, 1); }
+      const sx = ((fl.x * VW + Math.sin(t + fl.ph) * 20 - (G.cam.x * 0.3) % VW) % VW + VW) % VW;
+      c.beginPath(); c.arc(sx, fl.y * VH, fl.r, 0, TAU); c.fill();
     }
   }
-  drawMinimap(t);
+  if (G.fly.length) {
+    const r = G.hudRects || (G.hudRects = [$("hud-count").getBoundingClientRect(), $("hud-mel").getBoundingClientRect()]);
+    for (const fl of G.fly) {
+      const mel = fl.kind === "melon", rc = mel ? r[1] : r[0], tx = rc.left + 22, ty = rc.top + rc.height / 2;
+      const k = fl.t * fl.t, x = fl.sx + (tx - fl.sx) * k, y = fl.sy + (ty - fl.sy) * k - Math.sin(fl.t * Math.PI) * 60;
+      blitRot(c, mel ? melonSpr(11) : orangeSpr(10, fl.kind === "gold" ? "gold" : ""), x, y, fl.t * 6);
+    }
+  }
+  if ((G.mmT = (G.mmT || 0) + 1) % 6 === 1) drawMinimap(t);
 }
 
 function drawMinimap(t) {
@@ -2116,6 +2364,122 @@ function drawMinimap(t) {
   if (G.boss && G.boss.hp > 0) dot(G.boss.x, G.boss.y, 11, "#e5484d", true);
   dot(G.p.x, G.p.y, 9, "#ffffff"); dot(G.p.x, G.p.y, 6, "#f07500");
 }
+
+/* ---------- Квесты: отдельная полоса уровней, каждый раз новые задания ---------- */
+const Q_THEMES = ["beach", "jungle", "volcano", "swamp", "snow", "castle"];
+const Q_THEME_NAME = { beach: "Пляж", jungle: "Джунгли", volcano: "Вулкан", swamp: "Болото", snow: "Снег", castle: "Замок" };
+const Q_NAMES = {
+  beach: ["Ракушки и крабы", "Прилив", "Старый маяк"],
+  jungle: ["Лиановый лабиринт", "Водопад", "Тайная тропа"],
+  volcano: ["Пепельный склон", "Горячие камни", "Огненное кольцо"],
+  swamp: ["Кувшинки", "Туман над топью", "Старая коряга"],
+  snow: ["Сугробы", "Ледяная горка", "Северное сияние"],
+  castle: ["Стражники", "Высокие башни", "Тронная лестница"],
+};
+const QDEF = {
+  oranges: { icon: "orange", text: (n) => "Собери " + n + " апельсинов", prog: () => G.score },
+  melons: { icon: "melon", text: (n) => "Собери " + n + " арбузов", prog: () => G.melCount },
+  gold: { icon: "gold", text: (n) => "Найди " + n + " золотых апельсинов", prog: () => G.goldCount },
+  dash: { icon: "dash", text: (n) => "Сделай " + n + " рывков", prog: () => G.dashes },
+  tree: { icon: "tree", text: (n) => "Собери " + n + " апельсинов с дерева в горе", prog: () => G.treeCount },
+  relax: { icon: "spring", text: () => "Прими ванну в горячем источнике", prog: () => G.relaxed },
+  nobite: { icon: "shield", text: (n) => "Продержись " + n + " с без укусов", prog: () => Math.floor(G.bestNoBite) },
+  rescue: { icon: "baby", text: (n) => "Спаси " + n + " капибарят", prog: () => G.freed },
+  clean: { icon: "heart", text: () => "Пройди уровень без единого укуса", prog: () => (G.bites ? 0 : 1), atEnd: true },
+};
+const r5 = (v) => Math.round(v / 5) * 5;
+function questTarget(type, n) {
+  switch (type) {
+    case "oranges": return Math.min(140, r5(35 + n * 6));
+    case "melons": return Math.min(14, 4 + Math.floor(n * 0.6));
+    case "gold": return Math.min(8, 3 + Math.floor(n / 3));
+    case "dash": return Math.min(22, 6 + n);
+    case "tree": return Math.min(10, 3 + Math.floor(n / 2));
+    case "nobite": return Math.min(60, 20 + n * 3);
+    case "rescue": return Math.min(4, 2 + Math.floor(n / 4));
+    default: return 1;
+  }
+}
+function genQuests(n) {
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  const first = pick(["oranges", "oranges", "melons", "gold"]);
+  const pool = ["dash", "tree", "relax", "nobite", "rescue", "melons", "gold", "oranges"].filter((x) => x !== first);
+  if (n >= 4) pool.push("clean");
+  const out = [first];
+  while (out.length < 3) { const q = pick(pool); if (!out.includes(q)) out.push(q); }
+  return out.map((type) => { const nn = questTarget(type, n); return { type, n: nn, text: QDEF[type].text(nn), icon: QDEF[type].icon, atEnd: !!QDEF[type].atEnd }; });
+}
+const questCache = {};
+function questLevel(n) {
+  const theme = Q_THEMES[Math.floor(n / 3) % Q_THEMES.length];
+  if (!questCache[n]) questCache[n] = genQuests(n);
+  return {
+    id: "q" + n, n, quest: true, type: "quest", theme, chapter: Math.floor(n / 3) + 1,
+    name: Q_NAMES[theme][n % 3], time: 100 + Math.min(n * 2, 30),
+    crocs: Math.min(10, Math.round((2 + Math.floor(n / 2)) * 1.3)), chase: 90 + Math.min(n * 1.5, 18),
+    melons: clamp(7 + n, 7, 24), quests: questCache[n], reward: Math.min(80, 20 + n * 2), bonus: 0,
+  };
+}
+const questPlayable = (n) => n === 0 || (save.qstars[n - 1] || 0) > 0;
+function questTick() {
+  let changed = false;
+  for (const q of G.quests) {
+    if (q.done) continue;
+    const pr = Math.min(q.n, QDEF[q.type].prog());
+    if (pr !== q.prog) { q.prog = pr; changed = true; }
+    if (!q.atEnd && pr >= q.n) {
+      q.done = true; q.flash = 1; changed = true;
+      sfx.star(G.quests.filter((x) => x.done).length - 1); toast("Квест выполнен!");
+      const row = document.querySelector('#q-list [data-q="' + G.quests.indexOf(q) + '"]');
+      if (row) { const r = row.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, 26, 0.5); }
+    }
+  }
+  const left = G.quests.filter((q) => !q.done);
+  if (!left.length) finish("Все квесты выполнены!");
+  else if (left.every((q) => q.atEnd) && !G.cleanHint && G.bites === 0) { G.cleanHint = 1; toast("Осталось не попасться до конца!"); }
+  if (changed) renderQuestPanel();
+}
+function questIcon(cvs, icon) {
+  const c = cvs.getContext("2d"), w = cvs.width; c.clearRect(0, 0, w, w);
+  const m = w / 2;
+  if (icon === "orange") drawOrange(c, m, m + 2, w * 0.3, -0.2);
+  else if (icon === "gold") drawOrange(c, m, m + 2, w * 0.3, -0.2, "gold");
+  else if (icon === "melon") drawMelon(c, m, m, w * 0.32, 0.25);
+  else if (icon === "dash") { c.fillStyle = "#4fe0a0"; for (const dx of [-8, 6]) { c.beginPath(); c.moveTo(m + dx - 7, m - 11); c.lineTo(m + dx + 7, m); c.lineTo(m + dx - 7, m + 11); c.closePath(); c.fill(); } }
+  else if (icon === "tree") { c.fillStyle = "#7a4a26"; c.fillRect(m - 3, m, 6, 14); c.fillStyle = "#3fa046"; c.beginPath(); c.arc(m, m - 3, 13, 0, TAU); c.fill(); drawOrange(c, m - 5, m - 4, 4, 0); drawOrange(c, m + 6, m - 1, 4, 0); }
+  else if (icon === "spring") { c.fillStyle = "#7fe6ee"; c.beginPath(); c.ellipse(m, m + 8, 15, 6, 0, 0, TAU); c.fill(); c.strokeStyle = "#fff"; c.lineWidth = 2.5; c.lineCap = "round"; for (const dx of [-6, 0, 6]) { c.beginPath(); c.moveTo(m + dx, m + 3); c.quadraticCurveTo(m + dx + 4, m - 4, m + dx, m - 11); c.stroke(); } }
+  else if (icon === "shield") { c.fillStyle = "#3fc8e8"; c.beginPath(); c.moveTo(m, m - 14); c.lineTo(m + 12, m - 9); c.quadraticCurveTo(m + 11, m + 8, m, m + 15); c.quadraticCurveTo(m - 11, m + 8, m - 12, m - 9); c.closePath(); c.fill(); c.fillStyle = "rgba(255,255,255,0.5)"; c.fillRect(m - 2, m - 9, 4, 18); }
+  else if (icon === "baby") drawBaby(c, m - 2, m + 4, 1.05, 0, false, 1);
+  else if (icon === "heart") { c.fillStyle = "#ff7aa8"; c.font = "900 " + Math.round(w * 0.6) + "px sans-serif"; c.textAlign = "center"; c.textBaseline = "middle"; c.fillText("♥", m, m + 2); }
+}
+let qSig = "";
+function renderQuestPanel(force) {
+  if (!G || !G.quests) return;
+  const sig = G.quests.map((q) => q.prog + (q.done ? "d" : "") + (q.atEnd && G.bites ? "f" : "")).join("|");
+  if (!force && sig === qSig) return;
+  qSig = sig;
+  const list = $("q-list");
+  if (force || list.children.length !== G.quests.length) {
+    list.innerHTML = "";
+    G.quests.forEach((q, i) => {
+      const row = document.createElement("div"); row.className = "q-row"; row.dataset.q = i;
+      row.innerHTML = '<span class="q-check"></span><canvas width="56" height="56"></canvas><div class="q-txt"><b></b><div class="q-bar"><i></i></div></div><span class="q-num"></span>';
+      row.querySelector("b").textContent = q.text; questIcon(row.querySelector("canvas"), q.icon);
+      list.append(row);
+    });
+  }
+  let done = 0;
+  G.quests.forEach((q, i) => {
+    const row = list.children[i], fail = q.atEnd && G.bites > 0;
+    if (q.done) done++;
+    row.classList.toggle("done", q.done); row.classList.toggle("fail", fail && !q.done);
+    row.querySelector(".q-bar i").style.width = (q.atEnd ? (fail ? 0 : 100) : (q.prog / q.n * 100)) + "%";
+    row.querySelector(".q-num").textContent = q.done ? "✓" : q.atEnd ? (fail ? "✕" : "…") : q.prog + "/" + q.n;
+    if (q.flash) { q.flash = 0; row.classList.remove("pop"); void row.offsetWidth; row.classList.add("pop"); }
+  });
+  $("q-count").textContent = done + "/" + G.quests.length;
+}
+$("q-head").addEventListener("click", () => { $("quests").classList.toggle("collapsed"); });
 
 /* ---------- HUD ---------- */
 let shownScore = -1;
@@ -2140,7 +2504,7 @@ function updateHud(force) {
   const s = Math.ceil(G.t), m = Math.floor(s / 60), ss = s % 60;
   $("timer").textContent = m + ":" + String(ss).padStart(2, "0");
   $("timer").classList.toggle("low", s <= 15);
-  $("goal-t").textContent = goalText();
+  if (LV.quest) renderQuestPanel(); else $("goal-t").textContent = goalText();
   $("goal").classList.toggle("done", G.goalDone && LV.type !== "boss");
   if (G.boss) $("boss-fill").style.width = (G.boss.hp / G.boss.max * 100) + "%";
   const r = $("relax");
@@ -2194,7 +2558,7 @@ function goMenu() { G = null; hideHud(); refreshMenu(); showScreen("menu"); play
 function togglePause() {
   if (!G || !G.running || G.ending > 0) return;
   G.paused = !G.paused; $("paused").hidden = !G.paused;
-  $("pause-goal").textContent = LV.name + ": " + LV.desc;
+  $("pause-goal").textContent = LV.quest ? LV.name + ": " + G.quests.map((q) => (q.done ? "✓ " : "• ") + q.text).join("  ") : LV.name + ": " + LV.desc;
 }
 
 /* ---------- Карта ---------- */
@@ -2210,49 +2574,66 @@ function islandIcon(theme) {
   if (!iconCache[theme]) { const c = document.createElement("canvas"); c.width = 200; c.height = 168; drawIslandIcon(c.getContext("2d"), 200, 168, theme, 0); iconCache[theme] = c; }
   const out = document.createElement("canvas"); out.width = 200; out.height = 168; out.getContext("2d").drawImage(iconCache[theme], 0, 0); return out;
 }
+let mapTrack = "main", cardKind = "main", cardQuest = 0;
+function questFrontier() { let n = 0; while ((save.qstars[n] || 0) > 0) n++; return n; }
+function makeNode(opts) {
+  const b = document.createElement("button");
+  b.className = "node small" + (opts.play ? "" : " locked") + (opts.current ? " current" : "");
+  b.style.left = opts.x + "%"; b.style.top = (opts.y - 10) + "px";
+  const num = document.createElement("div"); num.className = "node-num"; num.textContent = opts.num;
+  const nm = document.createElement("div"); nm.className = "node-name"; nm.textContent = opts.name;
+  b.append(islandIcon(opts.theme), num, nm);
+  if (opts.play) { const st = document.createElement("div"); st.className = "node-stars"; const n = opts.stars || 0; st.innerHTML = "<b>" + "★".repeat(n) + "</b>" + "★".repeat(3 - n); b.append(st); }
+  b.setAttribute("aria-label", opts.label + (opts.play ? "" : ", закрыт"));
+  b.addEventListener("click", opts.onClick);
+  return b;
+}
 function openMap(focusId) {
   G = null; hideHud(); setWallets(); playMusic("menu");
+  document.querySelectorAll(".map-tab").forEach((t) => t.setAttribute("aria-selected", t.dataset.track === mapTrack ? "true" : "false"));
+  $("quest-dot").hidden = !(mapTrack === "main" && questPlayable(questFrontier()) && questFrontier() === 0);
   const track = $("map-track");
   track.querySelectorAll(".node, .world-head").forEach((n) => n.remove());
   mapNodes = [];
-  const cur = currentLevel(), cols = [26, 50, 74, 50];
+  const cols = [30, 70, 42];
   let y = 24, focusY = 0;
-  for (const W of WORLDS) {
-    const lv = LEVELS.filter((l) => l.w === W.id);
-    const head = document.createElement("div"); head.className = "world-head"; head.style.top = y + "px";
-    const got = lv.reduce((a, l) => a + (save.stars[l.id] || 0), 0);
-    const hb = document.createElement("b"); hb.textContent = "Мир " + W.id + ": " + W.name;
-    const hs = document.createElement("span");
-    if (worldOpen(W.id)) hs.textContent = "★ " + got + "/" + lv.length * 3;
-    else { hs.append(orangeIcon(40), document.createTextNode(String(W.price))); }
-    head.append(hb, hs); track.append(head);
-    y += HEAD_H;
-    lv.forEach((L, i) => {
-      const play = levelPlayable(L);
-      const b = document.createElement("button");
-      b.className = "node small" + (play ? "" : " locked") + (L.id === cur ? " current" : "");
-      const xPct = cols[i % 4];
-      b.style.left = xPct + "%"; b.style.top = (y - 10) + "px";
-      const num = document.createElement("div"); num.className = "node-num"; num.textContent = L.id;
-      const nm = document.createElement("div"); nm.className = "node-name"; nm.textContent = L.name;
-      b.append(islandIcon(L.theme), num, nm);
-      if (play) {
-        const st = document.createElement("div"); st.className = "node-stars"; const n = save.stars[L.id] || 0;
-        st.innerHTML = "<b>" + "★".repeat(n) + "</b>" + "★".repeat(3 - n); b.append(st);
+  const head = (title, right, quest) => { const h = document.createElement("div"); h.className = "world-head" + (quest ? " quest-head" : ""); h.style.top = y + "px"; const hb = document.createElement("b"); hb.textContent = title; const hs = document.createElement("span"); if (typeof right === "string") hs.textContent = right; else hs.append(...right); h.append(hb, hs); track.append(h); y += HEAD_H; };
+  if (mapTrack === "main") {
+    const cur = currentLevel(), fid = focusId || cur;
+    for (const W of WORLDS) {
+      const lv = LEVELS.filter((l) => l.w === W.id);
+      const got = lv.reduce((a, l) => a + (save.stars[l.id] || 0), 0);
+      head("Мир " + W.id + ": " + W.name, worldOpen(W.id) ? "★ " + got + "/" + lv.length * 3 : [orangeIcon(40), document.createTextNode(String(W.price))]);
+      lv.forEach((L, i) => {
+        track.append(makeNode({ play: levelPlayable(L), current: L.id === cur, x: cols[i % 3], y, num: L.id, name: L.name, theme: L.theme, stars: save.stars[L.id], label: "Уровень " + L.id + ": " + L.name, onClick: () => openLevel(L.id) }));
+        mapNodes.push({ x: cols[i % 3], y: y + 30, done: (save.stars[L.id] || 0) > 0 });
+        if (L.id === fid) focusY = y;
+        y += NODE_GAP;
+      });
+      y += 10;
+    }
+  } else {
+    const front = questFrontier(), chapters = Math.floor(front / 3) + 2, fq = front;
+    for (let ch = 0; ch < chapters; ch++) {
+      const th = Q_THEMES[ch % Q_THEMES.length];
+      let got = 0; for (let j = 0; j < 3; j++) got += save.qstars[ch * 3 + j] || 0;
+      head("Глава " + (ch + 1) + ": " + Q_THEME_NAME[th], "★ " + got + "/9", true);
+      for (let j = 0; j < 3; j++) {
+        const n = ch * 3 + j, Lq = questLevel(n);
+        track.append(makeNode({ play: questPlayable(n), current: n === front, x: cols[j], y, num: n + 1, name: Lq.name, theme: Lq.theme, stars: save.qstars[n], label: "Квест " + (n + 1) + ": " + Lq.name, onClick: () => openQuest(n) }));
+        mapNodes.push({ x: cols[j], y: y + 30, done: (save.qstars[n] || 0) > 0 });
+        if (n === fq) focusY = y;
+        y += NODE_GAP;
       }
-      b.setAttribute("aria-label", "Уровень " + L.id + ": " + L.name + (play ? "" : ", закрыт"));
-      b.addEventListener("click", () => { sfx.click(); openLevel(L.id); });
-      track.append(b); mapNodes.push({ x: xPct, y: y + 30, id: L.id });
-      if (L.id === (focusId || cur)) focusY = y;
-      y += NODE_GAP;
-    });
-    y += 10;
+      y += 10;
+    }
   }
   track.style.height = (y + 40) + "px";
   showScreen("map");
   drawMapPath();
   requestAnimationFrame(() => { $("map-scroll").scrollTop = Math.max(0, focusY - innerHeight * 0.35); });
 }
+document.querySelectorAll(".map-tab").forEach((t) => t.addEventListener("click", () => { mapTrack = t.dataset.track; openMap(); }));
 function drawMapPath() {
   const cvp = $("map-path"), track = $("map-track"), w = track.clientWidth, h = track.clientHeight;
   if (!w) return;
@@ -2261,9 +2642,8 @@ function drawMapPath() {
   const c = cvp.getContext("2d"); c.setTransform(d, 0, 0, d, 0, 0); c.clearRect(0, 0, w, h);
   for (let i = 0; i < mapNodes.length - 1; i++) {
     const a = mapNodes[i], b = mapNodes[i + 1], ax = a.x / 100 * w, bx = b.x / 100 * w;
-    const done = (save.stars[a.id] || 0) > 0;
     c.setLineDash([2, 14]); c.lineCap = "round"; c.lineWidth = 8;
-    c.strokeStyle = done ? "rgba(255,207,58,0.9)" : "rgba(255,255,255,0.3)";
+    c.strokeStyle = a.done ? "rgba(255,207,58,0.9)" : "rgba(255,255,255,0.3)";
     c.beginPath(); c.moveTo(ax, a.y + 20); c.bezierCurveTo(ax, a.y + 70, bx, b.y - 50, bx, b.y - 10); c.stroke();
   }
   c.setLineDash([]);
@@ -2271,16 +2651,18 @@ function drawMapPath() {
 
 /* ---------- Карточка уровня ---------- */
 let cardLevel = 1;
+function cardChips(list) {
+  const chips = $("lvl-chips"); chips.innerHTML = "";
+  for (const [txt, cls] of list) { const s2 = document.createElement("span"); s2.className = "chip" + (cls ? " " + cls : ""); s2.textContent = txt; chips.append(s2); }
+}
 function openLevel(id) {
-  const L = LEVELS[id - 1]; cardLevel = id;
+  const L = LEVELS[id - 1]; cardLevel = id; cardKind = "main";
   $("lvl-title").textContent = L.id + ". " + L.name;
   $("lvl-goal").textContent = L.desc;
-  const chips = $("lvl-chips"); chips.innerHTML = "";
-  const add = (txt, cls) => { const s = document.createElement("span"); s.className = "chip" + (cls ? " " + cls : ""); s.textContent = txt; chips.append(s); };
-  add("Мир " + L.w + ": " + worldOf(L).name); add("Время: " + L.time + " с"); add("Крокодилы: " + L.crocs + (L.boss ? " + босс" : ""));
-  starHint(L).forEach((sx) => add(sx, "star"));
+  $("lvl-quests").hidden = true; $("lvl-reroll").hidden = true;
+  cardChips([["Мир " + L.w + ": " + worldOf(L).name], ["Время: " + L.time + " с"], ["Крокодилы: " + L.crocs + (L.boss ? " + босс" : "")], ...starHint(L).map((sx) => [sx, "star"])]);
   const btn = $("lvl-go"), note = $("lvl-note");
-  btn.className = "btn"; note.hidden = true; btn.innerHTML = "";
+  btn.className = "btn"; note.hidden = true; btn.innerHTML = ""; btn.style.color = "";
   const W = worldOf(L);
   if (levelPlayable(L)) { btn.classList.add("btn-primary"); btn.textContent = (save.stars[id] || 0) > 0 ? "Играть снова" : "Играть"; }
   else if (!worldOpen(L.w)) {
@@ -2295,10 +2677,35 @@ function openLevel(id) {
   }
   showScreen("level", ["map"]);
 }
+function openQuest(n) {
+  const Lq = questLevel(n); cardQuest = n; cardKind = "quest";
+  $("lvl-title").textContent = "Квест " + (n + 1) + ". " + Lq.name;
+  $("lvl-goal").textContent = "Выполни квесты: каждый дает звезду и " + Lq.reward + " апельсинов, а за все три еще +10 арбузов.";
+  const box = $("lvl-quests"); box.innerHTML = ""; box.hidden = false;
+  for (const q of Lq.quests) {
+    const row = document.createElement("div"); row.className = "q-prev";
+    const ic = document.createElement("canvas"); ic.width = 60; ic.height = 60; questIcon(ic, q.icon);
+    const tx = document.createElement("div"); tx.textContent = q.text;
+    const rw = document.createElement("span"); rw.textContent = "+" + Lq.reward;
+    row.append(ic, tx, rw); box.append(row);
+  }
+  cardChips([["Глава " + Lq.chapter], ["Время: " + Lq.time + " с"], ["Крокодилы: " + Lq.crocs]]);
+  const btn = $("lvl-go"), note = $("lvl-note"), play = questPlayable(n);
+  btn.className = "btn"; btn.innerHTML = ""; btn.style.color = ""; note.hidden = play;
+  $("lvl-reroll").hidden = !play;
+  if (play) { btn.classList.add("btn-primary"); btn.textContent = (save.qstars[n] || 0) > 0 ? "Играть снова" : "Играть"; }
+  else { btn.classList.add("btn-ghost"); btn.style.color = "var(--ink)"; btn.textContent = "Закрыто"; note.textContent = "Сначала выполни хотя бы один квест на уровне " + n; }
+  showScreen("level", ["map"]);
+}
+$("lvl-reroll").addEventListener("click", () => { questCache[cardQuest] = genQuests(cardQuest); openQuest(cardQuest); });
 $("lvl-go").addEventListener("click", () => {
-  const L = LEVELS[cardLevel - 1], btn = $("lvl-go"), W = worldOf(L);
-  btn.style.color = "";
-  if (levelPlayable(L)) { sfx.click(); playStory("intro" + L.id, () => startRound(L.id), ["map"]); return; }
+  const btn = $("lvl-go");
+  if (cardKind === "quest") {
+    if (!questPlayable(cardQuest)) { btn.animate && btn.animate([{ transform: "translateX(-6px)" }, { transform: "translateX(6px)" }, { transform: "translateX(0)" }], { duration: 240 }); return; }
+    startRound(questLevel(cardQuest)); return;
+  }
+  const L = LEVELS[cardLevel - 1], W = worldOf(L);
+  if (levelPlayable(L)) { playStory("intro" + L.id, () => startRound(L.id), ["map"]); return; }
   if (worldOpen(L.w) || !prevWorldDone(L.w) || save.wallet < W.price) { btn.animate && btn.animate([{ transform: "translateX(-6px)" }, { transform: "translateX(6px)" }, { transform: "translateX(0)" }], { duration: 240 }); return; }
   save.wallet -= W.price; save.unlocked.push(L.w); persist(); sfx.buy(); burst(innerWidth / 2, innerHeight / 2, 100, 1.2);
   openMap(L.id); openLevel(L.id); toast("Мир «" + W.name + "» открыт!");
@@ -2353,12 +2760,23 @@ function drawPortrait(t) {
 let lastStars = 0, lastExtra = { mel: 0, extra: 0, mult: 1 };
 function endRound() {
   G.running = false;
+  if (LV.quest) {
+    for (const q of G.quests) if (q.atEnd && !q.done && G.bites === 0) q.done = true;
+    const qs = calcStars(), mult2 = (SKIN_MAP[save.skin] && SKIN_MAP[save.skin].mult) || 1, extra2 = Math.round(G.score * (mult2 - 1));
+    const qReward = qs * LV.reward, perfect = qs === G.quests.length ? 10 : 0;
+    save.wallet += G.score + extra2 + qReward; save.melons += G.mel + perfect;
+    if (qs > (save.qstars[LV.n] || 0)) save.qstars[LV.n] = qs;
+    questCache[LV.n] = genQuests(LV.n); // в следующий раз будут новые квесты
+    lastExtra = { mel: G.mel + perfect, extra: extra2, mult: mult2, quest: qReward };
+    persist(); lastStars = qs; hideHud();
+    showResults(qs, G.score, 0); return;
+  }
   const stars = calcStars(), score = G.score, id = LV.id;
   const first = stars > 0 && !(save.stars[id] > 0);
   const bonus = first ? LV.bonus : 0;
   const mult = (SKIN_MAP[save.skin] && SKIN_MAP[save.skin].mult) || 1, extra = Math.round(score * (mult - 1));
   save.wallet += score + extra + bonus; save.melons += G.mel;
-  lastExtra = { mel: G.mel, extra, mult };
+  lastExtra = { mel: G.mel, extra, mult, quest: 0 };
   if (stars > (save.stars[id] || 0)) save.stars[id] = stars;
   persist(); lastStars = stars;
   hideHud();
@@ -2368,10 +2786,11 @@ function endRound() {
 function showResults(stars, score, bonus) {
   const win = stars > 0, id = LV.id;
   playMusic("menu");
-  $("res-title").textContent = win ? (id === LEVELS.length ? "Остров спасен!" : "Уровень пройден!") : (LV.type === "boss" ? LV.boss.name + " устоял..." : "Время вышло!");
+  $("res-title").textContent = LV.quest ? "Квесты: " + stars + " из " + G.quests.length : win ? (id === LEVELS.length ? "Остров спасен!" : "Уровень пройден!") : (LV.type === "boss" ? LV.boss.name + " устоял..." : "Время вышло!");
   $("res-sub").textContent = (win ? "апельсинов собрано" : "апельсинов собрано, они твои. Попробуй еще!") + " · в копилке " + save.wallet;
   const ex = $("res-extra"); ex.innerHTML = "";
   const chip = (cvKind, txt, cls) => { const sp = document.createElement("span"); if (cls) sp.className = cls; if (cvKind) { const cc = document.createElement("canvas"); cc.width = 44; cc.height = 44; const x2 = cc.getContext("2d"); cvKind === "melon" ? drawMelon(x2, 22, 22, 16, 0.25) : drawOrange(x2, 22, 24, 15, -0.2); sp.append(cc); } sp.append(document.createTextNode(txt)); ex.append(sp); };
+  if (lastExtra.quest) chip("orange", "+" + lastExtra.quest + " за квесты");
   chip("melon", "+" + lastExtra.mel + " арбузов");
   if (lastExtra.extra > 0) chip("orange", "+" + lastExtra.extra + " скин x" + lastExtra.mult, "mult");
   const bz = $("res-bonus"); bz.hidden = !bonus; bz.textContent = "+" + bonus + " за первое прохождение";
@@ -2382,30 +2801,38 @@ function showResults(stars, score, bonus) {
     if (i < stars) setTimeout(() => { paintStar(cvv, true); sfx.star(i); cvv.animate && cvv.animate([{ transform: "scale(0.2) rotate(-40deg)" }, { transform: "scale(1.25)" }, { transform: "scale(1)" }], { duration: 420, easing: "ease-out" }); }, 350 + i * 300);
   });
   if (!win) sfx.fail(); else { burst(innerWidth / 2, innerHeight * 0.3, 90, 1.2); setTimeout(() => burst(innerWidth * 0.25, innerHeight * 0.35, 40), 400); setTimeout(() => burst(innerWidth * 0.75, innerHeight * 0.35, 40), 700); }
-  const next = LEVELS.find((l) => l.id === id + 1);
   const nb = $("btn-next");
-  nb.hidden = !(win && next);
-  if (next) nb.textContent = levelPlayable(next) ? "Следующий уровень" : "Открыть мир «" + worldOf(next).name + "»";
+  if (LV.quest) { nb.hidden = !win; nb.textContent = "Следующий квест"; }
+  else {
+    const next = LEVELS.find((l) => l.id === id + 1);
+    nb.hidden = !(win && next);
+    if (next) nb.textContent = levelPlayable(next) ? "Следующий уровень" : "Открыть мир «" + worldOf(next).name + "»";
+  }
   const t0 = performance.now(), dur = 900;
   const step = (now) => { const k = Math.min(1, (now - t0) / dur); $("res-num").textContent = Math.round(score * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); };
   requestAnimationFrame(step);
 }
-$("btn-next").addEventListener("click", () => { sfx.click(); const nid = LV.id + 1; const N = LEVELS[nid - 1]; if (levelPlayable(N)) playStory("intro" + nid, () => startRound(nid), []); else { openMap(nid); openLevel(nid); } });
-$("btn-again").addEventListener("click", () => { sfx.click(); startRound(LV.id); });
-$("btn-map").addEventListener("click", () => { sfx.click(); openMap(LV.id); });
+$("btn-next").addEventListener("click", () => { if (LV.quest) { mapTrack = "quest"; openMap(); openQuest(LV.n + 1); return; } const nid = LV.id + 1; const N = LEVELS[nid - 1]; if (levelPlayable(N)) playStory("intro" + nid, () => startRound(nid), []); else { openMap(nid); openLevel(nid); } });
+$("btn-again").addEventListener("click", () => { if (LV.quest) { mapTrack = "quest"; openMap(); openQuest(LV.n); } else startRound(LV.id); });
+$("btn-map").addEventListener("click", () => { if (LV.quest) { mapTrack = "quest"; openMap(); } else { mapTrack = "main"; openMap(LV.id); } });
 
 /* ---------- Магазин ---------- */
 const UPGS = [
-  { id: "speed", name: "Быстрые лапки", desc: "+8% к скорости за уровень", base: 60 },
-  { id: "magnet", name: "Магнит для фруктов", desc: "Притягивает фрукты издалека", base: 75 },
-  { id: "dash", name: "Мощный рывок", desc: "Перезарядка рывка короче", base: 60 },
+  { id: "speed", name: "Быстрые лапки", desc: (l) => "Скорость +" + l * 8 + "%" + (l < 5 ? " → +" + (l + 1) * 8 + "%" : ""), base: 60 },
+  { id: "magnet", name: "Магнит для фруктов", desc: (l) => l ? "Притягивает фрукты: " + (34 + l * 22) + (l < 5 ? " → " + (34 + (l + 1) * 22) : "") : "Фрукты сами летят к Капе", base: 75 },
+  { id: "dash", name: "Мощный рывок", desc: (l) => "Перезарядка " + (3 - l * 0.4).toFixed(1) + " с" + (l < 5 ? " → " + (3 - (l + 1) * 0.4).toFixed(1) + " с" : ""), base: 60 },
 ];
 const MAXLVL = 5;
 const shake = (b) => b.animate && b.animate([{ transform: "translateX(-5px)" }, { transform: "translateX(5px)" }, { transform: "translateX(0)" }], { duration: 220 });
+function priceIcon(melon) {
+  const ic = document.createElement("canvas"); ic.width = 48; ic.height = 48; const g = ic.getContext("2d");
+  if (melon) drawMelon(g, 24, 24, 17, 0.25); else drawOrange(g, 24, 27, 16, -0.15);
+  return ic;
+}
 function priceBtn(b, price) {
   if (save.wallet < price) b.classList.add("locked");
-  const ic = document.createElement("canvas"); ic.width = 36; ic.height = 36; drawOrange(ic.getContext("2d"), 18, 20, 12, -0.2);
-  b.append(ic, document.createTextNode(String(price)));
+  const tx = document.createElement("span"); tx.textContent = String(price);
+  b.append(priceIcon(false), tx);
 }
 function subHead(grid, text, melon) {
   const h = document.createElement("div"); h.className = "shop-sub" + (melon ? "" : " plain");
@@ -2425,7 +2852,7 @@ function itemGrid(gridId, items, ownedKey, curKey, draw) {
     const b = document.createElement("button"); b.className = "buy";
     if (on) { b.classList.add("on"); b.textContent = "Выбрано"; }
     else if (owned) { b.classList.add("owned"); b.textContent = "Выбрать"; }
-    else if (mel) { b.classList.add("mel"); if (save.melons < it.price) b.classList.add("locked"); const ic = document.createElement("canvas"); ic.width = 36; ic.height = 36; drawMelon(ic.getContext("2d"), 18, 18, 13, 0.25); b.append(ic, document.createTextNode(String(it.price))); }
+    else if (mel) { b.classList.add("mel"); if (save.melons < it.price) b.classList.add("locked"); const tx = document.createElement("span"); tx.textContent = String(it.price); b.append(priceIcon(true), tx); }
     else priceBtn(b, it.price);
     b.addEventListener("click", () => {
       if (on) return;
@@ -2453,9 +2880,10 @@ function renderShop() {
     else if (u.id === "magnet") { c3.strokeStyle = "#e5484d"; c3.lineWidth = 14; c3.beginPath(); c3.arc(56, 52, 26, Math.PI, 0); c3.stroke(); c3.fillStyle = "#cfd6dc"; c3.fillRect(23, 50, 14, 16); c3.fillRect(75, 50, 14, 16); drawOrange(c3, 56, 92, 11, 0); }
     else { c3.fillStyle = "#19b877"; c3.beginPath(); c3.moveTo(30, 30); c3.lineTo(58, 56); c3.lineTo(30, 82); c3.closePath(); c3.fill(); c3.beginPath(); c3.moveTo(58, 30); c3.lineTo(86, 56); c3.lineTo(58, 82); c3.closePath(); c3.fill(); }
     const mid = document.createElement("div");
-    mid.innerHTML = `<div class="upg-title"></div><div class="upg-desc"></div><div class="pips"></div>`;
+    mid.innerHTML = `<div class="upg-title"></div><div class="upg-desc"></div><div class="pips"></div><div class="upg-lvl"></div>`;
     mid.querySelector(".upg-title").textContent = u.name;
-    mid.querySelector(".upg-desc").textContent = u.desc;
+    mid.querySelector(".upg-desc").textContent = u.desc(lvl);
+    mid.querySelector(".upg-lvl").textContent = "Уровень " + lvl + " из " + MAXLVL;
     const pips = mid.querySelector(".pips");
     for (let i = 0; i < MAXLVL; i++) { const pp = document.createElement("div"); pp.className = "pip" + (i < lvl ? " on" : ""); pips.append(pp); }
     const b = document.createElement("button"); b.className = "buy";
@@ -2513,10 +2941,11 @@ $("shop").addEventListener("click", (e) => { if (e.target.id === "shop") { if (s
 $("settings").addEventListener("click", (e) => { if (e.target.id === "settings") { if (settingsFrom === "map") openMap(cardLevel); else goMenu(); } });
 $("pause").addEventListener("click", togglePause);
 $("btn-resume").addEventListener("click", togglePause);
-$("btn-quit").addEventListener("click", () => { $("paused").hidden = true; openMap(LV.id); });
-function syncToggles() { $("t-music").setAttribute("aria-checked", String(save.music)); $("t-sound").setAttribute("aria-checked", String(save.sound)); $("t-fx").setAttribute("aria-checked", String(save.fx)); $("t-story").setAttribute("aria-checked", String(!!save.storyAgain)); }
+$("btn-quit").addEventListener("click", () => { $("paused").hidden = true; mapTrack = LV.quest ? "quest" : "main"; openMap(LV.quest ? undefined : LV.id); });
+function syncToggles() { $("t-saver").setAttribute("aria-checked", String(!!save.saver)); $("t-music").setAttribute("aria-checked", String(save.music)); $("t-sound").setAttribute("aria-checked", String(save.sound)); $("t-fx").setAttribute("aria-checked", String(save.fx)); $("t-story").setAttribute("aria-checked", String(!!save.storyAgain)); }
 $("t-sound").addEventListener("click", () => { save.sound = !save.sound; persist(); syncToggles(); sfx.click(); });
 $("t-music").addEventListener("click", () => { save.music = !save.music; persist(); syncToggles(); if (save.music) { Music.cur = null; playMusic("menu"); } else stopMusic(); });
+$("t-saver").addEventListener("click", () => { save.saver = !save.saver; persist(); syncToggles(); sizeGame(); });
 $("t-fx").addEventListener("click", () => { save.fx = !save.fx; persist(); syncToggles(); });
 $("t-story").addEventListener("click", () => { save.storyAgain = !save.storyAgain; persist(); syncToggles(); sfx.click(); });
 $("reset").addEventListener("click", () => showScreen("confirm", [settingsFrom, "settings"]));
@@ -2527,20 +2956,31 @@ document.addEventListener("visibilitychange", () => { if (document.hidden && G &
 /* ---------- Цикл ---------- */
 addEventListener("resize", () => { sizeGame(); sizeBg(); sizeFx(); if (!$("map").hidden) drawMapPath(); });
 sizeGame(); sizeBg(); sizeFx(); buildWorld("beach"); refreshMenu(); syncToggles(); playMusic("menu");
-let last = performance.now(), T = 0;
+// ограничение кадров: 60 в секунду (30 в режиме экономии), фоновые картинки реже - телефон меньше греется
+let last = performance.now(), T = 0, fno = 0, blank = false;
+const $menu = $("menu"), $story = $("story"), $level = $("level");
 function frame(now) {
-  const dt = Math.min(0.05, (now - last) / 1000); last = now; T += dt;
-  if (!$("menu").hidden) { drawBg(dt, T); drawLogo(T); }
-  if (!$("story").hidden) drawPortrait(T);
-  if (confetti.length || fxc.dataset.dirty) { drawConfetti(dt); fxc.dataset.dirty = confetti.length ? "1" : ""; }
-  if (!$("level").hidden) { const L = LEVELS[cardLevel - 1]; const c = $("lvl-art").getContext("2d"); drawIslandIcon(c, 520, 220, L.theme, T, true); drawCapy(c, 90, 170, 1.4, { t: T, moving: true, dir: 1, skin: save.skin, hat: save.hat }); }
-  if (G) {
-    if (G.running && !G.paused && $("story").hidden) update(dt);
-    if (G) render(T);
-  } else {
-    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = "#06303a"; ctx.fillRect(0, 0, cv.width, cv.height);
-  }
   requestAnimationFrame(frame);
+  const minGap = save.saver ? 31 : 15;
+  if (now - last < minGap) return;
+  const dt = Math.min(0.05, (now - last) / 1000); last = now; T += dt; fno++;
+  const half = fno % 2 === 0;
+  if (!$menu.hidden) { drawBg(dt, T); if (half) drawLogo(T); }
+  if (!$story.hidden && half) drawPortrait(T);
+  if (confetti.length || fxc.dataset.dirty) { drawConfetti(dt); fxc.dataset.dirty = confetti.length ? "1" : ""; }
+  if (!$level.hidden && half) {
+    const c = $("lvl-art").getContext("2d"), th = cardKind === "quest" ? questLevel(cardQuest).theme : LEVELS[cardLevel - 1].theme;
+    drawIslandIcon(c, 520, 220, th, T, true); drawCapy(c, 90, 170, 1.4, { t: T, moving: true, dir: 1, skin: save.skin, hat: save.hat });
+  }
+  if (G) {
+    blank = false;
+    const live = G.running && !G.paused && $story.hidden;
+    if (live) update(dt);
+    // на паузе, в итогах и в диалогах картинка почти не меняется: перерисовываем редко
+    if (G && (live || fno % 12 === 0)) render(T);
+  } else if (!blank) {
+    blank = true; ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = "#06303a"; ctx.fillRect(0, 0, cv.width, cv.height);
+  }
 }
 requestAnimationFrame(frame);
 })();

@@ -557,6 +557,18 @@ canvas { display: block; }
 .toast { white-space: normal !important; width: max-content; max-width: calc(100vw - 32px); text-align: center; font-size: 24px !important; line-height: 1.15 !important; }
 #hud .toast { z-index: 8; }
 #hud.questmode .toast { top: 47%; }
+/* Промокоды */
+.promo-btn { position: absolute; z-index: 3; right: 16px; top: calc(env(safe-area-inset-top, 0px) + 64px); display: flex; align-items: center; gap: 6px; border: 0; cursor: pointer; padding: 9px 14px 9px 10px; border-radius: 999px; font: 800 15px/1 var(--font-display); color: #fff; background: linear-gradient(180deg, #ff8fa0, #e0405a); box-shadow: 0 4px 0 #a52a3e, 0 10px 18px rgba(0, 0, 0, 0.25); }
+.promo-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #a52a3e; }
+.promo-btn span { font-size: 17px; }
+.promo-btn:focus-visible { outline: 3px solid #fff; }
+.promo-box { gap: 12px; }
+.promo-gift { font-size: 56px; line-height: 1; animation: floaty 2.6s ease-in-out infinite; }
+.promo-input { width: 100%; box-sizing: border-box; border: 3px solid #f0d9b0; border-radius: 16px; padding: 14px 16px; font: 800 20px/1 var(--font-display); color: var(--ink); background: #fff; text-align: center; letter-spacing: 0.06em; outline: none; user-select: text; -webkit-user-select: text; }
+.promo-input:focus { border-color: var(--orange); }
+.promo-msg { min-height: 20px; font: 800 15px/1.3 var(--font-body); text-align: center; }
+.promo-msg.ok { color: #0d8a57; }
+.promo-msg.bad { color: #c0392b; }
 /* Звезды итога */
 .stars-row { display: flex; gap: 6px; align-items: flex-end; margin: 2px 0 4px; }
 .stars-row canvas { width: 64px; height: 64px; }
@@ -606,6 +618,7 @@ canvas { display: block; }
   <section class="screen" id="menu">
     <canvas id="bg"></canvas>
     <div class="wallets"><div class="wallet"><canvas width="60" height="60" data-orange></canvas><span id="menu-wallet">0</span></div><div class="wallet wallet-mel"><canvas width="60" height="60" data-melon></canvas><span id="menu-mel">0</span></div></div>
+    <button class="promo-btn" id="btn-promo"><span>🎁</span>Промокоды</button>
     <div class="menu-inner">
       <canvas class="logo-art" id="logo" width="560" height="440" aria-hidden="true"></canvas>
       <h1 class="title">КАПИБАРА</h1>
@@ -731,6 +744,19 @@ canvas { display: block; }
     </div>
   </section>
 
+  <section class="screen modal-wrap" id="promo" hidden>
+    <div class="panel" role="dialog" aria-labelledby="promo-title" style="width:min(400px,100%)">
+      <div class="panel-head"><h2 id="promo-title">Промокоды</h2><button class="close" data-close="menu" aria-label="Закрыть">X</button></div>
+      <div class="result-box promo-box">
+        <div class="promo-gift">🎁</div>
+        <div class="result-sub">Введи промокод и получи подарок</div>
+        <input class="promo-input" id="promo-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Промокод" maxlength="24">
+        <div class="promo-msg" id="promo-msg"></div>
+        <button class="btn btn-primary" id="promo-go">Активировать</button>
+      </div>
+    </div>
+  </section>
+
   <section class="screen" id="drawer" hidden>
     <nav class="drawer-panel" aria-label="Меню">
       <div class="drawer-head"><canvas width="120" height="96" id="drawer-art" aria-hidden="true"></canvas><div><b>Капибара</b><span>Апельсиновый остров</span></div></div>
@@ -769,7 +795,7 @@ const SAVE_KEY = "capy-orange-save-v1";
 const defaults = {
   wallet: 0, melons: 0, hats: ["none"], hat: "none", skins: ["classic"], skin: "classic",
   upg: { speed: 0, magnet: 0, dash: 0 }, sound: true, fx: !reduceMotion,
-  stars: {}, unlocked: [1], seen: {}, storyAgain: false, music: true, voice: true, ver: 3, qstars: {}, saver: false,
+  stars: {}, unlocked: [1], seen: {}, storyAgain: false, music: true, voice: true, ver: 3, qstars: {}, saver: false, promos: [],
 };
 let save = JSON.parse(JSON.stringify(defaults));
 try {
@@ -800,6 +826,7 @@ try {
       save.stars = st; save.seen = seen; save.unlocked = [...new Set(un)]; save.ver = 3;
     }
     if (!save.qstars || typeof save.qstars !== "object") save.qstars = {};
+    if (!Array.isArray(save.promos)) save.promos = [];
     if (save.music === undefined) save.music = true;
     if (s.tutDone === undefined) save.tutDone = !!(save.stars && save.stars[1]);
     if (save.voice === undefined) save.voice = true;
@@ -2753,7 +2780,7 @@ function updateHud(force) {
 }
 
 /* ---------- Экраны ---------- */
-const screens = ["menu", "map", "level", "shop", "settings", "paused", "results", "confirm", "story", "drawer"];
+const screens = ["menu", "map", "level", "shop", "settings", "paused", "results", "confirm", "story", "drawer", "promo"];
 function showScreen(id, under) { under = under || []; for (const s of screens) $(s).hidden = !(s === id || under.includes(s)); }
 let shopReturn = "menu";
 function totalStars() { return LEVELS.reduce((a, l) => a + (save.stars[l.id] || 0), 0); }
@@ -3191,6 +3218,24 @@ $("btn-shop").addEventListener("click", () => { sfx.click(); openShop("menu"); }
 let settingsFrom = "menu";
 function openSettings(from) { settingsFrom = from; syncToggles(); showScreen("settings", [from]); }
 $("btn-settings").addEventListener("click", () => openSettings("menu"));
+/* ---------- Промокоды ---------- */
+const PROMOS = {
+  skins: { text: "Открыты все скины!", apply: () => { save.skins = SKINS.map((s2) => s2.id); } },
+  upgradefull: { text: "Все улучшения на максимуме!", apply: () => { save.upg = { speed: MAXLVL, magnet: MAXLVL, dash: MAXLVL }; } },
+};
+function promoMsg(text, ok) { const m = $("promo-msg"); m.textContent = text; m.className = "promo-msg " + (ok ? "ok" : "bad"); }
+$("btn-promo").addEventListener("click", () => { $("promo-input").value = ""; promoMsg("", true); showScreen("promo", ["menu"]); setTimeout(() => $("promo-input").focus(), 50); });
+function activatePromo() {
+  const code = $("promo-input").value.trim().toLowerCase(), P = PROMOS[code];
+  if (!code) { promoMsg("Введи промокод", false); return; }
+  if (!P) { promoMsg("Такого промокода нет", false); shake($("promo-input")); sfx.fail(); return; }
+  if (save.promos.includes(code)) { promoMsg("Этот промокод уже активирован", false); return; }
+  P.apply(); save.promos.push(code); persist(); refreshMenu();
+  promoMsg(P.text, true); sfx.buy(); burstAt($("promo-go"), 60);
+}
+$("promo-go").addEventListener("click", activatePromo);
+$("promo-input").addEventListener("keydown", (e) => { if (e.key === "Enter") activatePromo(); });
+$("promo").addEventListener("click", (e) => { if (e.target.id === "promo") goMenu(); });
 document.querySelectorAll("[data-close]").forEach((b) => b.addEventListener("click", () => {
   const to = b.dataset.close === "shop" ? shopReturn : b.closest("#settings") ? settingsFrom : b.dataset.close;
   if (to === "map") openMap(cardLevel); else goMenu();

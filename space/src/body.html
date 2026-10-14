@@ -1,0 +1,125 @@
+<div id="view"></div>
+<div id="lookpad" hidden></div>
+<div id="flash"></div>
+<div id="loading">Загрузка…</div>
+
+<div id="hud" class="layer" hidden>
+  <div class="hud-tl">
+    <div class="pill coinpill" id="coinPill"><span class="coin"></span><span id="coins">0</span></div>
+    <div class="pill bros" id="bros"></div>
+  </div>
+  <div class="hud-top"><div class="obj" id="objBox"><small id="objTag">Задача</small><div id="obj"></div><span id="objDist"></span></div></div>
+  <div class="hud-tr">
+    <button id="bJournal" class="ib" aria-label="Журнал заданий" title="Журнал (J)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 3h11a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6z"/><path d="M6 3v18M10 8h5M10 12h5"/></svg></button>
+    <button id="bPause" class="ib" aria-label="Пауза" title="Пауза (Esc)">II</button>
+  </div>
+  <div id="tut" hidden><small>Обучение · <span id="tutN"></span></small><div id="tutText"></div><div class="tutbar"><i id="tutBar"></i></div></div>
+  <div id="cross"></div>
+  <div id="marker" hidden><b></b><i></i><span id="markerD"></span></div>
+  <div id="labels"></div>
+  <div id="prompt" hidden><span class="key" id="keyRing"><b>E</b></span><span id="promptText"></span></div>
+  <div id="toasts"></div>
+  <div id="banner" hidden><small id="bannerTag"></small><b id="bannerTitle"></b><span id="bannerSub"></span></div>
+  <div id="timer" hidden></div>
+  <div id="carryTag" hidden></div>
+  <div id="clickhint" hidden>Кликните по экрану, чтобы управлять камерой</div>
+  <div id="shud" hidden>
+    <div class="spd"><b id="spd">0</b><small>м/с</small></div>
+    <div class="boostbar"><small>Форсаж</small><div><i id="boostFill"></i></div></div>
+    <div id="shudHint"></div>
+  </div>
+</div>
+
+<div id="touch" class="layer" hidden>
+  <div id="joy"><div id="knob"></div></div>
+  <button id="tJump" class="tb">Прыжок</button>
+  <button id="tAlt" class="tb" hidden>Бросок</button>
+  <button id="tMap" class="tb" hidden>Карта</button>
+  <button id="tE" class="tb">E</button>
+</div>
+
+<div id="dlg" hidden>
+  <div class="portrait"><img id="dlgPic" alt=""></div>
+  <div class="dlgBody"><div class="dlgName" id="dlgName"></div><div class="dlgText" id="dlgText"></div><div class="dlgHint" id="dlgHint"></div></div>
+</div>
+
+<div id="title" class="screen" hidden>
+  <div class="titleCard">
+    <div class="titleArt" id="titleArt"></div>
+    <h1>Капик<span>в космосе</span></h1>
+    <p class="lede">Четыре младших брата. Четыре планеты. Одна старая дедушкина тарелка.</p>
+    <div class="btns"><button id="bNew" class="primary">Новая игра</button><button id="bCont" hidden>Продолжить</button></div>
+    <p class="ctrl" id="ctrlHint"></p>
+  </div>
+</div>
+
+<div id="pro" class="screen" hidden>
+  <div class="proCard">
+    <div id="proArt"></div>
+    <p id="proText"></p>
+    <div class="proNav"><span id="proStep"></span><button id="proSkip" class="ghost">Пропустить</button><button id="proNext" class="primary">Дальше</button></div>
+  </div>
+</div>
+
+<div id="menu" class="screen menu" hidden>
+  <div class="sheet">
+    <div class="sheetHead"><h2 id="menuTitle">Пауза</h2><button id="mResume" class="primary">Продолжить</button></div>
+    <div class="tabs" role="tablist" id="menuTabs">
+      <button role="tab" data-tab="quests">Задания</button>
+      <button role="tab" data-tab="kapik">Капик</button>
+      <button role="tab" data-tab="settings">Настройки</button>
+      <button role="tab" data-tab="controls">Управление</button>
+    </div>
+    <div id="menuBody"></div>
+  </div>
+</div>
+
+<div id="shop" class="screen menu" hidden>
+  <div class="sheet">
+    <div class="shopHead"><div class="portrait"><img id="shopPic" alt=""></div><p id="shopSay"></p><div class="wallet"><span class="coin"></span><span id="shopCoins">0</span></div></div>
+    <div class="tabs" role="tablist" id="shopTabs">
+      <button role="tab" data-tab="gear">Снаряжение</button>
+      <button role="tab" data-tab="ship">Тарелка</button>
+      <button role="tab" data-tab="hats">Шапки</button>
+      <button role="tab" data-tab="decor">Для базы</button>
+    </div>
+    <div class="cards" id="shopList"></div>
+    <button class="ghost" data-close>Выйти из лавки</button>
+  </div>
+</div>
+
+<div id="map" class="screen menu" hidden>
+  <div class="mapSheet">
+    <div class="mapWrap"><canvas id="mapc"></canvas></div>
+    <div class="mapSide">
+      <h2>Борткомпьютер</h2>
+      <p id="mapHelp">Нажмите на планету, чтобы проложить курс. Оранжевая линия покажет путь в полёте.</p>
+      <div id="mapInfo"></div>
+      <div class="btns" style="justify-content:flex-start">
+        <button id="mAuto" class="cyan" hidden>Автопилот</button>
+        <button id="mClose" class="primary">Лететь</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="fish" class="screen menu" hidden>
+  <div class="fishCard">
+    <h2>Подлёдная рыбалка</h2>
+    <p id="fishHelp">Жмите E или кнопку, когда поплавок в зелёной зоне.</p>
+    <div class="fbar"><div id="fzone"></div><div id="fneedle"></div></div>
+    <div id="fishCount"></div>
+    <div class="btns"><button id="fHook" class="primary">Подсечь</button><button id="fQuit" class="ghost">Уйти</button></div>
+  </div>
+</div>
+
+<div id="end" class="screen" hidden>
+  <div class="titleCard">
+    <div class="art" id="endArt"></div>
+    <h1>Все дома<span>Конец первой главы</span></h1>
+    <p class="lede">Капик вернул всех четырёх братьев. Пруд снова тёплый, мандарины снова сладкие. На базе и в космосе остались секреты.</p>
+    <button id="endOk" class="primary">Гулять дальше</button>
+  </div>
+</div>
+
+<div id="fade"><div id="fadeText"></div></div>

@@ -253,3 +253,59 @@ h1 span{display:block;font-size:.34em;color:var(--mandarin);letter-spacing:.24em
 #menu.fromTitle [data-tab="quests"],#menu.fromTitle [data-tab="kapik"],#menu.fromTitle .exitbtn{display:none}
 .selltab{color:var(--ok)!important}
 #vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 55%,rgba(0,0,0,.35) 100%)}
+
+/* ===== v4 menus: storybook paper sheets on a warm dusk backdrop (matches the dialog card) ===== */
+:root{--paper:#fbf1de;--paper-2:#f3e4c6;--ink2:#2a1e3a;--ink-soft:#6b5a72;--ink-dim:#9a8a8e}
+.screen,.screen.menu{background:
+  radial-gradient(circle at 18% 22%,rgba(255,214,140,.16) 0 2px,transparent 3px) 0 0/140px 140px,
+  radial-gradient(circle at 70% 64%,rgba(255,255,255,.12) 0 1.5px,transparent 2.5px) 0 0/110px 110px,
+  linear-gradient(160deg,rgba(20,58,74,.9) 0%,rgba(44,32,82,.9) 55%,rgba(92,42,72,.9) 100%);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.screen.menu{z-index:9}
+.sheet,.fishCard{background:var(--paper);color:var(--ink2);border:3px solid var(--ink2);border-radius:24px;box-shadow:0 8px 0 var(--ink2),0 26px 60px rgba(0,0,0,.4);position:relative}
+.sheet::before,.fishCard::before{content:'';position:absolute;inset:7px;border:2px dashed rgba(42,30,58,.12);border-radius:18px;pointer-events:none}
+.sheet h2,.fishCard h2{color:var(--ink2)}
+.sheet .sub,.fishCard p,.sheet .cardMain span,.sheet .setrow label,.sheet .check,.sheet .ctlgrid dd,.shopHead p{color:var(--ink-soft)}
+.sheet .setrow{color:var(--ink2)}
+.sheet button{background:#fff;color:var(--ink2);border:2px solid var(--ink2);border-bottom-width:4px;border-radius:12px}
+.sheet button.primary,.fishCard button.primary{background:var(--mandarin);color:#2a1606;border-color:var(--ink2)}
+.sheet button.ghost,.fishCard button.ghost{background:transparent;color:var(--ink-soft);border-color:rgba(42,30,58,.35)}
+.sheet button.cyan{background:#bdeef0;color:var(--ink2)}
+.tabs{border-bottom:2px solid rgba(42,30,58,.12)}
+.sheet .tabs button{background:transparent;border:2px solid transparent;border-bottom-width:2px;color:var(--ink-soft)}
+.sheet .tabs button[aria-selected="true"]{background:var(--ink2);color:var(--paper);border-color:var(--ink2)}
+.sheet .card{background:#fff;border:2px solid rgba(42,30,58,.14);box-shadow:0 3px 0 rgba(42,30,58,.12)}
+.sheet .card.cur{border-color:var(--mandarin);background:#fff4e2}
+.sheet .thumb{background:radial-gradient(circle at 50% 35%,#fff6e6,#f0d9b0);border:2px solid rgba(42,30,58,.15)}
+.sheet .tag{background:rgba(42,30,58,.07);color:var(--ink-soft)}
+.sheet .tag.ok{background:#dff4d8;color:#2f7a2a}.sheet .tag.no{background:#ffe0dc;color:#b33a2e}.sheet .tag.gold{background:#ffecc2;color:#9a5a00}
+.sheet .qsec{color:var(--ink-dim)}
+.sheet .empty{color:var(--ink-dim)}
+.sheet .ctlgrid dt{color:#c9671a}
+.sheet .wallet{background:var(--ink2);color:var(--paper)}
+.sheet .seg{background:rgba(42,30,58,.08)}
+.sheet .seg button{background:transparent;border-color:transparent;border-bottom-width:2px}
+.sheet .seg button[aria-pressed="true"]{background:var(--mandarin);border-color:var(--ink2)}
+.sheet input[type=range]{accent-color:#e8892a}
+.sheet .exitbtn{color:#b33a2e;border-color:rgba(179,58,46,.4)}
+.sheet .selltab{color:#2f7a2a!important}
+.fishCard .fbar{border:2px solid var(--ink2)}
+#fishCount{color:#1d7a86}
+/* chapter end */
+#end{background:radial-gradient(ellipse at 50% 110%,rgba(255,171,74,.55),transparent 60%),linear-gradient(180deg,#143a4a 0%,#3a2456 60%,#7a3a52 100%);z-index:10}
+#end .titleCard{background:var(--paper);color:var(--ink2);border:3px solid var(--ink2);border-radius:28px;padding:28px 26px 26px;box-shadow:0 10px 0 var(--ink2),0 30px 70px rgba(0,0,0,.45);box-sizing:border-box}
+#end h1{font-size:clamp(40px,8vw,72px);color:var(--ink2);text-shadow:0 4px 0 #f0c890}
+#end h1 span{color:#c9671a;text-shadow:none}
+#end .lede{color:var(--ink-soft)}
+#end .art img{background:radial-gradient(circle at 50% 35%,#fff6e6,#f0d9b0);border:3px solid var(--ink2)}
+#end .reward{display:inline-flex;gap:8px;align-items:center;background:var(--ink2);color:var(--paper);border-radius:999px;padding:7px 16px;font:400 16px var(--display)}
+/* bag */
+.bagRow{display:grid;grid-template-columns:52px 1fr;gap:6px 14px;align-items:center}
+.bagRow .cardMain{flex:none}
+.bagCtl{grid-column:2;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.bagCtl input[type=range]{flex:1 1 140px}
+.bagCtl output{font:400 16px var(--display);min-width:3ch;text-align:center;color:var(--ink2)}
+.sheet button.danger{background:#ffe0dc;color:#b33a2e;border-color:#b33a2e}
+#end .art img{width:88px;height:88px}#end .art img.big{width:128px;height:128px}
+#end .titleCard{gap:12px;max-height:calc(100% - 8px);overflow:auto}
+@media (max-height:560px){#end .art img{width:60px;height:60px}#end .art img.big{width:84px;height:84px}#end h1{font-size:38px}#end .lede{font-size:15px}}

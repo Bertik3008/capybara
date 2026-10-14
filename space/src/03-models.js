@@ -1,9 +1,9 @@
 /* ---------- CHARACTER MODELS ---------- */
 function eyes(h,x,y,z,r,o){o=o||{};for(const s of[-1,1]){mesh(G.sph,mat(o.white||0xffffff),s*x,y,z,r,r,r*.8,h);mesh(G.sph,mat(o.pupil||0x15100c),s*x,y+(o.py||0),z+r*.62,r*.58,r*.62,r*.4,h);mesh(G.sph,bmat(0xffffff),s*x+r*.2,y+r*.25,z+r*.85,r*.18,r*.18,r*.12,h)}}
 const HEADS={
-  capy(h,C){mesh(G.sph,mat(C.fur),0,.27,0,.3,.27,.33,h);mesh(G.box,mat(C.fur2),0,.2,.25,.33,.24,.26,h);mesh(G.box,mat(C.dark),0,.29,.375,.24,.07,.03,h);
-    for(const s of[-1,1]){mesh(G.sph,mat(0x1b1010),s*.07,.27,.385,.03,.022,.02,h);mesh(G.sph,mat(C.dark),s*.19,.5,-.06,.075,.06,.05,h)}eyes(h,.16,.36,.16,.045,{white:0x1b1010});
-    mesh(G.box,mat(0x2a1810),0,.13,.38,.08,.015,.01,h);for(const sd of[-1,1])mesh(G.sph,mat(0xd98a6a),sd*.2,.25,.2,.06,.035,.03,h);return .31},
+  capy(h,C){mesh(G.sph,mat(C.fur),0,.27,0,.3,.27,.33,h);mesh(G.sph,mat(C.fur2),0,.2,.23,.2,.155,.18,h);mesh(G.sph,mat(C.dark),0,.285,.36,.13,.05,.045,h);
+    for(const s of[-1,1]){mesh(G.sph,mat(0x1b1010),s*.06,.27,.395,.026,.02,.018,h);mesh(G.sph,mat(C.dark),s*.19,.5,-.06,.075,.06,.05,h)}eyes(h,.16,.36,.16,.045,{white:0x1b1010});
+    mesh(G.box,mat(0x2a1810),0,.14,.385,.07,.012,.01,h);for(const sd of[-1,1])mesh(G.sph,mat(0xd98a6a),sd*.2,.25,.2,.06,.035,.03,h);return .31},
   goat(h,C){mesh(G.sph,mat(C.fur),0,.28,0,.25,.28,.27,h);mesh(G.sph,mat(C.fur2),0,.18,.19,.15,.14,.2,h);mesh(G.sph,mat(0x3a2a24),0,.22,.37,.05,.035,.03,h);
     for(const s of[-1,1]){mesh(G.cone,mat(0xd8c8a8),s*.1,.6,-.04,.05,.24,.05,h).rotation.set(-.55,0,s*.25);mesh(G.sph,mat(C.fur),s*.27,.38,0,.12,.04,.06,h).rotation.z=s*.45}
     eyes(h,.13,.36,.17,.05,{pupil:0x3a2a10});mesh(G.cone,mat(C.beard||0xf2eee6),0,.02,.22,.055,.16,.05,h).rotation.x=Math.PI;return .3},
@@ -23,6 +23,9 @@ const HEADS={
   otter(h,C){mesh(G.sph,mat(C.fur),0,.26,0,.27,.25,.26,h);mesh(G.sph,mat(C.fur2),0,.19,.18,.17,.12,.14,h);mesh(G.sph,mat(0x2a1a14),0,.25,.31,.05,.035,.03,h);
     for(const s of[-1,1]){mesh(G.sph,mat(C.dark||0x5a3b26),s*.2,.43,-.02,.06,.05,.04,h);for(const k of[-1,1])mesh(G.box,mat(0xf2eee6),s*.2,.2+k*.025,.27,.16,.006,.006,h).rotation.y=s*.25}
     eyes(h,.12,.32,.19,.04);return .28},
+  squirrel(h,C){mesh(G.sph,mat(C.fur),0,.26,0,.26,.24,.25,h);mesh(G.sph,mat(C.fur2),0,.19,.17,.15,.11,.13,h);mesh(G.sph,mat(0x2a1a14),0,.23,.29,.04,.032,.028,h);mesh(G.box,mat(0xffffff),0,.12,.26,.05,.05,.02,h);
+    for(const s of[-1,1]){const e=mesh(G.cone,mat(C.fur),s*.15,.5,-.02,.07,.16,.05,h);e.rotation.z=-s*.25;mesh(G.cone,mat(C.dark||0x5a3018),s*.17,.6,-.02,.03,.08,.03,h).rotation.z=-s*.3;mesh(G.sph,mat(0xffb3a0),s*.17,.2,.19,.05,.03,.02,h)}
+    eyes(h,.11,.31,.19,.048);return .27},
   mole(h,C){mesh(G.sph,mat(C.fur),0,.25,0,.27,.25,.27,h);mesh(G.sph,mat(0xff8fb1),0,.22,.3,.07,.06,.06,h);for(let i=0;i<6;i++){const a=i/6*TAU;mesh(G.cone,mat(0xff8fb1),Math.cos(a)*.06,.22+Math.sin(a)*.06,.32,.025,.06,.025,h).rotation.set(Math.PI/2,0,a-Math.PI/2)}
     for(const s of[-1,1])mesh(G.sph,mat(0x111111),s*.1,.33,.22,.02,.02,.015,h);return .28}
 };
@@ -78,6 +81,7 @@ function makeChar(sp){
   (HATS[sp.hat]||HATS.none)(head,hr,C);if(sp.hat2)HATS[sp.hat2](head,hr,C);
   if(sp.tail==='ring'){for(let i=0;i<4;i++)mesh(G.sph,mat(i%2?0x2b2b33:C.fur),0,.05+i*.04,-bd-.08-i*.13,.1,.1,.12,torso)}
   else if(sp.tail==='short')mesh(G.sph,mat(C.fur),0,.05,-bd-.02,.07,.07,.07,torso);
+  else if(sp.tail==='bushy'){for(let i=0;i<4;i++){const t=mesh(G.sph,mat(i===3?(C.fur2||C.fur):C.fur),0,.12+i*.17,-bd-.14-Math.sin(i*.9)*.12,.15+i*.02,.17,.13,torso);t.rotation.x=-.3}}
   else if(sp.tail==='otter'){const t=mesh(G.cone,mat(C.fur),0,.0,-bd-.2,.09,.5,.06,torso);t.rotation.x=-1.9}
   if(sp.prop)PROPS[sp.prop](arms[1].userData.paw);
   if(sp.propL)PROPS[sp.propL](arms[0].userData.paw);
@@ -163,12 +167,17 @@ const CAST={
   magnetron:{name:'Магнетрон',voice:120,spec:()=>({sp:'robot',scale:2,c:{fur:0x6b3434,visor:0xff3a3a,tip:0xff3a3a}})},
   gaykin:{name:'Скупщик Гайкин',voice:380,spec:()=>({sp:'robot',hat:'tophat',c:{fur:0xc9a25a,visor:0xffd36b}})},
   cleaner:{name:'Робот-уборщик',voice:600,spec:()=>({sp:'robot',scale:.6,c:{fur:0x8ee0a8,visor:0x333333}})},
+  pushinka:{name:'Хранительница Пушинка',voice:560,spec:()=>({sp:'squirrel',hat:'goggles',scarf:0xfff2a8,tail:'bushy',c:{fur:0xd08a4a,fur2:0xfff0dc,dark:0x7a4420,shirt:0x6fbf9a,pants:0x6fbf9a,arm:0xd08a4a,paw:0xd08a4a}})},
+  shishkin:{name:'Дед Шишкин',voice:240,spec:()=>({sp:'squirrel',glasses:true,prop:'staff',tail:'bushy',scale:1.05,c:{fur:0x9a7a6a,fur2:0xe8e0d8,dark:0x5a4a40,shirt:0x8a5a3a,pants:0x6a4a30,arm:0x9a7a6a,paw:0x9a7a6a}})},
+  oreshka:{name:'Белка Орешка',voice:500,spec:()=>({sp:'squirrel',apron:0xfff1d6,tail:'bushy',c:{fur:0xc0703a,fur2:0xfff0dc,dark:0x6a3418,shirt:0xc94f6a,pants:0xc94f6a,arm:0xc0703a,paw:0xc0703a}})},
+  belchonok:{name:'Бельчонок',voice:760,spec:()=>({sp:'squirrel',scale:.6,tail:'bushy',c:{fur:0xd8904a,fur2:0xfff0dc,dark:0x7a4420,shirt:pick([0xffd36b,0x7fe3e8,0x8ee08a]),pants:0x6a4a30,arm:0xd8904a,paw:0xd8904a}})},
+  bee:{name:'Шмель Жужа',voice:420,spec:()=>({sp:'raccoon',scale:.8,hat:'propeller',c:{fur:0xffc83d,fur2:0x2b2b33,shirt:0x2b2b33,pants:0xffc83d,arm:0x2b2b33,paw:0x2b2b33}})},
   robot:{name:'Робот',voice:480,spec:()=>({sp:'robot',scale:.9,c:{fur:pick([0x9aa6ad,0xc9a25a,0x8fb0c0]),visor:pick([0x7fe3e8,0x8ee08a,0xffd36b])}})}
 };
 function makeCast(key){const c=makeChar(CAST[key].spec());c.key=key;return c}
 
 /* ---------- PROPS ---------- */
-const PAINTS={silver:{name:'Дедушкино серебро',col:0xb8c4d6,price:0},mandarin:{name:'Мандариновая',col:0xffab4a,price:25},mint:{name:'Мятная',col:0x6fe0b0,price:25},violet:{name:'Фиалковая',col:0xa98cff,price:25},gold:{name:'Золотая',col:0xffd36b,price:50}};
+const PAINTS={silver:{name:'Дедушкино серебро',col:0xb8c4d6,price:0},mandarin:{name:'Мандариновая',col:0xffab4a,price:25},mint:{name:'Мятная',col:0x6fe0b0,price:25},violet:{name:'Фиалковая',col:0xa98cff,price:25},gold:{name:'Золотая',col:0xffd36b,price:50},fluffy:{name:'Пушистая',col:0xfff0d8,price:0,secret:1}};
 /* the grandpa saucer: hull, rim, dome, lights; landed=true puts it on its legs */
 function makeUFO(paint,landed){
   const g=new THREE.Group();const col=(PAINTS[paint]||PAINTS.silver).col;
@@ -209,10 +218,13 @@ const ITEMS={
 /* resources: icon colour, name, base price */
 const RES={berry:{name:'Звёздные ягоды',one:'ягода',col:'#7aa8ff',price:1},mandarin:{name:'Мандарины',one:'мандарин',col:'#ffab4a',price:2},fish:{name:'Рыба',one:'рыба',col:'#9fd8f0',price:3},shroom:{name:'Светогрибы',one:'светогриб',col:'#d7a0ff',price:3},scrap:{name:'Металлолом',one:'деталь',col:'#b8c0c8',price:2},
   juice:{name:'Мандариновый сок',one:'банка сока',col:'#ff8a2e',price:16},smoked:{name:'Копчёная рыба',one:'копчёная рыба',col:'#d98a4a',price:15},elixir:{name:'Светоэликсир',one:'эликсир',col:'#c97aff',price:17},cog:{name:'Шестерни',one:'шестерня',col:'#ffd36b',price:15}};
+RES.fluff={name:'Звёздный пух',one:'пушинка',col:'#fff2b8',price:2};RES.pillow={name:'Пуховая подушка',one:'подушка',col:'#f4d0e8',price:19};
 function resModel(kind){const g=new THREE.Group();
   if(kind==='berry'){for(let i=0;i<5;i++)mesh(G.sph,bmat(0x7aa8ff),Math.cos(i*1.3)*.09,.12+(i%2)*.08,Math.sin(i*1.3)*.09,.07,.07,.07,g)}
   else if(kind==='mandarin'){mesh(G.sph,mat(0xff9a2e),0,.16,0,.16,.14,.16,g);mesh(G.box,mat(0x4f9a3a),.04,.31,0,.12,.02,.06,g)}
   else if(kind==='fish'){mesh(G.sph,mat(0x9fd8f0,{metal:.3}),0,.12,0,.25,.1,.07,g);mesh(G.cone,mat(0x7ab8d8),-.3,.12,0,.08,.14,.03,g).rotation.z=Math.PI/2}
   else if(kind==='shroom'){mesh(G.cyl,mat(0xe8dcc8),0,.1,0,.04,.2,.04,g);mesh(G.hemi,bmat(0xd7a0ff),0,.18,0,.14,.1,.14,g)}
+  else if(kind==='fluff'){mesh(G.sph,bmat(0xfff8d8),0,.16,0,.12,.12,.12,g);mesh(G.cyl,mat(0x8a9a5a),0,.05,0,.01,.1,.01,g)}
+  else if(kind==='pillow'){mesh(G.sph,mat(0xf4d0e8),0,.1,0,.22,.08,.16,g)}
   else if(kind==='scrap'){mesh(G.tor,mat(0x9aa6ad,{metal:.8}),0,.1,0,.12,.12,.2,g);mesh(G.box,mat(0x7a8088,{metal:.8}),.12,.06,.05,.18,.06,.06,g).rotation.y=.6}
   g.add(glow(RES[kind]?parseInt(RES[kind].col.slice(1),16):0xffffff,.9,.35));return g}

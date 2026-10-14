@@ -263,6 +263,62 @@ h1 span{display:block;font-size:.34em;color:var(--mandarin);letter-spacing:.24em
 .selltab{color:var(--ok)!important}
 #vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 55%,rgba(0,0,0,.35) 100%)}
 
+/* ===== v4 menus: storybook paper sheets on a warm dusk backdrop (matches the dialog card) ===== */
+:root{--paper:#fbf1de;--paper-2:#f3e4c6;--ink2:#2a1e3a;--ink-soft:#6b5a72;--ink-dim:#9a8a8e}
+.screen,.screen.menu{background:
+  radial-gradient(circle at 18% 22%,rgba(255,214,140,.16) 0 2px,transparent 3px) 0 0/140px 140px,
+  radial-gradient(circle at 70% 64%,rgba(255,255,255,.12) 0 1.5px,transparent 2.5px) 0 0/110px 110px,
+  linear-gradient(160deg,rgba(20,58,74,.9) 0%,rgba(44,32,82,.9) 55%,rgba(92,42,72,.9) 100%);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.screen.menu{z-index:9}
+.sheet,.fishCard{background:var(--paper);color:var(--ink2);border:3px solid var(--ink2);border-radius:24px;box-shadow:0 8px 0 var(--ink2),0 26px 60px rgba(0,0,0,.4);position:relative}
+.sheet::before,.fishCard::before{content:'';position:absolute;inset:7px;border:2px dashed rgba(42,30,58,.12);border-radius:18px;pointer-events:none}
+.sheet h2,.fishCard h2{color:var(--ink2)}
+.sheet .sub,.fishCard p,.sheet .cardMain span,.sheet .setrow label,.sheet .check,.sheet .ctlgrid dd,.shopHead p{color:var(--ink-soft)}
+.sheet .setrow{color:var(--ink2)}
+.sheet button{background:#fff;color:var(--ink2);border:2px solid var(--ink2);border-bottom-width:4px;border-radius:12px}
+.sheet button.primary,.fishCard button.primary{background:var(--mandarin);color:#2a1606;border-color:var(--ink2)}
+.sheet button.ghost,.fishCard button.ghost{background:transparent;color:var(--ink-soft);border-color:rgba(42,30,58,.35)}
+.sheet button.cyan{background:#bdeef0;color:var(--ink2)}
+.tabs{border-bottom:2px solid rgba(42,30,58,.12)}
+.sheet .tabs button{background:transparent;border:2px solid transparent;border-bottom-width:2px;color:var(--ink-soft)}
+.sheet .tabs button[aria-selected="true"]{background:var(--ink2);color:var(--paper);border-color:var(--ink2)}
+.sheet .card{background:#fff;border:2px solid rgba(42,30,58,.14);box-shadow:0 3px 0 rgba(42,30,58,.12)}
+.sheet .card.cur{border-color:var(--mandarin);background:#fff4e2}
+.sheet .thumb{background:radial-gradient(circle at 50% 35%,#fff6e6,#f0d9b0);border:2px solid rgba(42,30,58,.15)}
+.sheet .tag{background:rgba(42,30,58,.07);color:var(--ink-soft)}
+.sheet .tag.ok{background:#dff4d8;color:#2f7a2a}.sheet .tag.no{background:#ffe0dc;color:#b33a2e}.sheet .tag.gold{background:#ffecc2;color:#9a5a00}
+.sheet .qsec{color:var(--ink-dim)}
+.sheet .empty{color:var(--ink-dim)}
+.sheet .ctlgrid dt{color:#c9671a}
+.sheet .wallet{background:var(--ink2);color:var(--paper)}
+.sheet .seg{background:rgba(42,30,58,.08)}
+.sheet .seg button{background:transparent;border-color:transparent;border-bottom-width:2px}
+.sheet .seg button[aria-pressed="true"]{background:var(--mandarin);border-color:var(--ink2)}
+.sheet input[type=range]{accent-color:#e8892a}
+.sheet .exitbtn{color:#b33a2e;border-color:rgba(179,58,46,.4)}
+.sheet .selltab{color:#2f7a2a!important}
+.fishCard .fbar{border:2px solid var(--ink2)}
+#fishCount{color:#1d7a86}
+/* chapter end */
+#end{background:radial-gradient(ellipse at 50% 110%,rgba(255,171,74,.55),transparent 60%),linear-gradient(180deg,#143a4a 0%,#3a2456 60%,#7a3a52 100%);z-index:10}
+#end .titleCard{background:var(--paper);color:var(--ink2);border:3px solid var(--ink2);border-radius:28px;padding:28px 26px 26px;box-shadow:0 10px 0 var(--ink2),0 30px 70px rgba(0,0,0,.45);box-sizing:border-box}
+#end h1{font-size:clamp(40px,8vw,72px);color:var(--ink2);text-shadow:0 4px 0 #f0c890}
+#end h1 span{color:#c9671a;text-shadow:none}
+#end .lede{color:var(--ink-soft)}
+#end .art img{background:radial-gradient(circle at 50% 35%,#fff6e6,#f0d9b0);border:3px solid var(--ink2)}
+#end .reward{display:inline-flex;gap:8px;align-items:center;background:var(--ink2);color:var(--paper);border-radius:999px;padding:7px 16px;font:400 16px var(--display)}
+/* bag */
+.bagRow{display:grid;grid-template-columns:52px 1fr;gap:6px 14px;align-items:center}
+.bagRow .cardMain{flex:none}
+.bagCtl{grid-column:2;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.bagCtl input[type=range]{flex:1 1 140px}
+.bagCtl output{font:400 16px var(--display);min-width:3ch;text-align:center;color:var(--ink2)}
+.sheet button.danger{background:#ffe0dc;color:#b33a2e;border-color:#b33a2e}
+#end .art img{width:88px;height:88px}#end .art img.big{width:128px;height:128px}
+#end .titleCard{gap:12px;max-height:calc(100% - 8px);overflow:auto}
+@media (max-height:560px){#end .art img{width:60px;height:60px}#end .art img.big{width:84px;height:84px}#end h1{font-size:38px}#end .lede{font-size:15px}}
+
 </style>
 </head>
 <body>
@@ -320,7 +376,7 @@ h1 span{display:block;font-size:.34em;color:var(--mandarin);letter-spacing:.24em
     <button id="bSet">Настройки</button>
   </nav>
   <div class="tconfirm" id="tConfirm" hidden><p>Начать заново? Сохранение удалится.</p><div class="btns"><button id="bNewYes" class="primary">Начать заново</button><button id="bNewNo" class="ghost">Отмена</button></div></div>
-  <p class="tfoot">Версия 3</p>
+  <p class="tfoot">Версия 4 · глава 2</p>
 </div>
 
 <div id="pro" class="screen" hidden>
@@ -369,6 +425,14 @@ h1 span{display:block;font-size:.34em;color:var(--mandarin);letter-spacing:.24em
   </div>
 </div>
 
+<div id="bag" class="screen menu" hidden>
+  <div class="sheet">
+    <div class="sheetHead"><h2>Сумка</h2><div class="wallet"><span class="coin"></span><span id="bagCoins">0</span></div><button data-close class="primary">Закрыть</button></div>
+    <p class="sub" id="bagSub"></p>
+    <div class="cards" id="bagList"></div>
+  </div>
+</div>
+
 <div id="map" class="screen menu" hidden>
   <div class="mapSheet">
     <div class="mapWrap"><canvas id="mapc"></canvas></div>
@@ -397,8 +461,9 @@ h1 span{display:block;font-size:.34em;color:var(--mandarin);letter-spacing:.24em
 <div id="end" class="screen" hidden>
   <div class="titleCard">
     <div class="art" id="endArt"></div>
-    <h1>Все дома<span>Конец первой главы</span></h1>
-    <p class="lede">Капик вернул всех четырёх братьев. Пруд снова тёплый, мандарины снова сладкие. На базе и в космосе остались секреты.</p>
+    <h1 id="endTitle">Все дома<span>Конец первой главы</span></h1>
+    <p class="lede" id="endText"></p>
+    <p class="reward" id="endReward" hidden><span class="coin"></span>+50 монет и покраска тарелки «Пушистая»</p>
     <button id="endOk" class="primary">Гулять дальше</button>
   </div>
 </div>
@@ -437,7 +502,8 @@ const PL={
   p1:{name:'Мандарина',kind:'Садовая планета',desc:'Мандариновые сады, амбары и ветряк',bro:'yuzik',col:'#ffab4a'},
   p2:{name:'Ледора',kind:'Ледяная планета',desc:'Северное сияние, иглу и Звонкое озеро',bro:'snezhok',col:'#bfe8ff'},
   p3:{name:'Грибния',kind:'Грибная планета',desc:'Гигантские грибы, лягушачья деревня и светлячки',bro:'gribok',col:'#c79bff'},
-  p4:{name:'Шестерёнка',kind:'Планета-завод',desc:'Заводы, краны, конвейеры и роботы',bro:'vintik',col:'#8fd8e0'}
+  p4:{name:'Шестерёнка',kind:'Планета-завод',desc:'Заводы, краны, конвейеры и роботы',bro:'vintik',col:'#8fd8e0'},
+  p5:{name:'Одуванчия',kind:'Пуховая планета',desc:'Великий Пух, белки-летяги и потоки ветра',col:'#f4f0a0'}
 };
 
 /* ---------- AUDIO: procedural music + sfx ---------- */
@@ -645,22 +711,22 @@ const ATLAS=(()=>{const N=256,c=document.createElement('canvas');c.width=c.heigh
   const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;t.anisotropy=4;t.userData={shared:true};return t})();
 function groundTex(kind){const N=512,c=document.createElement('canvas');c.width=c.height=N;const g=c.getContext('2d'),img=g.createImageData(N,N),d=img.data,r=rng(kind.length*13);
   const n1=tileNoise(N,8,kind.length),n2=tileNoise(N,32,kind.length+3),n3=tileNoise(N,128,kind.length+7);
-  for(let y=0;y<N;y++)for(let x=0;x<N;x++){let v=.9+(n1(x,y)-.5)*.16+(n2(x,y)-.5)*.1+(n3(x,y)-.5)*.08;
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++){let v=.9+(n1(x,y)-.5)*.12+(n2(x,y)-.5)*.05+(n3(x,y)-.5)*.02;
     if(kind==='metal'){const px=x%256,py=y%256;v=.85+(n3(x,(y*4)%N)-.5)*.05;if(px<3||py<3)v*=.6;if(px%64<2&&py%64<2)v=1}
     if(kind==='snow')v=.96+(n2(x,y)-.5)*.05;
     const i=(y*N+x)*4;v=clamp(v,0,1)*255;d[i]=d[i+1]=d[i+2]=v;d[i+3]=255}
   g.putImageData(img,0,0);
-  if(kind==='grass'||kind==='moss'){for(let i=0;i<9000;i++){const x=r()*N,y=r()*N,l=3+r()*7,a=-Math.PI/2+(r()-.5)*.8,b=r();g.strokeStyle=b<.5?`rgba(0,0,0,${.12+r()*.12})`:`rgba(255,255,255,${.1+r()*.12})`;g.lineWidth=1+r();g.beginPath();g.moveTo(x,y);g.lineTo(x+Math.cos(a)*l,y+Math.sin(a)*l);g.stroke()}}
+  if(kind==='grass'||kind==='moss'){for(let i=0;i<2200;i++){const x=r()*N,y=r()*N,l=3+r()*6,a=-Math.PI/2+(r()-.5)*.8,b=r();g.strokeStyle=b<.5?`rgba(0,0,0,${.05+r()*.05})`:`rgba(255,255,255,${.05+r()*.05})`;g.lineWidth=1+r();g.beginPath();g.moveTo(x,y);g.lineTo(x+Math.cos(a)*l,y+Math.sin(a)*l);g.stroke()}}
   if(kind==='snow'){for(let i=0;i<600;i++){g.fillStyle=`rgba(255,255,255,${.4+r()*.6})`;g.fillRect(r()*N,r()*N,1.5,1.5)}for(let i=0;i<120;i++){g.fillStyle='rgba(120,150,180,.08)';g.beginPath();g.ellipse(r()*N,r()*N,6+r()*14,3+r()*6,r()*3,0,TAU);g.fill()}}
   const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.encoding=THREE.sRGBEncoding;t.anisotropy=8;return t}
 function pathTex(kind){const W=256,H=512,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d'),r=rng(kind.length*7+1);
   const base={dirt:'#d9c2a0',cobble:'#c9c2b8',snow:'#eef4f8',metal:'#9aa2aa',moss:'#b8a8d0'}[kind]||'#d9c2a0';g.fillStyle=base;g.fillRect(0,0,W,H);
   const n=tileNoise(H,16,kind.length);const img=g.getImageData(0,0,W,H),d=img.data;
-  for(let y=0;y<H;y++)for(let x=0;x<W;x++){const i=(y*W+x)*4,v=.85+(n(x%H,y)-.5)*.3;d[i]*=v;d[i+1]*=v;d[i+2]*=v;const edge=Math.min(x,W-1-x)/W,rag=.06+n((x*3)%H,(y*2)%H)*.12;d[i+3]=edge<rag?0:255}
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){const i=(y*W+x)*4,v=.9+(n(x%H,y)-.5)*.14;d[i]*=v;d[i+1]*=v;d[i+2]*=v;const edge=Math.min(x,W-1-x)/W,rag=.06+n((x*3)%H,(y*2)%H)*.12;d[i+3]=edge<rag?0:255}
   g.putImageData(img,0,0);g.globalCompositeOperation='source-atop';
   if(kind==='cobble'){for(let yy=0;yy<H;yy+=26)for(let xx=-10;xx<W;xx+=32){const ox=(yy/26)%2?16:0;g.fillStyle=`rgba(${150+r()*40|0},${145+r()*35|0},${135+r()*35|0},1)`;g.beginPath();g.ellipse(xx+ox+r()*4,yy+13,13,10,0,0,TAU);g.fill();g.strokeStyle='rgba(60,50,40,.5)';g.lineWidth=2;g.stroke()}}
   else if(kind==='metal'){g.fillStyle='rgba(60,64,70,.6)';for(let y=0;y<H;y+=64)g.fillRect(0,y,W,3);g.fillStyle='#e8b23a';for(let y=0;y<H;y+=40){g.save();g.translate(0,y);g.transform(1,0,-.6,1,0,0);g.fillRect(14,0,14,20);g.fillRect(W-28,0,14,20);g.restore()}}
-  else{for(let i=0;i<(kind==='snow'?60:260);i++){const x=r()*W,y=r()*H,s=1.5+r()*4;g.fillStyle=kind==='snow'?'rgba(140,170,200,.25)':kind==='moss'?`rgba(${200+r()*55|0},${170+r()*60|0},255,.6)`:`rgba(${90+r()*60|0},${70+r()*50|0},${50+r()*40|0},.75)`;g.beginPath();g.ellipse(x,y,s,s*.7,r()*3,0,TAU);g.fill()}
+  else{for(let i=0;i<(kind==='snow'?30:70);i++){const x=r()*W,y=r()*H,s=1.5+r()*4;g.fillStyle=kind==='snow'?'rgba(140,170,200,.25)':kind==='moss'?`rgba(${200+r()*55|0},${170+r()*60|0},255,.6)`:`rgba(${120+r()*50|0},${100+r()*40|0},${75+r()*30|0},.35)`;g.beginPath();g.ellipse(x,y,s,s*.7,r()*3,0,TAU);g.fill()}
     if(kind==='snow')for(let y=20;y<H;y+=46){g.fillStyle='rgba(120,150,180,.25)';g.beginPath();g.ellipse(W*.4,y,9,14,0,0,TAU);g.fill();g.beginPath();g.ellipse(W*.6,y+23,9,14,0,0,TAU);g.fill()}}
   const t=new THREE.CanvasTexture(c);t.wrapT=THREE.RepeatWrapping;t.encoding=THREE.sRGBEncoding;t.anisotropy=8;return t}
 const glowTex=(()=>{const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');const gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(.25,'rgba(255,255,255,.5)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(0,0,64,64);const t=new THREE.CanvasTexture(c);t.userData={shared:true};return t})();
@@ -677,7 +743,7 @@ function atlasMat(){const m=new THREE.MeshStandardMaterial({vertexColors:true,ma
       #else
       vec4 texelColor=texture2D(map,tuv);
       #endif
-      texelColor=mapTexelToLinear(texelColor);diffuseColor*=texelColor;
+      texelColor=mapTexelToLinear(texelColor);texelColor.rgb=mix(vec3(0.78),texelColor.rgb,0.5);diffuseColor*=texelColor;
       #endif`)};m.userData.shared=true;return m}
 const batchMat=atlasMat();
 const glowBatchMat=new THREE.MeshBasicMaterial({vertexColors:true,toneMapped:false});glowBatchMat.userData.shared=true;
@@ -784,9 +850,9 @@ function portraitOf(k,make){
 /* ---------- CHARACTER MODELS ---------- */
 function eyes(h,x,y,z,r,o){o=o||{};for(const s of[-1,1]){mesh(G.sph,mat(o.white||0xffffff),s*x,y,z,r,r,r*.8,h);mesh(G.sph,mat(o.pupil||0x15100c),s*x,y+(o.py||0),z+r*.62,r*.58,r*.62,r*.4,h);mesh(G.sph,bmat(0xffffff),s*x+r*.2,y+r*.25,z+r*.85,r*.18,r*.18,r*.12,h)}}
 const HEADS={
-  capy(h,C){mesh(G.sph,mat(C.fur),0,.27,0,.3,.27,.33,h);mesh(G.box,mat(C.fur2),0,.2,.25,.33,.24,.26,h);mesh(G.box,mat(C.dark),0,.29,.375,.24,.07,.03,h);
-    for(const s of[-1,1]){mesh(G.sph,mat(0x1b1010),s*.07,.27,.385,.03,.022,.02,h);mesh(G.sph,mat(C.dark),s*.19,.5,-.06,.075,.06,.05,h)}eyes(h,.16,.36,.16,.045,{white:0x1b1010});
-    mesh(G.box,mat(0x2a1810),0,.13,.38,.08,.015,.01,h);for(const sd of[-1,1])mesh(G.sph,mat(0xd98a6a),sd*.2,.25,.2,.06,.035,.03,h);return .31},
+  capy(h,C){mesh(G.sph,mat(C.fur),0,.27,0,.3,.27,.33,h);mesh(G.sph,mat(C.fur2),0,.2,.23,.2,.155,.18,h);mesh(G.sph,mat(C.dark),0,.285,.36,.13,.05,.045,h);
+    for(const s of[-1,1]){mesh(G.sph,mat(0x1b1010),s*.06,.27,.395,.026,.02,.018,h);mesh(G.sph,mat(C.dark),s*.19,.5,-.06,.075,.06,.05,h)}eyes(h,.16,.36,.16,.045,{white:0x1b1010});
+    mesh(G.box,mat(0x2a1810),0,.14,.385,.07,.012,.01,h);for(const sd of[-1,1])mesh(G.sph,mat(0xd98a6a),sd*.2,.25,.2,.06,.035,.03,h);return .31},
   goat(h,C){mesh(G.sph,mat(C.fur),0,.28,0,.25,.28,.27,h);mesh(G.sph,mat(C.fur2),0,.18,.19,.15,.14,.2,h);mesh(G.sph,mat(0x3a2a24),0,.22,.37,.05,.035,.03,h);
     for(const s of[-1,1]){mesh(G.cone,mat(0xd8c8a8),s*.1,.6,-.04,.05,.24,.05,h).rotation.set(-.55,0,s*.25);mesh(G.sph,mat(C.fur),s*.27,.38,0,.12,.04,.06,h).rotation.z=s*.45}
     eyes(h,.13,.36,.17,.05,{pupil:0x3a2a10});mesh(G.cone,mat(C.beard||0xf2eee6),0,.02,.22,.055,.16,.05,h).rotation.x=Math.PI;return .3},
@@ -806,6 +872,9 @@ const HEADS={
   otter(h,C){mesh(G.sph,mat(C.fur),0,.26,0,.27,.25,.26,h);mesh(G.sph,mat(C.fur2),0,.19,.18,.17,.12,.14,h);mesh(G.sph,mat(0x2a1a14),0,.25,.31,.05,.035,.03,h);
     for(const s of[-1,1]){mesh(G.sph,mat(C.dark||0x5a3b26),s*.2,.43,-.02,.06,.05,.04,h);for(const k of[-1,1])mesh(G.box,mat(0xf2eee6),s*.2,.2+k*.025,.27,.16,.006,.006,h).rotation.y=s*.25}
     eyes(h,.12,.32,.19,.04);return .28},
+  squirrel(h,C){mesh(G.sph,mat(C.fur),0,.26,0,.26,.24,.25,h);mesh(G.sph,mat(C.fur2),0,.19,.17,.15,.11,.13,h);mesh(G.sph,mat(0x2a1a14),0,.23,.29,.04,.032,.028,h);mesh(G.box,mat(0xffffff),0,.12,.26,.05,.05,.02,h);
+    for(const s of[-1,1]){const e=mesh(G.cone,mat(C.fur),s*.15,.5,-.02,.07,.16,.05,h);e.rotation.z=-s*.25;mesh(G.cone,mat(C.dark||0x5a3018),s*.17,.6,-.02,.03,.08,.03,h).rotation.z=-s*.3;mesh(G.sph,mat(0xffb3a0),s*.17,.2,.19,.05,.03,.02,h)}
+    eyes(h,.11,.31,.19,.048);return .27},
   mole(h,C){mesh(G.sph,mat(C.fur),0,.25,0,.27,.25,.27,h);mesh(G.sph,mat(0xff8fb1),0,.22,.3,.07,.06,.06,h);for(let i=0;i<6;i++){const a=i/6*TAU;mesh(G.cone,mat(0xff8fb1),Math.cos(a)*.06,.22+Math.sin(a)*.06,.32,.025,.06,.025,h).rotation.set(Math.PI/2,0,a-Math.PI/2)}
     for(const s of[-1,1])mesh(G.sph,mat(0x111111),s*.1,.33,.22,.02,.02,.015,h);return .28}
 };
@@ -861,6 +930,7 @@ function makeChar(sp){
   (HATS[sp.hat]||HATS.none)(head,hr,C);if(sp.hat2)HATS[sp.hat2](head,hr,C);
   if(sp.tail==='ring'){for(let i=0;i<4;i++)mesh(G.sph,mat(i%2?0x2b2b33:C.fur),0,.05+i*.04,-bd-.08-i*.13,.1,.1,.12,torso)}
   else if(sp.tail==='short')mesh(G.sph,mat(C.fur),0,.05,-bd-.02,.07,.07,.07,torso);
+  else if(sp.tail==='bushy'){for(let i=0;i<4;i++){const t=mesh(G.sph,mat(i===3?(C.fur2||C.fur):C.fur),0,.12+i*.17,-bd-.14-Math.sin(i*.9)*.12,.15+i*.02,.17,.13,torso);t.rotation.x=-.3}}
   else if(sp.tail==='otter'){const t=mesh(G.cone,mat(C.fur),0,.0,-bd-.2,.09,.5,.06,torso);t.rotation.x=-1.9}
   if(sp.prop)PROPS[sp.prop](arms[1].userData.paw);
   if(sp.propL)PROPS[sp.propL](arms[0].userData.paw);
@@ -946,12 +1016,17 @@ const CAST={
   magnetron:{name:'Магнетрон',voice:120,spec:()=>({sp:'robot',scale:2,c:{fur:0x6b3434,visor:0xff3a3a,tip:0xff3a3a}})},
   gaykin:{name:'Скупщик Гайкин',voice:380,spec:()=>({sp:'robot',hat:'tophat',c:{fur:0xc9a25a,visor:0xffd36b}})},
   cleaner:{name:'Робот-уборщик',voice:600,spec:()=>({sp:'robot',scale:.6,c:{fur:0x8ee0a8,visor:0x333333}})},
+  pushinka:{name:'Хранительница Пушинка',voice:560,spec:()=>({sp:'squirrel',hat:'goggles',scarf:0xfff2a8,tail:'bushy',c:{fur:0xd08a4a,fur2:0xfff0dc,dark:0x7a4420,shirt:0x6fbf9a,pants:0x6fbf9a,arm:0xd08a4a,paw:0xd08a4a}})},
+  shishkin:{name:'Дед Шишкин',voice:240,spec:()=>({sp:'squirrel',glasses:true,prop:'staff',tail:'bushy',scale:1.05,c:{fur:0x9a7a6a,fur2:0xe8e0d8,dark:0x5a4a40,shirt:0x8a5a3a,pants:0x6a4a30,arm:0x9a7a6a,paw:0x9a7a6a}})},
+  oreshka:{name:'Белка Орешка',voice:500,spec:()=>({sp:'squirrel',apron:0xfff1d6,tail:'bushy',c:{fur:0xc0703a,fur2:0xfff0dc,dark:0x6a3418,shirt:0xc94f6a,pants:0xc94f6a,arm:0xc0703a,paw:0xc0703a}})},
+  belchonok:{name:'Бельчонок',voice:760,spec:()=>({sp:'squirrel',scale:.6,tail:'bushy',c:{fur:0xd8904a,fur2:0xfff0dc,dark:0x7a4420,shirt:pick([0xffd36b,0x7fe3e8,0x8ee08a]),pants:0x6a4a30,arm:0xd8904a,paw:0xd8904a}})},
+  bee:{name:'Шмель Жужа',voice:420,spec:()=>({sp:'raccoon',scale:.8,hat:'propeller',c:{fur:0xffc83d,fur2:0x2b2b33,shirt:0x2b2b33,pants:0xffc83d,arm:0x2b2b33,paw:0x2b2b33}})},
   robot:{name:'Робот',voice:480,spec:()=>({sp:'robot',scale:.9,c:{fur:pick([0x9aa6ad,0xc9a25a,0x8fb0c0]),visor:pick([0x7fe3e8,0x8ee08a,0xffd36b])}})}
 };
 function makeCast(key){const c=makeChar(CAST[key].spec());c.key=key;return c}
 
 /* ---------- PROPS ---------- */
-const PAINTS={silver:{name:'Дедушкино серебро',col:0xb8c4d6,price:0},mandarin:{name:'Мандариновая',col:0xffab4a,price:25},mint:{name:'Мятная',col:0x6fe0b0,price:25},violet:{name:'Фиалковая',col:0xa98cff,price:25},gold:{name:'Золотая',col:0xffd36b,price:50}};
+const PAINTS={silver:{name:'Дедушкино серебро',col:0xb8c4d6,price:0},mandarin:{name:'Мандариновая',col:0xffab4a,price:25},mint:{name:'Мятная',col:0x6fe0b0,price:25},violet:{name:'Фиалковая',col:0xa98cff,price:25},gold:{name:'Золотая',col:0xffd36b,price:50},fluffy:{name:'Пушистая',col:0xfff0d8,price:0,secret:1}};
 /* the grandpa saucer: hull, rim, dome, lights; landed=true puts it on its legs */
 function makeUFO(paint,landed){
   const g=new THREE.Group();const col=(PAINTS[paint]||PAINTS.silver).col;
@@ -992,11 +1067,14 @@ const ITEMS={
 /* resources: icon colour, name, base price */
 const RES={berry:{name:'Звёздные ягоды',one:'ягода',col:'#7aa8ff',price:1},mandarin:{name:'Мандарины',one:'мандарин',col:'#ffab4a',price:2},fish:{name:'Рыба',one:'рыба',col:'#9fd8f0',price:3},shroom:{name:'Светогрибы',one:'светогриб',col:'#d7a0ff',price:3},scrap:{name:'Металлолом',one:'деталь',col:'#b8c0c8',price:2},
   juice:{name:'Мандариновый сок',one:'банка сока',col:'#ff8a2e',price:16},smoked:{name:'Копчёная рыба',one:'копчёная рыба',col:'#d98a4a',price:15},elixir:{name:'Светоэликсир',one:'эликсир',col:'#c97aff',price:17},cog:{name:'Шестерни',one:'шестерня',col:'#ffd36b',price:15}};
+RES.fluff={name:'Звёздный пух',one:'пушинка',col:'#fff2b8',price:2};RES.pillow={name:'Пуховая подушка',one:'подушка',col:'#f4d0e8',price:19};
 function resModel(kind){const g=new THREE.Group();
   if(kind==='berry'){for(let i=0;i<5;i++)mesh(G.sph,bmat(0x7aa8ff),Math.cos(i*1.3)*.09,.12+(i%2)*.08,Math.sin(i*1.3)*.09,.07,.07,.07,g)}
   else if(kind==='mandarin'){mesh(G.sph,mat(0xff9a2e),0,.16,0,.16,.14,.16,g);mesh(G.box,mat(0x4f9a3a),.04,.31,0,.12,.02,.06,g)}
   else if(kind==='fish'){mesh(G.sph,mat(0x9fd8f0,{metal:.3}),0,.12,0,.25,.1,.07,g);mesh(G.cone,mat(0x7ab8d8),-.3,.12,0,.08,.14,.03,g).rotation.z=Math.PI/2}
   else if(kind==='shroom'){mesh(G.cyl,mat(0xe8dcc8),0,.1,0,.04,.2,.04,g);mesh(G.hemi,bmat(0xd7a0ff),0,.18,0,.14,.1,.14,g)}
+  else if(kind==='fluff'){mesh(G.sph,bmat(0xfff8d8),0,.16,0,.12,.12,.12,g);mesh(G.cyl,mat(0x8a9a5a),0,.05,0,.01,.1,.01,g)}
+  else if(kind==='pillow'){mesh(G.sph,mat(0xf4d0e8),0,.1,0,.22,.08,.16,g)}
   else if(kind==='scrap'){mesh(G.tor,mat(0x9aa6ad,{metal:.8}),0,.1,0,.12,.12,.2,g);mesh(G.box,mat(0x7a8088,{metal:.8}),.12,.06,.05,.18,.06,.06,g).rotation.y=.6}
   g.add(glow(RES[kind]?parseInt(RES[kind].col.slice(1),16):0xffffff,.9,.35));return g}
 
@@ -1132,7 +1210,7 @@ function fence(x0,z0,x1,z1,col,o){o=o||{};const d=Math.hypot(x1-x0,z1-z0),n=Math
   for(let i=0;i<=n;i++){const t=i/n;vis(G.box,col,lerp(x0,x1,t),h/2,lerp(z0,z1,t),.14,h,.14,0,0,0,.04,TX.planks)}vis(G.box,col,(x0+x1)/2,h*.75,(z0+z1)/2,.06,.14,d,0,ry,0,.03,TX.planks);vis(G.box,col,(x0+x1)/2,h*.38,(z0+z1)/2,.06,.14,d,0,ry,0,.03,TX.planks);
   if(!o.nc){const w=Math.abs(x1-x0)<.01?.2:Math.abs(x1-x0),dd=Math.abs(z1-z0)<.01?.2:Math.abs(z1-z0);box((x0+x1)/2,0,(z0+z1)/2,w,h,dd,0,{nv:true})}}
 function crate(x,y,z,s,col){box(x,y,z,s,s,s,col||0xb07a42,{tex:TX.planks});vis(G.box,0x7a4a2a,x,y+s/2,z,s*1.02,s*.12,s*1.02,0,0,0,.02,TX.planks);vis(G.box,0x7a4a2a,x,y+s-.04,z,s*1.03,.06,s*1.03,0,0,0,.02,TX.planks)}
-function sign(x,y,z,ry,lines,o){o=o||{};vis(G.cyl,0x6b4628,x,y+.7,z,.07,1.4,.07,0,0,0,.03,TX.bark);const tex=signTex(lines,o);const m=mesh(new THREE.BoxGeometry(o.w||1.6,o.h||.8,.06),[stdMat(0x6b4628),stdMat(0x6b4628),stdMat(0x6b4628),stdMat(0x6b4628),new THREE.MeshStandardMaterial({map:tex,roughness:.8}),new THREE.MeshStandardMaterial({map:tex,roughness:.8})],x,y+1.5,z,1,1,1,L.group);m.rotation.y=ry||0;m.castShadow=true}
+function sign(){/* signs removed in v4: text was hard to read and looked mirrored */}
 function flag(x,z,col,h){vis(G.cyl,0xdddddd,x,(h||3)/2,z,.05,h||3,.05);const f=mesh(new THREE.PlaneGeometry(.9,.55,6,1),stdMat(col,{side:THREE.DoubleSide}),x+.45,(h||3)-.35,z,1,1,1,L.group);const p=f.geometry.attributes.position,b=Float32Array.from(p.array);
   L.ticks.push(t=>{for(let i=0;i<p.count;i++){const xx=b[i*3];p.setZ(i,Math.sin(t*5+xx*5+x)*.08*(xx+.45))}p.needsUpdate=true});return f}
 /* building with an interior: walls with a door gap; returns inner bounds */
@@ -1255,7 +1333,10 @@ const QUESTS={
   s3b:{t:'Лягушачьи гонки',pl:'p3',giver:'kvak',rw:12,steps:['Обгони Квака до флага у пруда']},
   m4:{t:'Винтик в капсуле',pl:'p4',main:1,giver:'shurup',rw:15,steps:['Найди енота Шурупа на кабине крана','Вставь 3 энергоядра в гнёзда у башни','Поднимись на лифте башни и открой капсулу']},
   s4a:{t:'Сломанные уборщики',pl:'p4',giver:'bolt',rw:12,steps:['Почини 4 робота-уборщика','Вернись к Болтику']},
-  s4b:{t:'Срочная доставка',pl:'p4',giver:'posylkin',rw:10,steps:['Отнеси ящик с гайками со склада на крышу цеха']}
+  s4b:{t:'Срочная доставка',pl:'p4',giver:'posylkin',rw:10,steps:['Отнеси ящик с гайками со склада на крышу цеха']},
+  c2:{t:'Глава 2. Насморк Великого Пуха',pl:'p5',main:1,giver:'pushinka',rw:50,steps:['Поговори с Радистом Кротом на вышке','Лети на новую планету Одуванчия','Найди Хранительницу Пушинку у стебля Великого Пуха','Принеси Пушинке мандариновый сок и светоэликсир','Поставь пуховый фильтр на трубу завода на Шестерёнке','Поднимись по стеблю Великого Пуха и дай ему лекарство']},
+  s5a:{t:'Бельчата на ветру',pl:'p5',giver:'oreshka',rw:15,steps:['Найди трёх бельчат и отправь их домой','Вернись к Белке Орешке']},
+  s5b:{t:'Пуховые подушки',pl:'p5',giver:'shishkin',rw:18,steps:['Сделай 2 пуховые подушки в подушечной и отдай Деду Шишкину']}
 };
 const qs=id=>S.q[id]||0, qdone=id=>S.q[id]===99;
 function qd(id){return S.qd[id]||(S.qd[id]={})}
@@ -1305,7 +1386,7 @@ UI.refresh=()=>{UI.coins();UI.inv();UI.bros();lastObj='';objT=0};
 
 /* ---------- OBJECTIVE + MARKER ---------- */
 let lastObj='',objT=0,curObj=null;
-function getObjective(){if(mode==='space')return spaceObjective();if(!L)return null;return L.objective?L.objective():null}
+function getObjective(){if(mode==='space')return spaceObjective();if(!L)return null;const c=chapterObj();if(c)return c;return L.objective?L.objective():null}
 function updObjective(dt){objT-=dt;if(objT<=0){objT=.25;curObj=getObjective();const t=curObj?curObj.text:'';if(t!==lastObj){lastObj=t;$('#obj').textContent=t;$('#objTag').textContent=curObj&&curObj.tag||'Задача'}$('#objBox').hidden=!t}
   const dEl=$('#objDist');if(curObj&&curObj.pos&&mode!=='space'){const d=Math.hypot(curObj.pos[0]-P.x,curObj.pos[2]-P.z);dEl.textContent=Math.round(d)+' м'}else if(curObj&&curObj.dist!=null)dEl.textContent=curObj.dist;else dEl.textContent='';
   updMarker(curObj&&curObj.pos)}
@@ -1337,7 +1418,7 @@ function showPrompt(lab,p){const pr=$('#prompt');if(!lab){pr.hidden=true;return}
 /* ---------- SCREENS ---------- */
 let curScreen=null,screenRet='play';
 function openScreen(sel){if(curScreen)$(curScreen).hidden=true;else screenRet=mode==='space'?'space':mode==='title'?'title':'play';for(const k in keys)keys[k]=false;ePressed=false;curScreen=sel;$(sel).hidden=false;if(screenRet!=='title')setMode('menu');AU.sfx('ui')}
-function closeScreen(){if(curScreen)$(curScreen).hidden=true;const was=curScreen;curScreen=null;if(screenRet==='title'){return}setMode(screenRet);lock();
+function closeScreen(){if(curScreen)$(curScreen).hidden=true;const was=curScreen;curScreen=null;if(screenRet==='title'){$('#title').hidden=false;return}setMode(screenRet);lock();
   if((UI.rebuildAfter||UI.hatChanged)&&screenRet==='play'){UI.rebuildAfter=UI.hatChanged=false;rebuildHere()}else if((UI.hatChanged||UI.rebuildAfter)&&screenRet==='space'){UI.hatChanged=UI.rebuildAfter=false;SPX.repaint()}}
 $$('[data-close]').forEach(b=>b.addEventListener('click',closeScreen));
 
@@ -1349,7 +1430,7 @@ $('#mResume').addEventListener('click',closeScreen);
 $('#mExit').addEventListener('click',()=>{closeScreen();toTitle()});
 function renderMenu(){$$('#menuTabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===menuTab));const B=$('#menuBody');
   $('#menuTitle').textContent={quests:'Журнал заданий',kapik:'Капик и сумка',settings:'Настройки',controls:'Управление'}[menuTab];
-  if(menuTab==='quests'){const order=['base','p1','p2','p3','p4'];let h='';
+  if(menuTab==='quests'){const order=['base','p1','p2','p3','p4','p5'];let h='';
     for(const pl of order){const ids=Object.keys(QUESTS).filter(id=>QUESTS[id].pl===pl&&qs(id)>0);if(!ids.length)continue;h+=`<div class="qsec">${PL[pl].name}</div>`;
       ids.sort((a,b)=>(qdone(a)-qdone(b))||(QUESTS[b].main||0)-(QUESTS[a].main||0)).forEach(id=>{const q=QUESTS[id],st=qs(id),done=st===99;
         h+=`<div class="card ${done?'done':''} ${L&&L.id===pl&&!done?'cur':''}"><div class="thumb"><img alt="" src="${portrait(q.giver)}"></div><div class="cardMain"><b>${q.t}</b><span>${done?'Выполнено':q.steps[Math.min(st,q.steps.length)-1]}</span><div class="tags">${q.main?'<span class="tag gold">Главное</span>':'<span class="tag">Побочное</span>'}${q.rw?`<span class="tag">Награда: ${coinsWord(q.rw)}</span>`:''}${done?'<span class="tag ok">Готово</span>':''}</div></div></div>`})}
@@ -1372,8 +1453,8 @@ function renderMenu(){$$('#menuTabs [data-tab]').forEach(b=>b.setAttribute('aria
     B.querySelectorAll('input').forEach(i=>i.addEventListener('input',up));
     $('#sQ').onclick=e=>{const b=e.target.closest('[data-q]');if(!b)return;s.q=+b.dataset.q;save();applyQuality();applyShadows();UI.rebuildAfter=true;renderMenu()};
     const sk=$('#sSkip');if(sk)sk.onclick=()=>{S.tut=TUT.length;save();renderMenu();toast('Обучение пропущено')}}
-  else{const rows=isTouch?[['Джойстик слева','ходьба'],['Правая часть экрана','поворот камеры'],['Прыжок','прыжок; в воздухе ещё раз - двойной прыжок (нужны Пружинные лапы)'],['E','действие; удерживать, чтобы собирать и садиться в НЛО'],['Бросок','снежок на Ледоре'],['Карта','карта звёздной системы'],['В космосе: джойстик','газ и сдвиг'],['В космосе: правая часть','поворот тарелки']]
-    :[['W A S D','ходьба'],['Мышь','поворот камеры'],['Shift','бег'],['Пробел','прыжок; в воздухе ещё раз - двойной прыжок (нужны Пружинные лапы)'],['E','действие; удерживать, чтобы собирать и садиться в НЛО'],['Q','бросить предмет из лап'],['M','карта звёздной системы'],['Левая кнопка мыши','бросить снежок на Ледоре'],['J','журнал заданий'],['Esc','пауза'],['В космосе: W S','газ вперёд и назад'],['В космосе: мышь','поворот тарелки'],['В космосе: Shift','форсаж'],['В космосе: пробел и C','вверх и вниз'],['В космосе: V','вид из кабины или снаружи']];
+  else{const rows=isTouch?[['Джойстик слева','ходьба'],['Правая часть экрана','поворот камеры'],['Прыжок','прыжок; в воздухе ещё раз - двойной прыжок (нужны Пружинные лапы)'],['E','действие; удерживать, чтобы собирать и садиться в НЛО'],['Бросок','снежок на Ледоре'],['Карта','карта звёздной системы'],['В космосе: джойстик','газ и сдвиг'],['В космосе: правая часть','поворот тарелки, можно крутить сальто']]
+    :[['W A S D','ходьба'],['Мышь','поворот камеры'],['Shift','бег'],['Пробел','прыжок; в воздухе ещё раз - двойной прыжок (нужны Пружинные лапы)'],['E','действие; удерживать, чтобы собирать и садиться в НЛО'],['Q','бросить предмет из лап'],['M','карта звёздной системы'],['Левая кнопка мыши','бросить снежок на Ледоре'],['J','журнал заданий'],['Esc','пауза'],['В космосе: W S','газ вперёд и назад'],['В космосе: мышь','поворот тарелки; можно крутить сальто'],['В космосе: Q и R','крен влево и вправо'],['В космосе: Shift','форсаж'],['В космосе: пробел и C','вверх и вниз'],['В космосе: V','вид из кабины или снаружи']];
     B.innerHTML=`<dl class="ctlgrid">${rows.map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('')}</dl>`}
 }
 function applyShadows(){wscene.traverse(o=>{if(o.material){(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.needsUpdate=true)}})}
@@ -1399,7 +1480,7 @@ function renderShop(){$$('#shopTabs [data-tab]').forEach(b=>b.setAttribute('aria
   const row=(thumb,name,desc,own,price,attr,useLabel)=>`<div class="card ${own?'done':''}"><div class="thumb ${thumb.sw?'sw':''}" ${thumb.sw?`style="background:${thumb.sw}"`:''}>${thumb.img?`<img alt="" src="${thumb.img}">`:thumb.svg||''}</div><div class="cardMain"><b>${name}</b><span>${desc}</span></div>${own?(useLabel?`<button ${attr} data-use="1">${useLabel}</button>`:'<span class="tag ok">Куплено</span>'):`<button ${attr} ${S.coins<price?'disabled':''} class="primary"><span class="price"><span class="coin"></span>${price}</span></button>`}</div>`;
   if(shopTab==='gear')UPG.gear.forEach(u=>h+=row({svg:svgI(u.id)},u.name,u.desc,u.own?u.own():S.up[u.id],u.price,`data-buy="${u.id}"`));
   else if(shopTab==='ship'){UPG.ship.forEach(u=>h+=row({svg:svgI(u.id)},u.name,u.desc,S.up[u.id],u.price,`data-buy="${u.id}"`));h+='<div class="qsec">Покраска тарелки</div>';
-    for(const k in PAINTS){const p=PAINTS[k],own=S.paints[k];h+=row({sw:'#'+p.col.toString(16).padStart(6,'0')},p.name,own?(S.paint===k?'Тарелка сейчас в этом цвете':'Уже куплена'):'Новая краска для дедушкиной тарелки',own,p.price,`data-paint="${k}"`,own&&S.paint!==k?'Покрасить':null)}}
+    for(const k in PAINTS){const p=PAINTS[k],own=S.paints[k];if(p.secret&&!own)continue;h+=row({sw:'#'+p.col.toString(16).padStart(6,'0')},p.name,own?(S.paint===k?'Тарелка сейчас в этом цвете':'Уже куплена'):'Новая краска для дедушкиной тарелки',own,p.price,`data-paint="${k}"`,own&&S.paint!==k?'Покрасить':null)}}
   else if(shopTab==='hats'){for(const k in HAT_INFO){if(k==='none')continue;const hi=HAT_INFO[k],own=S.hats[k];h+=row({img:portraitHat(k)},hi.name,own?(S.hat===k?'Сейчас на Капике':'Уже куплена'):'Видно в разговорах и в окне тарелки',own,hi.price,`data-hat="${k}"`,own&&S.hat!==k?'Надеть':null)}}
   else UPG.decor.forEach(u=>h+=row({svg:svgI(u.id)},u.name,u.desc,S.decor[u.id],u.price,`data-decor="${u.id}"`));
   $('#shopList').innerHTML=h}
@@ -1445,11 +1526,12 @@ const cap=()=>S.up.bag?30:12;
 const invCount=()=>Object.values(S.inv).reduce((a,b)=>a+b,0);
 function addRes(kind,n,quiet){const free=cap()-invCount();if(free<=0){if(!quiet){toast('Сумка полна. Продайте находки торговцу');AU.sfx('bad')}return 0}const k=Math.min(n,free);S.inv[kind]=(S.inv[kind]||0)+k;save();UI.inv(true);if(!quiet)toast(`+${k} · ${RES[kind].name}`);return k}
 function takeRes(kind,n){if((S.inv[kind]||0)<n)return false;S.inv[kind]-=n;if(!S.inv[kind])delete S.inv[kind];save();UI.inv();return true}
-const nodeLabel={berry:'собрать ягоды',shroom:'сорвать светогриб',scrap:'разобрать железо',mandarin:'потрясти дерево'};
+const nodeLabel={fluff:'собрать звёздный пух',berry:'собрать ягоды',shroom:'сорвать светогриб',scrap:'разобрать железо',mandarin:'потрясти дерево'};
 /* gathering node: hold E, gets resources, regrows after a while */
 function node(kind,x,y,z,o){o=o||{};const g=new THREE.Group();g.position.set(x,y,z);L.group.add(g);const full=new THREE.Group();g.add(full);
   if(o.make)o.make(g,full);else if(kind==='berry'){mesh(G.sph,mat(0x2f6a3a),0,.5,0,.75,.55,.75,g).castShadow=true;mesh(G.sph,mat(0x3a7a44),.35,.7,.2,.45,.35,.45,g);for(let i=0;i<12;i++){const a=i*2.4,r2=.62+(i%3)*.1;mesh(G.sph,bmat(0x8ab8ff),Math.cos(a)*r2,.35+(i%4)*.18,Math.sin(a)*r2,.11,.11,.11,full)}const gg=glow(0x7aa8ff,3,.55);gg.position.y=.6;full.add(gg)}
   else if(kind==='shroom'){for(let i=0;i<3;i++){const a=i*2.1,x2=Math.cos(a)*.3,z2=Math.sin(a)*.3,h=.25+i*.1;mesh(G.cyl,mat(0xe8dcc8),x2,h/2,z2,.05,h,.05,full);mesh(G.hemi,bmat(0xd7a0ff),x2,h,z2,.18,.13,.18,full)}full.add(glow(0xd7a0ff,2.4,.5))}
+  else if(kind==='fluff'){vis(G.cyl,0x6a9a4a,x,y+.45,z,.035,.9,.035);mesh(G.sph,bmat(0xfffbe8),0,.95,0,.32,.32,.32,full);for(let i=0;i<14;i++){const a=i*2.4,u=Math.cos(i*1.7);mesh(G.cyl,mat(0xf4ecd0),Math.cos(a)*.3*Math.sqrt(1-u*u),.95+u*.3,Math.sin(a)*.3*Math.sqrt(1-u*u),.012,.2,.012,full)}full.add(glow(0xfff4c0,1.6,.4)).position.y=.95}
   else if(kind==='scrap'){for(let i=0;i<7;i++){const a=i*1.7;const m=mesh(i%2?G.box:G.cyl,mat(pick([0x8a96a0,0x6a7078,0xb07a42]),{metal:.7}),Math.cos(a)*.4,.12+i*.05,Math.sin(a)*.4,.25,.12,.18,full);m.rotation.set(a,i,0);m.castShadow=true}mesh(G.tor,mat(0xffab4a,{metal:.6}),0,.45,0,.18,.18,.18,full).rotation.x=1.2}
   const n={kind,x,y,z,g,full,t:0,regrow:o.regrow||60,ready:true};L.nodes.push(n);if(o.solid!==false&&kind==='berry')cyl(x,y,z,.7,.9,0,{nv:true});
   inter({x,y:y+.4,z,r:o.r||1.9,hold:o.hold||.9,label:()=>'Удерживайте E - '+(o.label||nodeLabel[kind]),cond:()=>n.ready&&(!o.cond||o.cond()),act:()=>{const got=addRes(kind,o.yield||(kind==='berry'?3:kind==='scrap'?2:1));if(!got)return;n.ready=false;n.t=n.regrow;full.visible=false;AU.sfx(kind==='scrap'?'repair':'pickup');FXW.burst(x,y+.6,z,{col:parseInt(RES[kind].col.slice(1),16),n:14,spd:2.5,up:2,life:.6});if(o.onGet)o.onGet()}});
@@ -1475,6 +1557,15 @@ function workshop(x,y,z,o){inter({x,y,z,r:o.r||2.4,label:()=>`E - ${o.title}: ${
 /* fishing spot: needs grandpa's rod */
 function fishingSpot(x,y,z,o){o=o||{};inter({x,y,z,r:o.r||2,label:'E - рыбачить',cond:o.cond,act:()=>{if(!S.got['rod']){say([['kapik','Без удочки не порыбачишь. Дедушкина удочка лежала где-то в амбаре на базе.']]);return}
   openMini({title:'Рыбалка',help:'Жмите E или кнопку, когда поплавок в зелёной зоне.',need:1,btn:'Подсечь',unit:'Поймано',loop:true,onCatch:()=>{const k=addRes('fish',1);if(o.onFish&&k)o.onFish();return k>0}})}})}
+/* bag screen (F): see everything, throw away any amount */
+function openBag(){openScreen('#bag');renderBag()}
+function renderBag(){$('#bagCoins').textContent=S.coins;const ks=Object.keys(S.inv).filter(k=>S.inv[k]>0);
+  $('#bagSub').textContent=`Занято ${invCount()} из ${cap()}. Ненужное можно выбросить: выберите количество ползунком.`;
+  $('#bagList').innerHTML=ks.length?ks.map(k=>{const n=S.inv[k];return`<div class="card bagRow"><div class="thumb" style="background:${RES[k].col}33"><span class="resdot" style="background:${RES[k].col}"></span></div><div class="cardMain"><b>${RES[k].name}</b><span>${n} шт. · торговцы платят ${coinsWord(RES[k].price)} за штуку</span></div>
+    <div class="bagCtl"><input type="range" min="1" max="${n}" step="1" value="${n}" data-k="${k}" aria-label="Сколько выбросить"><output id="bo-${k}">${n}</output><button class="danger" data-drop="${k}">Выбросить</button></div></div>`}).join('')
+    :'<div class="empty">Сумка пуста. Собирайте ягоды, мандарины, рыбу, светогрибы, железо и пух, продавайте торговцам.</div>'}
+$('#bagList').addEventListener('input',e=>{const r=e.target.closest('input[data-k]');if(r)$('#bo-'+r.dataset.k).textContent=r.value});
+$('#bagList').addEventListener('click',e=>{const b=e.target.closest('[data-drop]');if(!b)return;const k=b.dataset.drop,r=$(`#bagList input[data-k="${k}"]`),n=Math.min(+r.value,S.inv[k]||0);if(!n)return;takeRes(k,n);AU.sfx('thud');toast(`Выброшено: ${RES[k].name.toLowerCase()} × ${n}`);renderBag()});
 
 /* ---------- LEVEL: BASE «Пастбище» ---------- */
 function buildBase(){
@@ -1522,19 +1613,25 @@ function buildBase(){
   for(let y=1.5;y<8;y+=2.2)for(const s of[-1,1]){vis(G.box,0x8a8aa0,tx,y,tz+s*1.3,2.6,.08,.08,0,0,.6*s,.02,TX.metal);vis(G.box,0x8a8aa0,tx+s*1.3,y,tz,.08,.08,2.6,.6*s,0,0,.02,TX.metal)}
   box(tx,8,tz,3.4,.25,3.4,0x6b6b80,{tex:TX.metal});railRect(tx-1.7,tz-1.7,tx+1.7,tz+1.7,8.25,0xffab4a,{side:'s',at:0,w:1.2});ladder(tx,tz+1.95,0,8.25,0,0x8a8aa0);
   vis(G.cyl,0x8a8aa0,tx+1.2,10,tz-1.2,.06,3.6,.06);vis(G.hemi,0xdfe6ef,tx+1.2,11.4,tz-1.2,.7,.25,.7,1.2,0,0,.02,TX.metal);const bl=glow(0xff4a4a,1.2,.9);bl.position.set(tx+1.2,11.9,tz-1.2);L.group.add(bl);tick(t=>{bl.material.opacity=Math.sin(t*4)>0?.95:.15});
-  npc('mole',tx-.6,8.25,tz-.7,{yaw:0,pose:'sit',talk:moleTalk,mark:()=>qs('s0')===0&&S.tr?'!':qs('s0')===1&&Object.keys(S.souv).length>=4?'?':null});
+  npc('mole',tx-.6,8.25,tz-.7,{yaw:0,pose:'sit',talk:moleTalk,mark:()=>qs('c2')===1?'!':qs('s0')===0&&S.tr?'!':qs('s0')===1&&Object.keys(S.souv).length>=4?'?':null});
   /* decor */
   const D=S.decor;
   if(D.lights){for(let i=0;i<8;i++){const a=i/8*TAU;const x=Math.cos(a)*6.3,z=-14+Math.sin(a)*6.3;vis(G.cyl,0x6b4628,x,1.5,z,.06,3,.06);const a2=(i+1)/8*TAU,x2=Math.cos(a2)*6.3,z2=-14+Math.sin(a2)*6.3;for(let k=1;k<6;k++){const t=k/6;gvis(G.sph,[0xff6b6b,0xffd36b,0x7fe3e8,0x8ee08a,0xb28cff][k%5],lerp(x,x2,t),2.9-Math.sin(t*Math.PI)*.5,lerp(z,z2,t),.1,.1,.1)}}}
   if(D.tree)fruitTree(-4,17,1.3);
-  if(D.hammock){tree(-21,9,1.1,0x3f7a35);tree(-21,14.5,1.1,0x3f7a35);vis(G.box,0xe8d8b8,-21,1.0,11.75,1,.08,4.2,0,0,0,.02,TX.stripes);vis(G.box,0xc94f3a,-21,1.02,11.75,.9,.06,3.8,0,0,0,.02,TX.stripes);box(-21,0,11.75,1,1.05,4,0,{nv:true})}
+  if(D.hammock){tree(-22.6,8.3,1.1,0x3f7a35);tree(-22.6,15.2,1.1,0x3f7a35);
+    const HX=-21,Z0=9.4,Z1=14.1,top=1.75,end=1.05,mid=.62;for(const z of[Z0,Z1]){cyl(HX,0,z,.12,top+.15,0x6b4628,{tex:TX.bark});for(const s of[-1,1])vis(G.box,0x6b4628,HX+s*.35,.55,z+(z<12?-.25:.25),.08,1.3,.08,s*.45,0,(z<12?1:-1)*.3,.02,TX.bark)}
+    const za=Z0+.55,zb=Z1-.55,N=9,yAt=t=>end-(end-mid)*Math.sin(t*Math.PI);
+    for(const z of[Z0,Z1]){const ze=z<12?za:zb,dy=top-end,dz=ze-z,len=Math.hypot(dy,dz);for(const s of[-.35,0,.35])vis(G.cyl,0xd8c8a0,HX+s*.6,(top+end)/2,(z+ze)/2,.018,len,.018,Math.atan2(-dz,dy),0,0)}
+    for(let i=0;i<N;i++){const t0=i/N,t1=(i+1)/N,z0=lerp(za,zb,t0),z1=lerp(za,zb,t1),y0=yAt(t0),y1=yAt(t1),len=Math.hypot(z1-z0,y1-y0)+.02,ang=Math.atan2(y1-y0,z1-z0);
+      vis(G.box,i%2?0xc94f3a:0xe8d8b8,HX,(y0+y1)/2,(z0+z1)/2,1.05,.05,len,-ang,0,0,.02);vis(G.box,0x8a6a4a,HX-.53,(y0+y1)/2+.03,(z0+z1)/2,.04,.06,len,-ang,0,0);vis(G.box,0x8a6a4a,HX+.53,(y0+y1)/2+.03,(z0+z1)/2,.04,.06,len,-ang,0,0)}
+    box(HX,0,11.75,1,.6,4,0,{nv:true})}
   if(D.fountain){cyl(-6,0,5,2,.6,0x9a96a8,{g:G.cyl16,tex:TX.stone});water(-6,5,1.75,{safe:true,y:.62,col:0x6fd8f0});cyl(-6,0,5,.3,1.8,0x9a96a8,{tex:TX.stone});vis(G.cyl16,0x9a96a8,-6,1.8,5,.9,.15,.9,0,0,0,.02,TX.stone);tick(t=>{if(Math.random()<.5)FXW.burst(-6,2,5,{col:0x9fd8ff,n:2,spd:1.2,up:3,g:8,life:.8,size:.18})})}
   if(D.onsen){cyl(17.5,0,17,2.4,.5,0x7a7684,{g:G.cyl16,tex:TX.stone});water(17.5,17,2.1,{safe:true,y:.48,col:0x8fe6f0});for(let i=0;i<10;i++){const a=i/10*TAU;vis(G.dod,0x6a6674,17.5+Math.cos(a)*2.5,.45,17+Math.sin(a)*2.5,.5,.4,.5,0,i,0,.04,TX.stone)}tick(t=>{if(Math.random()<.25)FXW.burst(17.5+(Math.random()-.5)*3,.6,17+(Math.random()-.5)*3,{col:0xaaaaaa,n:1,spd:.3,up:.8,g:-.3,life:2,size:.7})})}
   if(D.telescope){vis(G.cyl,0x5a5a6a,18.5,5.9,0,.06,1.2,.06);vis(G.cyl,0xb28cff,18.5,6.7,0,.18,1.6,.18,.9,0,0,.02,TX.metal);vis(G.cyl,0x333344,18.5,6.65,.75,.2,.1,.2,.9,0,0)}
   /* brothers */
   if(S.rescued.p1)npc('yuzik',6.5,0,12,{yaw:2.3,pose:'sit',talk:n=>talk(n,[['yuzik',pick(['Капик, а на базе мандарины есть? Купи дерево у Выдры, а?','Я посторожу пруд. И мандарины, если найдутся.','На Мандарине я видел золотой мандарин. Высоко-высоко, на самой крыше ветряка.'])]])});
   if(S.rescued.p2){if(D.onsen)npc('snezhok',17.5,.1,17,{yaw:-2.5,pose:'sit',nc:true,talk:n=>talk(n,[['snezhok','Горячий источник! Капик, ты лучший брат во всей галактике.']])});else npc('snezhok',12.5,0,10.5,{yaw:-.6,pose:'sit',talk:n=>talk(n,[['snezhok',pick(['Тут тепло. Но я всё равно не сниму шарф.','Апчхи! Это не простуда, это радость.','Выдра говорит, бывают горячие источники. Вот бы такой у пруда.'])]])})}
-  if(S.rescued.p3){if(D.hammock)npc('gribok',-21,1.05,11.75,{yaw:Math.PI,pose:'lie',nc:true,talk:n=>talk(n,[['gribok','Хр-р... Гамак... лучший подарок... хр-р...']])});else npc('gribok',-6,0,11,{yaw:.5,pose:'lie',talk:n=>talk(n,[['gribok',pick(['Мм... можно я посплю прямо тут, на траве?','Улитки научили меня жить медленно. Очень медленно.','Хорошо бы гамак. Только никому не говори.'])]])})}
+  if(S.rescued.p3){if(D.hammock)npc('gribok',-21,.66,11.75,{yaw:Math.PI,pose:'lie',nc:true,talk:n=>talk(n,[['gribok','Хр-р... Гамак... лучший подарок... хр-р...']])});else npc('gribok',-6,0,11,{yaw:.5,pose:'lie',talk:n=>talk(n,[['gribok',pick(['Мм... можно я посплю прямо тут, на траве?','Улитки научили меня жить медленно. Очень медленно.','Хорошо бы гамак. Только никому не говори.'])]])})}
   if(S.rescued.p4)npc('vintik',4.5,0,-8.5,{yaw:-.6,pose:'hammer',talk:n=>talk(n,[['vintik',pick(['Я открутил у тарелки одну лишнюю гайку. Она точно была лишней.','Если поставить на тарелку форсаж, она полетит быстрее! В лавке есть.','Магнетрон спит. Я оставил ему записку: «Не балуйся».'])]])});
   /* scenery */
   const r=rng(11),avoid=[[0,-14,7],[-14,-6,6],[16,-2,9],[9,16,7],[-10,20,4],[0,6,4],[-6,5,3],[17.5,17,3.5],[-21,11.75,4],[-4,17,3],[24,12,9]];
@@ -1564,6 +1661,7 @@ function otterTalk(n){const st=qs('m0');
   if(st===2){talk(n,[['otter',`Ягод пока ${S.inv.berry||0} из 8. Кусты за амбаром, у ограды. Удерживай E.`]]);return}
   openShop()}
 function moleTalk(n){const st=qs('s0'),cnt=Object.keys(S.souv).length;
+  if(qs('c2')===1){talk(n,[['mole','Капик! Слушай! Ш-ш-ш... пи-пи... Чувствуешь? Это сигнал с новой планеты.'],['mole','Её зовут Одуванчия. Там растёт Великий Пух, огромный одуванчик. И он... простужен.'],['mole','Космический Чих, который унёс твоих братьев, прилетел оттуда. И скоро будет новый!'],['kapik','Тогда я лечу туда. Второй раз братьев не отдам.'],['mole','Я записал координаты в твой борткомпьютер. Открой карту, Одуванчия уже там.']],()=>{qset('c2',2);banner('Новая планета','Одуванчия','Открыта на звёздной карте')});return}
   if(st===0){talk(n,[['mole','А? Кто тут? А, Капик. Я Радист Крот, слушаю космос с этой вышки.'],['mole','По радио болтают, что на каждой из четырёх планет спрятан сувенир. Всегда на самом верху, куда без Пружинных лап не допрыгнуть.'],['mole','Принеси мне все четыре, и я отдам тебе свои сбережения. Сорок монет!'],['kapik','Договорились. Только лапы сначала куплю.']],()=>qset('s0',1));return}
   if(st===1&&cnt>=4){talk(n,[['mole','Мандарин, снежинка, спора и шестерёнка! Как по радио.'],['mole','Держи монеты. А сувениры я повешу на антенну, пусть вся галактика видит.']],()=>{qset('s0',2);qcomplete('s0')});return}
   if(st===1){talk(n,[['mole',`Сувениров у тебя ${cnt} из 4. Ищи на самых высоких крышах, шапках и трубах.`]]);return}
@@ -1975,7 +2073,9 @@ function buildP4(){
   /* chimney with souvenir */
   cyl(FX-5,7.3,FZ-4,1,6.6,0x8a5a4a,{g:G.cyl16});vis(G.cyl16,0x3b3438,FX-5,13.95,FZ-4,1.1,.1,1.1);
   [[0,1.2],[Math.PI/2,2.4],[Math.PI,3.6],[Math.PI*1.5,4.8]].forEach(b=>box(FX-5+Math.cos(b[0])*1.6,7.3+b[1]-.3,FZ-4+Math.sin(b[0])*1.6,1,.3,1,0x5a6068,{surf:'metal'}));
-  souvenir('p4',FX-5,13.9,FZ-4);tick((t,dt)=>{if(Math.random()<dt*5)FXW.burst(FX-5,14.2,FZ-4,{col:0x553a3a,n:1,spd:.4,up:1.6,g:-.4,life:3,size:1.2})});
+  souvenir('p4',FX-5,13.9,FZ-4);L.chimney=[FX-5,FZ-4];const filt=new THREE.Group();filt.position.set(FX-5,14,FZ-4);L.group.add(filt);mesh(G.cyl16,mat(0xfff6e0),0,.15,0,1.15,.3,1.15,filt);for(let i=0;i<8;i++){const a=i/8*TAU;mesh(G.sph,bmat(0xfffbe8),Math.cos(a)*.9,.35,Math.sin(a)*.9,.22,.22,.22,filt)}filt.visible=!!S.got.filterOn;
+  tick((t,dt)=>{if(Math.random()<dt*5)FXW.burst(FX-5,14.2,FZ-4,{col:S.got.filterOn?0xf4f4f4:0x553a3a,n:1,spd:.4,up:1.6,g:-.4,life:3,size:S.got.filterOn?.7:1.2})});
+  inter({x:FX-5,y:13.2,z:FZ-4,r:2.6,hold:1.2,label:'Удерживайте E - поставить пуховый фильтр',cond:()=>qs('c2')===5&&!S.got.filterOn,act:()=>{S.got.filterOn=1;save();filt.visible=true;filt.scale.setScalar(.01);tween(.5,p=>filt.scale.setScalar(Math.max(.01,p)));AU.sfx('repair');FXW.burst(FX-5,14.4,FZ-4,{col:0xfffbe8,n:40,spd:4,life:1});qset('c2',6);banner('Фильтр на месте','Дым стал белым','Лети на Одуванчию и поднимись к венчику Пуха')}});
   /* courier quest */
   const pos=npc('posylkin',FX-4,7.3,FZ+3,{yaw:Math.PI/2,pose:'hold',talk:posTalk,mark:()=>!S.tr?null:qs('s4b')===0?'!':null});
   vis(G.box,0xffab4a,FX+4,7.32,FZ-3,2.2,.04,2.2);const dl=textSprite('ДОСТАВКА',{size:36,h:.4,bg:'#ffab4a',fg:'#2a1606'});dl.position.set(FX+4,8.6,FZ-3);L.group.add(dl);
@@ -2029,18 +2129,147 @@ function posTalk(n){if(needTr('posylkin'))return;const st=qs('s4b');
   if(st===0){talk(n,[['posylkin','БИП. Курьерская служба. Срочный заказ: ящик с гайками со склада на крышу цеха.'],['posylkin','У меня колесо отвалилось. Отнесёшь? Склад у южного края. Жёлтая площадка тут, на крыше. 10 монет.']],()=>qset('s4b',1));return}
   talk(n,[['posylkin',qdone('s4b')?'Посылка на месте. Спасибо за быструю доставку.':'Ящик на складе. Неси на жёлтую площадку. По лестнице с ящиком тоже можно.']])}
 
+/* ---------- LEVEL: P5 «Одуванчия» (глава 2) ---------- */
+/* chapter-2 objective shown on every other planet while the chapter runs */
+function chapterObj(){const st=qs('c2');if(!st||st===99||!L)return null;const id=L.id;
+  if(st===1)return id==='base'?{text:'Радист Крот машет с вышки: он поймал странный сигнал',pos:[-10,9.5,20],tag:'Глава 2'}:{text:'Лети на базу: Радист Крот поймал странный сигнал',pos:null,tag:'Глава 2'};
+  if(id==='p5')return null;
+  if(st===4){if(!(S.inv.juice>0))return{text:'Для лекарства нужен мандариновый сок: 5 мандаринов в сокодавильне на Мандарине',pos:null,tag:'Глава 2'};
+    if(!(S.inv.elixir>0))return{text:'Для лекарства нужен светоэликсир: 4 светогриба в зельеварне на Грибнии',pos:null,tag:'Глава 2'};
+    return{text:'Сок и эликсир в сумке. Лети к Пушинке на Одуванчию',pos:null,tag:'Глава 2'}}
+  if(st===5){if(id==='p4')return{text:'Поставь пуховый фильтр на дымящую трубу завода. Ступени вьются вокруг трубы',pos:[L.chimney?L.chimney[0]:0,14.5,L.chimney?L.chimney[1]:0],tag:'Глава 2'};
+    return{text:'Лети на Шестерёнку: пуховый фильтр нужно поставить на трубу завода',pos:null,tag:'Глава 2'}}
+  return{text:'Лети на Одуванчию: открой карту клавишей M',pos:null,tag:'Глава 2'}}
+
+function buildP5(){
+  newLevel('p5');
+  setSky({top:0x5aa8e0,hor:0xfff0c8,bot:0xffe8b8,fog:0xfff0d0,near:50,far:185,hs:0xfffaf0,hg:0x7a9a5a,hi:.72,sc:0xfff4d8,si:.85,sd:[-.35,.6,-.5],sunGlow:0xfff8d0,clouds:14});
+  skyBody(0xffe8f0,[160,120,-260],20);skyBody(0x8fdc7a,[-240,90,-120],12);
+  L.spawn={x:0,y:0,z:9,yaw:0};L.surface='grass';
+  path([[0,9],[0,-23]],1.7,0xc8b080);path([[0,4],[-20,6]],1.4,0xc8b080);path([[0,4],[18,6]],1.4,0xc8b080);path([[0,-4],[26,-12]],1.2,0xc8b080);
+  placeUFO(0,16,{pad:0xb8b090});
+  if(qs('c2')===2){S.q.c2=3;save()}
+  const SX=0,SZ=-30;L.stem=[SX,SZ];
+  /* ---- the Great Fluff: stem, leaves, wind, drifting seeds, sepal ring and the puffball ---- */
+  cyl(SX,0,SZ,1.5,32,0x5aa04a,{g:G.cyl16});for(let y=2;y<32;y+=4)vis(G.cyl16,0x4a8a3c,SX,y,SZ,1.53,.25,1.53);
+  const leafAt=(a,y,r,big)=>{const x=SX+Math.cos(a)*(r||3.6),z=SZ+Math.sin(a)*(r||3.6),w=big?3.4:2.6;vis(G.sph,0x6abf4a,x,y-.15,z,w*.62,.16,w*.55,0,-a,0);vis(G.box,0x4a8a3c,x,y-.06,z,w*.9,.04,.08,0,-a,0);vis(G.cyl,0x5aa04a,(x+SX)/2,y-.35,(z+SZ)/2,.12,.12,(r||3.6)*.9,Math.PI/2,-a+Math.PI/2,0);
+    return box(x,y-.3,z,w*.8,.3,w*.8,0,{nv:true,surf:'moss'})};
+  const steps=[[1.55,1.2],[2.35,2.4],[3.15,3.6],[3.95,4.8],[4.75,6.0]];steps.forEach(s=>leafAt(s[0],s[1]));
+  /* updraft columns: wind lifts Kapik like a dandelion seed */
+  const drafts=[];const draft=(x,z,y0,y1,r)=>{const d={x,z,y0,y1,r};drafts.push(d);const m=mesh(new THREE.CylinderGeometry(r,r,y1-y0,24,1,true),new THREE.MeshBasicMaterial({color:0xfff8d8,transparent:true,opacity:.1,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false}),x,(y0+y1)/2,z,1,1,1,L.group);d.m=m;
+    for(let i=0;i<5;i++){const rg=mesh(G.torThin,new THREE.MeshBasicMaterial({color:0xfff8d8,transparent:true,opacity:.35,depthWrite:false,toneMapped:false}),x,y0,z,r,r,r,L.group);rg.rotation.x=Math.PI/2;d['r'+i]=rg}return d};
+  const a1=5.55,U1=draft(SX+Math.cos(a1)*3.7,SZ+Math.sin(a1)*3.7,5.7,17.3,1.25);leafAt(6.35,16.5,3.6,true);checkpoint(SX+Math.cos(6.35)*3.6,16.5,SZ+Math.sin(6.35)*3.6,2.6,2.6,0);
+  const seeds=[];for(let i=0;i<3;i++){const y=17.7+i*1.2;const c=addC({k:'b',x0:-1.1,x1:1.1,y0:y-.25,y1:y,z0:-1.1,z1:1.1,t:'solid',surf:'moss',h:.25});const g=new THREE.Group();L.group.add(g);
+    mesh(G.cyl16,mat(0xfff6e0),0,-.12,0,1.15,.12,1.15,g);for(let k=0;k<10;k++){const a=k/10*TAU;const s=mesh(G.cyl,mat(0xfffbe8),Math.cos(a)*.7,.25,Math.sin(a)*.7,.03,.8,.03,g);s.rotation.set(Math.sin(a)*.5,0,-Math.cos(a)*.5)}g.add(glow(0xfff2b0,3.2,.35));c.m=g;c.h=.25;
+    const ph=i*.55,rr=5.6;seeds.push(c);mover(c,t=>{const a=t*.32+ph;return[SX+Math.cos(a)*rr,y-.25+Math.sin(t*1.4+i)*.12,SZ+Math.sin(a)*rr]})}
+  const a7=2.2;leafAt(a7,21.3,3.6,true);checkpoint(SX+Math.cos(a7)*3.6,21.3,SZ+Math.sin(a7)*3.6,2.6,2.6,0);
+  const U2=draft(SX+Math.cos(a7)*6.4,SZ+Math.sin(a7)*6.4,21,33,1.3);
+  /* sepal ring and puffball */
+  addC({k:'c',x:SX,z:SZ,r:5.4,y0:31.7,y1:32,t:'solid',surf:'moss'});vis(G.cyl16,0x5aa04a,SX,31.85,SZ,5.4,.3,5.4);
+  for(let i=0;i<12;i++){const a=i/12*TAU;vis(G.sph,0x6abf4a,SX+Math.cos(a)*5.3,31.7,SZ+Math.sin(a)*5.3,1.4,.14,.5,0,-a,.5)}
+  const puff=new THREE.Group();puff.position.set(SX,40,SZ);L.group.add(puff);const pm=mesh(new THREE.IcosahedronGeometry(6,3),stdMat(0xfffbea,{roughness:1}),0,0,0,1,1,1,puff);pm.castShadow=true;
+  for(let i=0;i<70;i++){const u=Math.random()*2-1,a=Math.random()*TAU,q=Math.sqrt(1-u*u),dir=new THREE.Vector3(q*Math.cos(a),u,q*Math.sin(a));const s=mesh(G.cyl,mat(0xf4ecd0),dir.x*7,dir.y*7,dir.z*7,.05,2.4,.05,puff);s.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir);const tip=mesh(G.sph,bmat(0xfffbe8),dir.x*8.2,dir.y*8.2,dir.z*8.2,.35,.35,.35,puff)}
+  const pg=glow(0xfff4c0,26,.35);puff.add(pg);addC({k:'c',x:SX,z:SZ,r:4.2,y0:34.6,y1:48,t:'solid'});
+  const face=textSprite('◕‿◕',{size:64,h:1.6,bg:'rgba(0,0,0,0)',fg:'#c98a5a'});face.position.set(SX,37.4,SZ+5.4);L.group.add(face);
+  checkpoint(SX,32,SZ+3.5,4,3,0);
+  tick((t,dt)=>{puff.rotation.y=t*.05;const sick=qs('c2')!==99;puff.scale.setScalar(1+Math.sin(t*(sick?2.4:1))*(sick?.025:.01));face.material.opacity=.9;
+    for(const d of drafts){d.m.material.opacity=.07+Math.sin(t*3)*.03;for(let i=0;i<5;i++){const k=((t*.35+i/5)%1);const rg=d['r'+i];rg.position.y=d.y0+k*(d.y1-d.y0);rg.material.opacity=.35*Math.sin(k*Math.PI)}
+      if(Math.random()<dt*10)FXW.burst(d.x+(Math.random()-.5)*d.r,d.y0+Math.random()*(d.y1-d.y0),d.z+(Math.random()-.5)*d.r,{col:0xfff8d8,n:1,spd:.3,up:4,g:-2,life:1.2,size:.25});
+      if(Math.hypot(P.x-d.x,P.z-d.z)<d.r&&P.y>=d.y0-.2&&P.y<d.y1){P.vy=Math.min(9,Math.max(P.vy,0)+42*dt);P.ground=false;if(!S.seen.draft){S.seen.draft=1;save();toast('Ветер подхватил Капика! Двигайтесь в сторону листа')}}}});
+  /* glider: hold jump while falling */
+  tick((t,dt)=>{if(!S.got.glider||P.ground||P.ladder||!keys.Space||P.vy>-2.4)return;P.vy=-2.4;if(Math.random()<dt*12)FXW.burst(P.x,P.y+2.2,P.z,{col:0xfffbe8,n:1,spd:.5,up:.5,g:0,life:.6,size:.25})});
+  /* ---- Pushinka at the stem base ---- */
+  box(SX+4.2,0,SZ+5.5,2.4,.5,1.4,0x8a6a4a,{tex:TX.planks});
+  npc('pushinka',SX+3.2,0,SZ+5.2,{yaw:Math.PI*.85,pose:'wave',talk:pushinkaTalk,mark:()=>{const st=qs('c2');return st===3||(st===4&&S.inv.juice>0&&S.inv.elixir>0)||st===6?'!':null}});
+  /* ---- the village of flying squirrels ---- */
+  const stump=(x,z,r,h,roof)=>{cyl(x,0,z,r,h,0x7a5a3a,{g:G.cyl16,tex:TX.bark});if(roof)vis(G.cone,roof,x,h+1.1,z,r*1.35,2.2,r*1.35);else{vis(G.cyl16,0x9a7a52,x,h+.02,z,r*1.02,.06,r*1.02);for(let i=0;i<8;i++){const a=i/8*TAU;gvis(G.sph,0xffd36b,x+Math.cos(a)*(r-.2),h+.12,z+Math.sin(a)*(r-.2),.08,.08,.08)}}vis(G.box,0x3a2a1a,x,1.1,z+r-.02,.9,1.6,.08);vis(G.box,0xffe8a0,x+r*.62,h*.62,z+r*.72,.5,.5,.06,0,-.7,0)};
+  stump(-22,10,2.6,4.2,0);stump(-28,2,2.2,3.6,0xffab4a);stump(-16,18,2,3.4,0x7fc0e8);
+  npc('oreshka',-22,0,13.4,{yaw:0,pose:'idle',talk:oreshkaTalk,mark:()=>!S.tr?null:qs('s5a')===0?'!':qs('s5a')===2?'?':null});
+  /* Shishkin's pillow shop */
+  building({x:18,z:4,w:5,d:4,h:2.8,col:0xf0d8b0,trim:0x8a5a3a,door:'s',dw:1.6,dh:2.2,roof:'gable',roofCol:0x6abf8a,rh:1.4});
+  box(18,0,7.2,3.2,.9,.9,0x8a5a32,{tex:TX.planks});for(let i=0;i<3;i++)vis(G.sph,0xf4d0e8,17+i*1,1.05,7.2,.32,.12,.24);
+  npc('shishkin',18,0,8.4,{yaw:Math.PI,trader:1,talk:shishkinTalk,mark:()=>!S.tr?null:qs('s5b')===0?'!':qs('s5b')===1&&(S.inv.pillow||0)>=2?'?':null});
+  vis(G.box,0x6b4628,21.6,.55,6.6,1.6,1.1,1,0,0,0,.02,TX.planks);vis(G.cyl,0xf4d0e8,21.6,1.2,6.6,.5,.2,.4);
+  workshop(21.6,0,6.6,{title:'Подушечная',help:'Взбивайте пух в такт: три точных нажатия - пуховая подушка.',from:'fluff',need:5,to:'pillow',btn:'Взбить',r:2.2});
+  /* bee on a giant flower tower (bouncy heads) */
+  const gflower=(x,z,top,r,col,pow)=>{vis(G.cyl,0x5aa04a,x,top/2,z,.25,top,.25);for(let i=0;i<8;i++){const a=i/8*TAU;vis(G.sph,col,x+Math.cos(a)*r*.75,top+.05,z+Math.sin(a)*r*.75,r*.45,.12,r*.28,0,-a,0)}vis(G.sph,0xffd36b,x,top+.12,z,r*.45,.2,r*.45);
+    return addC({k:'c',x,z,r:r*.9,y0:top-.2,y1:top+.2,t:pow?'bounce':'solid',pow:pow||0,surf:'moss'})};
+  gflower(30,-4,1.4,1.4,0xff8fb1,15);gflower(33,-8,5.2,1.6,0xb28cff,14);gflower(30,-12.5,8.6,1.8,0x7fc0e8,0);
+  npc('bee',29.6,8.8,-12.2,{yaw:-2.2,pose:'wave',nc:true,r:3,talk:n=>{if(needTr('bee'))return;talk(n,[['bee',pick(['Жу-жу! Розовые цветы пружинят. Прыгай прямо на серединку!','Великий Пух чихает раз в сто лет. В прошлый раз чих долетел до самого Пастбища.','С облачного острова видно всю Одуванчию. Туда только планировать, ж-ж-ж.'])]])}});
+  /* cloud island (reach it by gliding from the high leaf) */
+  const IX=20,IZ=-34,IY=8;addC({k:'b',x0:IX-2.6,x1:IX+2.6,y0:IY-.6,y1:IY,z0:IZ-2.6,z1:IZ+2.6,t:'solid',surf:'moss'});
+  for(let i=0;i<9;i++){const a=i/9*TAU;vis(G.sph,0xffffff,IX+Math.cos(a)*2.2,IY-.5,IZ+Math.sin(a)*2.2,1.3,.8,1.3)}vis(G.sph,0xffffff,IX,IY-.45,IZ,2.6,.5,2.6);
+  /* fluff meadow: gather star fluff */
+  const fl=[[-8,-6],[-12,-14],[9,-8],[12,-16],[-6,18],[8,20],[-30,-12],[26,14],[-18,-24],[16,-24]];
+  fl.forEach(p=>node('fluff',p[0],0,p[1],{regrow:50,yield:2}));
+  /* lost squirrel kids (side quest) */
+  const kids=[[IX,IY,IZ,'на облачном острове'],[30,8.8,-12.5,'на синем цветке'],[-21.4,4.2,10.6,'на крыше высокого пня']];
+  kids.forEach((k,i)=>{if(S.got['kid'+i]||qdone('s5a'))return;const n=npc('belchonok',k[0]+(i===1?.8:0),k[1],k[2]+(i===1?.6:0),{yaw:Math.random()*6,pose:'wave',nc:true,r:2.4,label:'Удерживайте E - отправить бельчонка домой',talk:()=>{}});
+    n.it.hold=1;n.it.cond=()=>qs('s5a')===1;n.it.act=()=>{S.got['kid'+i]=1;const q=qd('s5a');q.n=(q.n||0)+1;save();AU.sfx('beam');const c=n.c.root,y0=c.position.y;n.it.cond=()=>false;tween(1.2,p=>{c.position.y=y0+p*5;c.scale.setScalar(1-p*.9)},()=>{c.visible=false;FXW.burst(c.position.x,c.position.y,c.position.z,{col:0xfff2b0,n:24,spd:3,life:.9})});toast(`Бельчата: ${q.n} из 3`);if(q.n>=3)qset('s5a',2)};
+    n.vis=true;n.kid=i});
+  /* roof of the tall stump is the third kid's spot: ladder up */
+  ladder(-22,7.3,0,4.2,0,0x6b4628);
+  /* scenery */
+  const r=rng(61),avoid=[[0,16,7],[0,9,4],[SX,SZ,9],[-22,10,8],[18,5,7],[31,-8,7],[IX,IZ,5],[0,-4,3]];
+  scatter(r,26,12,58,avoid,(x,z,s)=>tree(x,z,s*1.1,pick([0x6abf4a,0x8ad05a,0x5aa04a])));
+  scatter(r,40,6,58,avoid,(x,z,s)=>{vis(G.cyl,0x7aa04a,x,.35*s,z,.03,.7*s,.03);gvis(G.sph,0xfffbe8,x,.75*s,z,.18*s,.18*s,.18*s)});
+  scatter(r,30,6,58,avoid,(x,z,s)=>{for(let i=0;i<5;i++)gvis(G.sph,pick([0xffd36b,0xff8fb1,0xffffff]),x+Math.cos(i*1.3)*.15,.15,z+Math.sin(i*1.3)*.15,.06,.04,.06)});
+  scatter(r,6,14,50,avoid,(x,z,s)=>rock(x,z,s*.7,0x9a9a8a));
+  tick((t,dt)=>{if(Math.random()<dt*6){const a=Math.random()*TAU,d=Math.random()*30;FXW.burst(P.x+Math.cos(a)*d,1+Math.random()*6,P.z+Math.sin(a)*d,{col:0xfffbe8,n:1,spd:.6,up:.4,g:-.2,life:4,size:.2})}});
+  grass(520,[0x6aa83a,0x5a9a3a,0x8ac850],61);
+  makeGround({c1:0x7ab84a,c2:0x6aa840,mount:0x8aa070,snow:0xfffbe8,path:0xc8b080,seed:61,snowY:14,mh:20});
+  finishLevel();
+  AU.music('p1');AU.ambient('birds');
+  L.arrive=[['kapik','Одуванчия... Всё вокруг в пуху. Даже воздух щекочет нос.'],['kapik','А вот и Великий Пух. Какой огромный! Кажется, у него насморк.']];
+  L.objective=()=>{const st=qs('c2');
+    if(!S.tr)return{text:'Без переводчика не обойтись',pos:null};
+    if(st===3)return{text:'Найди Хранительницу Пушинку у стебля Великого Пуха',pos:[SX+3.2,2.2,SZ+5.2],tag:'Глава 2'};
+    if(st===4){if(S.inv.juice>0&&S.inv.elixir>0)return{text:'Отдай сок и эликсир Пушинке',pos:[SX+3.2,2.2,SZ+5.2],tag:'Глава 2'};return{text:'Нужны мандариновый сок (Мандарина) и светоэликсир (Грибния)',pos:null,tag:'Глава 2'}}
+    if(st===5)return{text:'Лети на Шестерёнку: пуховый фильтр нужно поставить на трубу завода',pos:null,tag:'Глава 2'};
+    if(st===6){const y=P.y;if(y<6)return{text:'Поднимись по листьям стебля. На верхнем листе прыгни в поток ветра',pos:[SX+Math.cos(4.75)*3.6,7,SZ+Math.sin(4.75)*3.6],tag:'Глава 2'};
+      if(y<16)return{text:'Встань в поток ветра, он поднимет к большому листу',pos:[U1.x,17,U1.z],tag:'Глава 2'};
+      if(y<21)return{text:'Прыгай по летающим семенам к листу выше',pos:[SX+Math.cos(a7)*3.6,22.5,SZ+Math.sin(a7)*3.6],tag:'Глава 2'};
+      return{text:'Последний поток ветра поднимет к венчику. Дай Пуху лекарство',pos:[SX,33.5,SZ+3],tag:'Глава 2'}}
+    if(qs('s5a')===1){const k=kids.findIndex((k,i)=>!S.got['kid'+i]);if(k>=0)return{text:`Найди бельчонка ${kids[k][3]}. Удерживай пробел в падении, чтобы планировать`,pos:[kids[k][0],kids[k][1]+1.5,kids[k][2]]}}
+    if(qs('s5b')===1)return{text:`Сделай 2 пуховые подушки для Деда Шишкина: ${S.inv.pillow||0} из 2`,pos:[21.6,1.5,6.6]};
+    return{text:qdone('c2')?'Великий Пух здоров. Собирай пух и помогай белкам':'Поговори с жителями Одуванчии',pos:null}};
+  /* the final medicine */
+  inter({x:SX,y:32,z:SZ+3,r:3.2,hold:1.2,label:'Удерживайте E - дать Великому Пуху лекарство',cond:()=>qs('c2')===6,act:()=>{
+    say([['kapik','Великий Пух, открой... э-э... нос. Это микстура от Пушинки.'],['pushinka','Я тут, рядом! Лей прямо в серединку цветка, Капик!'],['kapik','Ап... ап... Держись! Сейчас чихнёт!']],()=>{
+      AU.sfx('warp');for(let i=0;i<6;i++)setTimeout(()=>FXW.burst(SX,38,SZ,{col:0xfffbe8,n:60,spd:12,up:3,g:1,life:3,size:.5}),i*180);
+      setTimeout(()=>say([['pushinka','Тихий-тихий чих! Ни одной капибары не унесло!'],['pushinka','Пух здоров. А фильтр на заводе больше не пустит к нам пыль. Спасибо, Капик!'],['kapik','Пора домой. Братья ждут рассказа.']],()=>{qcomplete('c2');showEnding(2)}),1300)})}});
+}
+function pushinkaTalk(n){if(needTr('pushinka'))return;const st=qs('c2');
+  if(st===3){talk(n,[['pushinka','Ой! Настоящая капибара! Я Пушинка, хранительница Великого Пуха.'],['pushinka','Это Пух устроил Космический Чих. Не нарочно! У него насморк от заводской пыли с Шестерёнки.'],['pushinka','Скоро он снова чихнёт, и твоих братьев опять разнесёт по галактике.'],['kapik','Только не это. Что нужно?'],['pushinka','Лекарство. Принеси банку мандаринового сока и светоэликсир, я сварю микстуру.'],['pushinka','А пока держи семечко-парашют. В прыжке удерживай пробел, и будешь планировать, как я.']],()=>{S.got.glider=1;qset('c2',4);banner('Новая способность','Семечко-парашют',isTouch?'Удерживайте «Прыжок» в падении, чтобы планировать':'Удерживайте пробел в падении, чтобы планировать')});return}
+  if(st===4){if(S.inv.juice>0&&S.inv.elixir>0){talk(n,[['pushinka','Сок и эликсир! Сейчас смешаю... Буль-буль... Готово!'],['pushinka','Но этого мало. Пыль с завода Шестерёнки снова застудит Пуху нос.'],['pushinka','Я сшила пуховый фильтр. Поставь его на дымящую трубу завода, а потом возвращайся.']],()=>{takeRes('juice',1);takeRes('elixir',1);S.got.filter=1;qset('c2',5);banner('Получено','Микстура и пуховый фильтр','Фильтр - на трубу завода Шестерёнки')});return}
+    talk(n,[['pushinka','Нужны банка мандаринового сока и светоэликсир.'],['pushinka','Сок делают на Мандарине из пяти мандаринов, эликсир варят на Грибнии из четырёх светогрибов.']]);return}
+  if(st===5){talk(n,[['pushinka','Фильтр на трубу Шестерёнки! Без него лекарство не поможет.']]);return}
+  if(st===6){talk(n,[['pushinka','Фильтр стоит? Ура! Теперь наверх, к венчику. Листья, ветер и летающие семена приведут тебя.'],['pushinka','Упадёшь, не страшно: планируй на семечке.']]);return}
+  talk(n,[['pushinka',pick(['Пух снова улыбается. Слышишь, как шуршит?','Заглядывай! На Одуванчии всегда найдётся пух для подушек.'])]])}
+function oreshkaTalk(n){if(needTr('oreshka'))return;const st=qs('s5a');
+  if(st===0){talk(n,[['oreshka','Капибара, помоги! Мои бельчата полетели кататься на ветре и застряли.'],['oreshka','Один на облачном острове у Великого Пуха, другой на синем цветке у Шмеля, третий на крыше моего пня.'],['oreshka','Найди их и отправь домой. Дам 15 монет и орехов в придачу!']],()=>qset('s5a',1));return}
+  if(st===2){talk(n,[['oreshka','Все трое дома, чумазые и счастливые! Держи, как обещала.']],()=>qcomplete('s5a'));return}
+  if(st===1){talk(n,[['oreshka',`Бельчат дома: ${qd('s5a').n||0} из 3. На облачный остров только планировать с высокого листа.`]]);return}
+  talk(n,[['oreshka','Спасибо тебе за малышей! Заходи на орешки.']])}
+function shishkinTalk(n){if(needTr('shishkin'))return;const st=qs('s5b');
+  if(st===0){talk(n,[['shishkin','Кхе-кхе. Я Дед Шишкин, торгую подушками. А подушек нет: руки уже не те.'],['shishkin','Собери звёздный пух на лугу и взбей в подушечной рядом. Две подушки, и получишь 18 монет.']],()=>qset('s5b',1));return}
+  if(st===1&&(S.inv.pillow||0)>=2){talk(n,[['shishkin','Мягкие, как облако! Вот твои монеты.']],()=>{takeRes('pillow',2);qcomplete('s5b')});return}
+  if(st===1){talk(n,[['shishkin',`Подушек: ${S.inv.pillow||0} из 2. Пять пушинок на одну.`]],()=>openTrade('shishkin'));return}
+  openTrade('shishkin')}
+
 /* ---------- SPACE FLIGHT ---------- */
 function h3(x,y,z){const s=Math.sin(x*127.1+y*269.5+z*113.5)*43758.5453;return s-Math.floor(s)}
 function n3(x,y,z){const xi=Math.floor(x),yi=Math.floor(y),zi=Math.floor(z),xf=x-xi,yf=y-yi,zf=z-zi,u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf),w=zf*zf*(3-2*zf);
   const a=lerp(lerp(h3(xi,yi,zi),h3(xi+1,yi,zi),u),lerp(h3(xi,yi+1,zi),h3(xi+1,yi+1,zi),u),v),b=lerp(lerp(h3(xi,yi,zi+1),h3(xi+1,yi,zi+1),u),lerp(h3(xi,yi+1,zi+1),h3(xi+1,yi+1,zi+1),u),v);return lerp(a,b,w)}
 function f3(x,y,z){return n3(x,y,z)*.52+n3(x*2.03,y*2.03,z*2.03)*.26+n3(x*4.1,y*4.1,z*4.1)*.14+n3(x*8.3,y*8.3,z*8.3)*.08}
 const SPX=(()=>{
-  const PLN={base:{pos:[300,0,700],r:30,col:0x8fdc7a},p1:{pos:[-380,40,380],r:60,col:0xff9a3a},p2:{pos:[-780,-30,-160],r:70,col:0xcfeeff,ring:0xdff6ff},p3:{pos:[160,60,-720],r:62,col:0xb06ad6},p4:{pos:[760,-20,-260],r:56,col:0x7a8a94,ring:0xffab4a}};
-  const IDS=['base','p1','p2','p3','p4'];
+  const PLN={base:{pos:[300,0,700],r:30,col:0x8fdc7a},p1:{pos:[-380,40,380],r:60,col:0xff9a3a},p2:{pos:[-780,-30,-160],r:70,col:0xcfeeff,ring:0xdff6ff},p3:{pos:[160,60,-720],r:62,col:0xb06ad6},p4:{pos:[760,-20,-260],r:56,col:0x7a8a94,ring:0xffab4a},p5:{pos:[-560,140,-940],r:58,col:0xf4f0a0}};
+  const IDS=['base','p1','p2','p3','p4','p5'];const OPEN=()=>IDS.filter(id=>id!=='p5'||qs('c2')>=2);
   const RAMP={base:[[0,0x5a4a6a],[.45,0x7a6a8a],[.55,0x4f8a3c],[.75,0x6fae52],[1,0x9fd07a]],p1:[[0,0x1f6a7a],[.4,0x2a9a8a],[.44,0xe8c890],[.52,0x6fa840],[.68,0xffab4a],[.85,0xff8a2e],[1,0xfff0c0]],
-    p2:[[0,0x1a4a7a],[.38,0x3a7ab0],[.42,0xbfe8ff],[.6,0xeaf6ff],[1,0xffffff]],p3:[[0,0x2a1846],[.4,0x4a2a6a],[.55,0x8a3a9a],[.7,0xd84a9a],[1,0xffb0e0]],p4:[[0,0x2a2e34],[.4,0x4a5058],[.6,0x7a8088],[.75,0xa86a3a],[1,0xd8d0c8]]};
+    p2:[[0,0x1a4a7a],[.38,0x3a7ab0],[.42,0xbfe8ff],[.6,0xeaf6ff],[1,0xffffff]],p3:[[0,0x2a1846],[.4,0x4a2a6a],[.55,0x8a3a9a],[.7,0xd84a9a],[1,0xffb0e0]],p4:[[0,0x2a2e34],[.4,0x4a5058],[.6,0x7a8088],[.75,0xa86a3a],[1,0xd8d0c8]],p5:[[0,0x2f6a5a],[.38,0x4a9a5a],[.5,0x8ac850],[.62,0xd8e870],[.74,0xfff2a8],[1,0xffffff]]};
   let built=false,ship=null,cam=1,auto=false,rocks=[],rockIM=null,rings=[],labels={},comet=null,shake=0,cockpit=null,sunM=null;
-  const sh={pos:new THREE.Vector3(),vel:new THREE.Vector3(),yaw:0,pitch:0,roll:0,boost:1,thr:0,str:0,lx:0};
+  const _m4=new THREE.Matrix4(),_qt=new THREE.Quaternion(),_ax=new THREE.Vector3(),_z0=new THREE.Vector3(),_wu=new THREE.Vector3(0,1,0);
+  const sh={pos:new THREE.Vector3(),vel:new THREE.Vector3(),q:new THREE.Quaternion(),loop:0,yaw:0,pitch:0,roll:0,boost:1,thr:0,str:0,lx:0};
   const v3=(a)=>new THREE.Vector3(a[0],a[1],a[2]);
   function ramp(stops,t){for(let i=1;i<stops.length;i++)if(t<=stops[i][0]){const a=stops[i-1],b=stops[i],k=(t-a[0])/(b[0]-a[0]);return _c.set(a[1]).lerp(new THREE.Color(b[1]),k)}return _c.set(stops[stops.length-1][1])}
   function planetTex(id){const W=512,H=256,c=document.createElement('canvas'),hc=document.createElement('canvas'),ec=document.createElement('canvas');c.width=hc.width=ec.width=W;c.height=hc.height=ec.height=H;
@@ -2061,10 +2290,12 @@ const SPX=(()=>{
     else geo=new THREE.SphereGeometry(r,96,64);
     const pm=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({map:tx.t,bumpMap:tx.ht,bumpScale:id==='p4'?1.5:2.2,emissiveMap:tx.et,emissive:new THREE.Color(0xffffff),roughness:id==='p2'?.55:.9,metalness:id==='p4'?.35:0}));g.add(pm);p.body=pm;
     if(id==='base'){const dome=mesh(new THREE.SphereGeometry(4,24,12,0,TAU,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0x9fe9ff,transparent:true,opacity:.5,roughness:.1}),0,r*.66,0,1,1,1,g);mesh(G.box,mat(0xb5452f),9,r*.62+2,4,6,4,5,g);mesh(G.cyl,mat(0x8a8aa0),-8,r*.62+4,-6,.4,8,.4,g);const bl=glow(0xffab4a,40,.4);bl.position.y=r*.7;g.add(bl)}
-    else{g.add(atmo(r*1.06,p.col,id==='p3'?2.2:3));if(id==='p1'||id==='p3'){const cm=mesh(new THREE.SphereGeometry(r*1.015,64,48),new THREE.MeshStandardMaterial({map:cloudLayer(IDS.indexOf(id),0xffffff),transparent:true,depthWrite:false,roughness:1,color:id==='p3'?0xe0c8ff:0xffffff}),0,0,0,1,1,1,g);p.clouds=cm}}
+    else{g.add(atmo(r*1.06,p.col,id==='p3'?2.2:3));if(id==='p1'||id==='p3'||id==='p5'){const cm=mesh(new THREE.SphereGeometry(r*1.015,64,48),new THREE.MeshStandardMaterial({map:cloudLayer(IDS.indexOf(id),0xffffff),transparent:true,depthWrite:false,roughness:1,color:id==='p3'?0xe0c8ff:0xffffff}),0,0,0,1,1,1,g);p.clouds=cm}}
     if(p.ring){const rg=new THREE.RingGeometry(r*1.4,r*2.2,128,4);const pos=rg.attributes.position,uv=rg.attributes.uv;for(let i=0;i<pos.count;i++){const d=Math.hypot(pos.getX(i),pos.getY(i));uv.setXY(i,(d-r*1.4)/(r*.8),.5)}
       const rc=document.createElement('canvas');rc.width=256;rc.height=4;const rcg=rc.getContext('2d');for(let x=0;x<256;x++){const a=.25+.6*Math.abs(Math.sin(x*.21)*Math.sin(x*.047+1));rcg.fillStyle=`rgba(255,255,255,${a*(x<8||x>248?.2:1)})`;rcg.fillRect(x,0,1,4)}
       const ring=new THREE.Mesh(rg,new THREE.MeshStandardMaterial({map:new THREE.CanvasTexture(rc),color:lc(p.ring),side:THREE.DoubleSide,transparent:true,depthWrite:false,roughness:.8}));ring.rotation.set(-1.2,.3,0);g.add(ring)}
+    if(id==='p5'){const pf=new THREE.Group();g.add(pf);mesh(G.cyl,mat(0x5aa85a),0,r+14,0,1.6,30,1.6,pf);const ball=mesh(new THREE.IcosahedronGeometry(16,3),stdMat(0xfffbe8,{roughness:1}),0,r+38,0,1,1,1,pf);const bg=glow(0xfff8d0,90,.35);bg.position.y=r+38;pf.add(bg);
+      for(let i=0;i<40;i++){const u=Math.random()*2-1,a2=Math.random()*TAU,q=Math.sqrt(1-u*u);const sd=mesh(G.cyl,mat(0xf6f0d8),q*Math.cos(a2)*19,r+38+u*19,q*Math.sin(a2)*19,.25,7,.25,pf);sd.quaternion.setFromUnitVectors(_wu,new THREE.Vector3(q*Math.cos(a2),u,q*Math.sin(a2)))}pf.rotation.set(.35,0,-.25);p.puff=pf}
     if(id==='p4'){const gr=new THREE.Group();g.add(gr);for(let i=0;i<3;i++){const t=mesh(G.tor,mat(0xffab4a,{metal:.7}),0,0,0,r*.25,r*.25,r*.5,gr);t.position.set(Math.cos(i*2.1)*r*1.6,Math.sin(i*1.3)*r*.3,Math.sin(i*2.1)*r*1.6)}p.gears=gr}
     p.mesh=g}
   /* ---------- cockpit interior ---------- */
@@ -2129,26 +2360,29 @@ const SPX=(()=>{
   function repaint(){if(!ship)return;const p=ship.position.clone(),r=ship.quaternion.clone();ship.remove(cockpit);sscene.remove(ship);disposeTree(ship);ship=makeUFO(S.paint);ship.position.copy(p);ship.quaternion.copy(r);ship.add(cockpit);sscene.add(ship)}
   const SP={};
   function placeAt(id){const p=PLN[id];const tgt=routeTarget();const tp=v3(PLN[tgt===id?'base':tgt].pos);const pp=v3(p.pos);let dir=tp.clone().sub(pp);if(dir.lengthSq()<1)dir.set(0,0,-1);dir.normalize();
-    sh.pos.copy(pp).addScaledVector(dir,p.r+40);sh.pos.y+=6;sh.vel.set(0,0,0);sh.yaw=Math.atan2(-dir.x,-dir.z);sh.pitch=Math.asin(clamp(dir.y,-1,1))*.5;sh.boost=1}
+    sh.pos.copy(pp).addScaledVector(dir,p.r+40);sh.pos.y+=6;sh.vel.set(0,0,0);sh.yaw=Math.atan2(-dir.x,-dir.z);sh.pitch=Math.asin(clamp(dir.y,-1,1))*.5;sh.q.setFromEuler(new THREE.Euler(sh.pitch,sh.yaw,0,'YXZ'));sh.loop=0;sh.boost=1}
   function enter(from){build();repaint();placeAt(from);auto=false;camSnap=true;camera.near=.05;camera.fov=70;camera.updateProjectionMatrix();
     IDS.forEach(id=>labels[id].hidden=false);AU.music('space');AU.ambient(null);AU.engine(true,0,false)}
   function exit(){camera.up.set(0,1,0);camera.fov=70;camera.near=.1;camera.updateProjectionMatrix();IDS.forEach(id=>labels[id].hidden=true);labels.ring.hidden=true;AU.engine(false);rings.forEach(c=>{c.on=false;c.next=0});$('#timer').hidden=true}
-  function routeTarget(){if(S.route&&PLN[S.route])return S.route;const nx=PIDS.find(p=>!S.rescued[p]);if(!S.tr)return'base';return nx||'base'}
+  function routeTarget(){if(S.route&&PLN[S.route])return S.route;const nx=PIDS.find(p=>!S.rescued[p]);if(!S.tr)return'base';if(!nx&&qs('c2')>=2&&!qdone('c2'))return qs('c2')===5?'p4':'p5';return nx||'base'}
   let camSnap=true,holdT=0,scrT=0;const fwd=new THREE.Vector3(),rgt=new THREE.Vector3(),upv=new THREE.Vector3(),camT=new THREE.Vector3();
-  function spin(dt,t){IDS.forEach(id=>{const p=PLN[id];if(p.body)p.body.rotation.y+=dt*.015;if(p.clouds)p.clouds.rotation.y+=dt*.025;if(p.gears)p.gears.rotation.y+=dt*.2});
+  function spin(dt,t){IDS.forEach(id=>{const p=PLN[id];if(id==='p5'&&p.mesh)p.mesh.visible=OPEN().includes('p5');if(p.puff)p.puff.rotation.y+=dt*.05;if(p.body)p.body.rotation.y+=dt*.015;if(p.clouds)p.clouds.rotation.y+=dt*.025;if(p.gears)p.gears.rotation.y+=dt*.2});
     const ca=t*.03;comet.position.set(Math.cos(ca)*1000,200+Math.sin(ca*2)*80,Math.sin(ca)*700);comet.lookAt(Math.cos(ca-.05)*1000,200+Math.sin((ca-.05)*2)*80,Math.sin(ca-.05)*700);comet.rotateY(Math.PI)}
   function titleView(t,dt){build();const a=t*.04;const c=v3(PLN.p1.pos);if(camera.fov!==40){camera.fov=40;camera.updateProjectionMatrix()}camera.position.set(c.x+Math.cos(a)*320,c.y+70+Math.sin(a*.7)*35,c.z+Math.sin(a)*320);camera.up.set(0,1,0);{const dx=c.x-camera.position.x,dz=c.z-camera.position.z,l=Math.hypot(dx,dz)||1,w=innerWidth/innerHeight>1.2?80:0;camera.lookAt(c.x+dz/l*w,c.y+(w?0:-65),c.z-dx/l*w)}SP.stars.position.copy(camera.position);
     ship.position.set(c.x+Math.cos(a+.25)*120,c.y+30+Math.sin(t*.8)*2,c.z+Math.sin(a+.25)*120);ship.rotation.set(.1,a,Math.sin(t*.6)*.1);ship.userData.update(t,.3);cockpit.visible=false;ship.userData.dome.visible=true;ship.userData.head.root.visible=true;spin(dt,t)}
   function update(dt,inp){if(!built)return;const t=performance.now()/1000;
-    if(auto&&S.up.auto){const tp=v3(PLN[routeTarget()].pos),d=tp.clone().sub(sh.pos),dist=d.length();d.normalize();const wy=Math.atan2(-d.x,-d.z),wp=Math.asin(clamp(d.y,-1,1));let dy=wy-sh.yaw;dy=Math.atan2(Math.sin(dy),Math.cos(dy));sh.yaw+=dy*Math.min(1,dt*1.5);sh.pitch+=(wp-sh.pitch)*Math.min(1,dt*1.5);inp.thr=1;inp.boost=dist>500&&sh.boost>.3;
+    if(auto&&S.up.auto){const tp=v3(PLN[routeTarget()].pos),d=tp.clone().sub(sh.pos),dist=d.length();d.normalize();_m4.lookAt(_z0,d,_wu);_qt.setFromRotationMatrix(_m4);sh.q.slerp(_qt,Math.min(1,dt*1.5));inp.thr=1;inp.boost=dist>500&&sh.boost>.3;
       if(dist<PLN[routeTarget()].r+90){auto=false;toast('Автопилот: прибыли. Удерживайте E для посадки')}}
-    sh.yaw-=inp.lx;sh.pitch=clamp(sh.pitch-inp.ly,-1.3,1.3);
-    fwd.set(-Math.sin(sh.yaw)*Math.cos(sh.pitch),Math.sin(sh.pitch),-Math.cos(sh.yaw)*Math.cos(sh.pitch));rgt.set(Math.cos(sh.yaw),0,-Math.sin(sh.yaw));upv.crossVectors(rgt,fwd);
+    /* free 6-DOF steering: yaw around the saucer's own up, pitch around its own right, so full loops are possible */
+    _qt.setFromAxisAngle(_ax.set(0,1,0),-inp.lx);sh.q.multiply(_qt);_qt.setFromAxisAngle(_ax.set(1,0,0),-inp.ly);sh.q.multiply(_qt);sh.q.normalize();
+    if(inp.roll){_qt.setFromAxisAngle(_ax.set(0,0,1),inp.roll*dt*2.2);sh.q.multiply(_qt)}
+    if(Math.abs(inp.ly)>1e-4){if(Math.sign(inp.ly)!==Math.sign(sh.loop))sh.loop=0;sh.loop+=inp.ly;if(Math.abs(sh.loop)>=TAU){sh.loop=0;SP.flips=(SP.flips||0)+1;AU.sfx('djump');banner('Сальто!',SP.flips>1?'Ещё одно: '+SP.flips:'Тарелка сделала полный оборот','');if(!S.got.flip){S.got.flip=1;save();setTimeout(()=>{addCoins(5);toast('Первое сальто: +5 монет')},600)}}}
+    fwd.set(0,0,-1).applyQuaternion(sh.q);rgt.set(1,0,0).applyQuaternion(sh.q);upv.set(0,1,0).applyQuaternion(sh.q);sh.yaw=Math.atan2(-fwd.x,-fwd.z);sh.pitch=Math.asin(clamp(fwd.y,-1,1));
     const boosting=inp.boost&&sh.boost>.02&&inp.thr>=0;const acc=50*(boosting?(S.up.boost?3.1:2.2):1);
     if(boosting){sh.boost=Math.max(0,sh.boost-dt*(S.up.boost?.18:.25));if(!SP.bst)AU.sfx('boost');SP.bst=true}else{sh.boost=Math.min(1,sh.boost+dt*(S.up.boost?.18:.12));SP.bst=false}
     const thr=boosting?1:inp.thr;sh.vel.addScaledVector(fwd,thr*acc*dt).addScaledVector(rgt,inp.str*30*dt).addScaledVector(upv,inp.vert*30*dt);sh.vel.multiplyScalar(Math.exp(-.9*dt));
     sh.pos.addScaledVector(sh.vel,dt);sh.thr=Math.min(1,Math.abs(thr)+(boosting?.5:0));sh.str=inp.str;sh.lx=inp.lx;
-    for(const id of IDS){const p=PLN[id],pp=_p.set(p.pos[0],p.pos[1],p.pos[2]),d=sh.pos.distanceTo(pp),m=p.r*(id==='base'?.8:1.02)+4;if(d<m){const n=sh.pos.clone().sub(pp).normalize();sh.pos.copy(pp).addScaledVector(n,m);const vn=sh.vel.dot(n);if(vn<0)sh.vel.addScaledVector(n,-vn*1.4);if(vn<-15){AU.sfx('thud');shake=.4}}}
+    for(const id of OPEN()){const p=PLN[id],pp=_p.set(p.pos[0],p.pos[1],p.pos[2]),d=sh.pos.distanceTo(pp),m=p.r*(id==='base'?.8:1.02)+4;if(d<m){const n=sh.pos.clone().sub(pp).normalize();sh.pos.copy(pp).addScaledVector(n,m);const vn=sh.vel.dot(n);if(vn<0)sh.vel.addScaledVector(n,-vn*1.4);if(vn<-15){AU.sfx('thud');shake=.4}}}
     const ds=sh.pos.length();if(ds<150){const n=sh.pos.clone().normalize();sh.vel.addScaledVector(n,(150-ds)*dt*6);if(!SP.hotT||t-SP.hotT>3){SP.hotT=t;toast('Слишком жарко! Звезда отталкивает тарелку');AU.sfx('bad')}}
     if(ds>1350){sh.vel.addScaledVector(sh.pos.clone().normalize(),-(ds-1350)*dt*.8);if(!SP.farT||t-SP.farT>4){SP.farT=t;toast('Дальше только пустота. Разворачивайся')}}
     for(const r of rocks){const dx=sh.pos.x-r.x,dy=sh.pos.y-r.y,dz=sh.pos.z-r.z,m=r.s+3.2;if(Math.abs(dx)<m&&Math.abs(dz)<m&&Math.abs(dy)<m){const d=Math.hypot(dx,dy,dz);if(d<m&&d>.01){const n=new THREE.Vector3(dx/d,dy/d,dz/d);sh.pos.set(r.x,r.y,r.z).addScaledVector(n,m);const vn=sh.vel.dot(n);if(vn<0){sh.vel.addScaledVector(n,-vn*(S.up.shield?1.3:1.6));if(!S.up.shield)sh.vel.multiplyScalar(.6)}AU.sfx('thud');shake=.5;FXS.burst(sh.pos.x-n.x*3,sh.pos.y-n.y*3,sh.pos.z-n.z*3,{col:0xbbaacc,n:14,spd:8,g:0,life:.8,size:1.2})}}}
@@ -2158,7 +2392,7 @@ const SPX=(()=>{
       r.side=side;if(c.on){c.t-=dt;const tm=$('#timer');tm.hidden=false;tm.innerHTML=`<small>Кольца: ${c.next} из 6</small>${c.t.toFixed(1)}`;tm.classList.toggle('warn',c.t<8);if(c.t<=0){c.on=false;c.next=0;tm.hidden=true;c.rings.forEach(x=>{x.m.material.color.copy(lc(0x7fe3e8));x.side=0});toast('Время на трассе вышло. Начните с первого кольца')}}
       const d0=sh.pos.distanceTo(c.rings[c.next]?c.rings[c.next].p:c.rings[0].p);if(d0<350&&(!near||d0<near.d))near={c,d:d0}}
     rings.forEach(c=>c.rings.forEach((r,i)=>{r.m.material.opacity=i===c.next?.95:.35;if(i===c.next)r.m.scale.setScalar(1+Math.sin(t*4)*.05)}));
-    ship.position.copy(sh.pos);const latV=sh.vel.dot(rgt);sh.roll+=(clamp(-latV*.02-inp.lx*8,-.6,.6)-sh.roll)*Math.min(1,dt*4);ship.rotation.set(0,0,0);ship.rotateY(sh.yaw);ship.rotateX(sh.pitch*(cam?1:.5));ship.rotateZ(sh.roll*(cam?.3:1));ship.userData.update(t,sh.thr);
+    ship.position.copy(sh.pos);const latV=sh.vel.dot(rgt);sh.roll+=(clamp(-latV*.02-inp.lx*8,-.6,.6)-sh.roll)*Math.min(1,dt*4);ship.quaternion.copy(sh.q);ship.rotateZ(sh.roll*(cam?.3:1));ship.userData.update(t,sh.thr);
     const sk=shake>0?(shake-=dt,shake*.6):0;const inC=cam===1;cockpit.visible=inC;ship.userData.dome.visible=!inC;ship.userData.head.root.visible=!inC;
     if(!inC){camT.copy(sh.pos).addScaledVector(fwd,-15).addScaledVector(upv,5);if(camSnap){camera.position.copy(camT);camSnap=false}else camera.position.lerp(camT,1-Math.exp(-dt*7));camera.up.copy(upv);camera.lookAt(_p.copy(sh.pos).addScaledVector(fwd,10).addScaledVector(upv,1.5))}
     else{ship.updateMatrixWorld();camera.position.set(0,1.32,.18).applyMatrix4(ship.matrixWorld);const look=_p.set(0,1.18,-3).applyMatrix4(ship.matrixWorld);camera.up.set(0,1,0).applyQuaternion(ship.quaternion);camera.lookAt(look);camSnap=false;
@@ -2167,16 +2401,16 @@ const SPX=(()=>{
     if(sk){camera.position.x+=(Math.random()-.5)*sk;camera.position.y+=(Math.random()-.5)*sk}
     const spd=sh.vel.length();camera.fov+=((inC?74:70)+Math.min(spd/6,16)-camera.fov)*Math.min(1,dt*3);camera.updateProjectionMatrix();
     SP.stars.position.copy(camera.position);spin(dt,t);
-    let land=null,ld=1e9;for(const id of IDS){const p=PLN[id],d=sh.pos.distanceTo(_p.set(p.pos[0],p.pos[1],p.pos[2]));if(d<p.r+70&&d<ld){ld=d;land=id}}
+    let land=null,ld=1e9;for(const id of OPEN()){const p=PLN[id],d=sh.pos.distanceTo(_p.set(p.pos[0],p.pos[1],p.pos[2]));if(d<p.r+70&&d<ld){ld=d;land=id}}
     if(land){if(inp.eHeld){holdT+=dt;if(holdT>=1){holdT=0;landOn(land);return}}else holdT=0;showPrompt('Удерживайте E - посадка: '+PL[land].name,holdT/1)}else{holdT=0;showPrompt(null)}
     if(land&&S.route===land){S.route=null;save()}
     $('#spd').textContent=Math.round(spd);$('#boostFill').style.width=(sh.boost*100)+'%';
-    const tgt=routeTarget(),placed=[],place=(x,y)=>{for(let k=0;k<6;k++){if(!placed.some(q=>Math.abs(q[0]-x)<150&&Math.abs(q[1]-y)<36))break;y-=36}placed.push([x,y]);return y};IDS.forEach(id=>{const el=labels[id],p=PLN[id];tmpV.set(p.pos[0],p.pos[1]+p.r*1.15,p.pos[2]);const d=sh.pos.distanceTo(_p.set(p.pos[0],p.pos[1],p.pos[2]));tmpV.project(camera);
-      if(tmpV.z>1||Math.abs(tmpV.x)>1.1||Math.abs(tmpV.y)>1.1){el.style.display='none';return}el.style.display='';const lx=(tmpV.x*.5+.5)*innerWidth,ly=place(lx,(-tmpV.y*.5+.5)*innerHeight);el.style.transform=`translate(${lx}px,${ly}px) translate(-50%,-100%)`;el.classList.toggle('tgt',id===tgt);el.querySelector('span').textContent=(S.rescued[id]||id==='base'?'':'брат ждёт · ')+Math.round(d)+' м'});
+    const tgt=routeTarget(),placed=[],place=(x,y)=>{for(let k=0;k<6;k++){if(!placed.some(q=>Math.abs(q[0]-x)<150&&Math.abs(q[1]-y)<36))break;y-=36}placed.push([x,y]);return y};IDS.forEach(id=>{const el=labels[id],p=PLN[id];if(!OPEN().includes(id)){el.style.display='none';return}tmpV.set(p.pos[0],p.pos[1]+p.r*1.15,p.pos[2]);const d=sh.pos.distanceTo(_p.set(p.pos[0],p.pos[1],p.pos[2]));tmpV.project(camera);
+      if(tmpV.z>1||Math.abs(tmpV.x)>1.1||Math.abs(tmpV.y)>1.1){el.style.display='none';return}el.style.display='';const lx=(tmpV.x*.5+.5)*innerWidth,ly=place(lx,(-tmpV.y*.5+.5)*innerHeight);el.style.transform=`translate(${lx}px,${ly}px) translate(-50%,-100%)`;el.classList.toggle('tgt',id===tgt);el.querySelector('span').textContent=(id==='p5'?(qdone('c2')?'':'Великий Пух · '):S.rescued[id]||id==='base'?'':'брат ждёт · ')+Math.round(d)+' м'});
     const rl=labels.ring;if(near){const r=near.c.rings[near.c.next]||near.c.rings[0];tmpV.copy(r.p);tmpV.y+=12;tmpV.project(camera);if(tmpV.z<1&&Math.abs(tmpV.x)<1.1&&Math.abs(tmpV.y)<1.1){rl.hidden=false;const rx=(tmpV.x*.5+.5)*innerWidth,ry=place(rx,(-tmpV.y*.5+.5)*innerHeight);rl.style.transform=`translate(${rx}px,${ry}px) translate(-50%,-100%)`;rl.querySelector('b').textContent=near.c.next===0?'Трасса колец: влетайте':'Кольцо '+(near.c.next+1);rl.querySelector('span').textContent=S.got['ring'+near.c.k]?'пройдена':'награда '+near.c.rw}else rl.hidden=true}else rl.hidden=true;
   }
   function objective(){const tgt=routeTarget(),p=PLN[tgt];const d=sh.pos.distanceTo(_p.set(p.pos[0],p.pos[1],p.pos[2]));
-    let text=tgt==='base'?(!S.tr?'Вернись на базу: без переводчика на планетах не обойтись':'Курс: база Пастбище'):`Курс: ${PL[tgt].name}`+(S.rescued[tgt]?'':' · там ждёт '+CAST[PL[tgt].bro].name);
+    let text=tgt==='base'?(!S.tr?'Вернись на базу: без переводчика на планетах не обойтись':'Курс: база Пастбище'):`Курс: ${PL[tgt].name}`+(tgt==='p5'?' · там ждёт Великий Пух':S.rescued[tgt]||!PL[tgt].bro?'':' · там ждёт '+CAST[PL[tgt].bro].name);
     if(auto)text='Автопилот · '+text;return{text,pos:[p.pos[0],p.pos[1]+p.r*1.1,p.pos[2]],dist:Math.round(d)+' м',tag:'Борткомпьютер'}}
   /* ---------- MAP ---------- */
   let mapSel=null;const mc=$('#mapc');
@@ -2190,20 +2424,20 @@ const SPX=(()=>{
     g.font=`700 ${11*dpr}px Nunito, sans-serif`;g.textAlign='center';g.fillStyle='rgba(255,240,200,.7)';g.fillText('Звезда',cx,cy+(100*s)+12*dpr);g.fillText('Пояс астероидов',cx,cy-450*s);
     rings.forEach(c=>{g.strokeStyle=S.got['ring'+c.k]?'rgba(142,224,138,.7)':'rgba(127,227,232,.8)';g.lineWidth=1.5*dpr;c.rings.forEach(r=>{const[x,y]=mapXY(r.p.x,r.p.z);g.beginPath();g.arc(x,y,3.5*dpr,0,TAU);g.stroke()})});
     const[sx,sy]=mapXY(sh.pos.x,sh.pos.z),tg=PLN[mapSel||routeTarget()];if(tg){const[tx,ty]=mapXY(tg.pos[0],tg.pos[2]);g.strokeStyle='#ffab4a';g.lineWidth=2*dpr;g.setLineDash([6*dpr,6*dpr]);g.beginPath();g.moveTo(sx,sy);g.lineTo(tx,ty);g.stroke();g.setLineDash([])}
-    IDS.forEach(id=>{const p=PLN[id],[x,y]=mapXY(p.pos[0],p.pos[2]),rr=Math.max(9*dpr,p.r*s*1.6);const gr=g.createRadialGradient(x-rr*.35,y-rr*.35,rr*.1,x,y,rr);gr.addColorStop(0,'#fff');gr.addColorStop(.25,'#'+new THREE.Color(p.col).getHexString());gr.addColorStop(1,'#'+new THREE.Color(p.col).multiplyScalar(.35).getHexString());g.fillStyle=gr;g.beginPath();g.arc(x,y,rr,0,TAU);g.fill();
+    OPEN().forEach(id=>{const p=PLN[id],[x,y]=mapXY(p.pos[0],p.pos[2]),rr=Math.max(9*dpr,p.r*s*1.6);const gr=g.createRadialGradient(x-rr*.35,y-rr*.35,rr*.1,x,y,rr);gr.addColorStop(0,'#fff');gr.addColorStop(.25,'#'+new THREE.Color(p.col).getHexString());gr.addColorStop(1,'#'+new THREE.Color(p.col).multiplyScalar(.35).getHexString());g.fillStyle=gr;g.beginPath();g.arc(x,y,rr,0,TAU);g.fill();
       if(id===mapSel){g.strokeStyle='#ffd36b';g.lineWidth=3*dpr;g.beginPath();g.arc(x,y,rr+5*dpr,0,TAU);g.stroke()}
-      g.fillStyle='#f7eee1';g.font=`400 ${13*dpr}px "Russo One", sans-serif`;g.fillText(PL[id].name,x,y-rr-8*dpr);g.font=`700 ${11*dpr}px Nunito, sans-serif`;g.fillStyle=id==='base'?'#b3a8c9':S.rescued[id]?'#8ee08a':'#ffab4a';g.fillText(id==='base'?'дом':S.rescued[id]?'брат спасён':CAST[PL[id].bro].name+' ждёт',x,y+rr+14*dpr)});
+      g.fillStyle='#f7eee1';g.font=`400 ${13*dpr}px "Russo One", sans-serif`;g.fillText(PL[id].name,x,y-rr-8*dpr);g.font=`700 ${11*dpr}px Nunito, sans-serif`;g.fillStyle=id==='base'?'#b3a8c9':S.rescued[id]?'#8ee08a':'#ffab4a';g.fillText(id==='base'?'дом':id==='p5'?(qdone('c2')?'Пух здоров':'Глава 2'):S.rescued[id]?'брат спасён':CAST[PL[id].bro].name+' ждёт',x,y+rr+14*dpr)});
     g.save();g.translate(sx,sy);g.rotate(-sh.yaw);g.fillStyle='#7fe3e8';g.beginPath();g.moveTo(0,-10*dpr);g.lineTo(7*dpr,8*dpr);g.lineTo(0,4*dpr);g.lineTo(-7*dpr,8*dpr);g.closePath();g.fill();g.restore();
     g.fillStyle='#7fe3e8';g.font=`800 ${11*dpr}px Nunito, sans-serif`;g.fillText('Вы здесь',sx,sy+20*dpr)}
-  const WORK={p1:'сокодавильня, мандариновый сад',p2:'коптильня, проруби',p3:'зельеварня, светогрибы',p4:'плавильня, металлолом',base:'ягоды, рыбалка, лавка'};
+  const WORK={p1:'сокодавильня, мандариновый сад',p2:'коптильня, проруби',p3:'зельеварня, светогрибы',p4:'плавильня, металлолом',p5:'подушечная, пух',base:'ягоды, рыбалка, лавка'};
   function renderMapInfo(){const done=id=>Object.keys(QUESTS).filter(q=>QUESTS[q].pl===id&&qdone(q)).length,all=id=>Object.keys(QUESTS).filter(q=>QUESTS[q].pl===id).length;
-    $('#mapInfo').innerHTML=IDS.map(id=>{const d=Math.round(sh.pos.distanceTo(_p.set(PLN[id].pos[0],PLN[id].pos[1],PLN[id].pos[2])));
-      return `<button class="mi ${id===mapSel?'cur':''}" data-pl="${id}" style="text-align:left;${id===mapSel?'border-color:var(--mandarin);background:rgba(255,171,74,.1)':''}"><b style="color:#${new THREE.Color(PLN[id].col).getHexString()}">${PL[id].name}</b><span>${PL[id].kind}. ${PL[id].desc}.</span><span>${id==='base'?'Лавка, братья, Радист Крот':(S.rescued[id]?'Брат спасён':'Здесь '+CAST[PL[id].bro].name)} · заданий ${done(id)} из ${all(id)}${SOUV[id]?(S.souv[id]?' · сувенир найден':' · сувенир спрятан'):''} · ${d} м</span><span>Работа: ${WORK[id]}</span></button>`}).join('')+
+    $('#mapInfo').innerHTML=OPEN().map(id=>{const d=Math.round(sh.pos.distanceTo(_p.set(PLN[id].pos[0],PLN[id].pos[1],PLN[id].pos[2])));
+      return `<button class="mi ${id===mapSel?'cur':''}" data-pl="${id}" style="text-align:left;${id===mapSel?'border-color:var(--mandarin);background:rgba(255,171,74,.1)':''}"><b style="color:#${new THREE.Color(PLN[id].col).getHexString()}">${PL[id].name}</b><span>${PL[id].kind}. ${PL[id].desc}.</span><span>${id==='base'?'Лавка, братья, Радист Крот':(id==='p5'?'Великий Пух и белки-летяги':S.rescued[id]?'Брат спасён':'Здесь '+CAST[PL[id].bro].name)} · заданий ${done(id)} из ${all(id)}${SOUV[id]?(S.souv[id]?' · сувенир найден':' · сувенир спрятан'):''} · ${d} м</span><span>Работа: ${WORK[id]}</span></button>`}).join('')+
       `<p>Колец пройдено: ${[0,1,2].filter(k=>S.got['ring'+k]).length} из 3.</p>`;
     $('#mClose').textContent=screenRet==='space'?(mapSel?'Лететь: '+PL[mapSel].name:'Лететь'):'Закрыть'}
   $('#mapInfo').addEventListener('click',e=>{const b=e.target.closest('[data-pl]');if(!b)return;select(b.dataset.pl)});
   function select(id){mapSel=id;S.route=id;save();AU.sfx('ui');drawMap();renderMapInfo()}
-  mc.addEventListener('pointerdown',e=>{const r=mc.getBoundingClientRect(),dpr=mc.width/r.width,x=(e.clientX-r.left)*dpr,y=(e.clientY-r.top)*dpr;let best=null,bd=50*dpr;IDS.forEach(id=>{const[px,py]=mapXY(PLN[id].pos[0],PLN[id].pos[2]);const d=Math.hypot(px-x,py-y);if(d<bd){bd=d;best=id}});if(best)select(best)});
+  mc.addEventListener('pointerdown',e=>{const r=mc.getBoundingClientRect(),dpr=mc.width/r.width,x=(e.clientX-r.left)*dpr,y=(e.clientY-r.top)*dpr;let best=null,bd=50*dpr;OPEN().forEach(id=>{const[px,py]=mapXY(PLN[id].pos[0],PLN[id].pos[2]);const d=Math.hypot(px-x,py-y);if(d<bd){bd=d;best=id}});if(best)select(best)});
   $('#mClose').addEventListener('click',()=>closeScreen());
   $('#mAuto').addEventListener('click',()=>{if(!S.up.auto)return;if(!mapSel)mapSel=routeTarget();S.route=mapSel;auto=true;save();closeScreen();toast('Автопилот включён. Нажмите W или S, чтобы взять управление')});
   return{build,enter,exit,update,objective,openMap,resizeMap,repaint,titleView,setCam:()=>{cam=1-cam;toast(cam?'Вид из кабины':'Вид снаружи')},stopAuto:()=>{if(auto){auto=false;toast('Автопилот выключен')}},get auto(){return auto},PLN};
@@ -2214,7 +2448,7 @@ UI.resizeMap=()=>SPX.resizeMap();
 /* ---------- MAIN: input, modes, travel, loop ---------- */
 const keys={};let ePressed=false,eJust=false,jumpReq=false,throwReq=false,boostHeld=false;
 let locked=false,noLock=isTouch||!('requestPointerLock' in cv),lockFails=0,drag=null,MX=0,MY=0;
-const BUILD={base:buildBase,p1:buildP1,p2:buildP2,p3:buildP3,p4:buildP4};
+const BUILD={base:buildBase,p1:buildP1,p2:buildP2,p3:buildP3,p4:buildP4,p5:buildP5};
 let lockClick=false;
 function lockFailed(){if(lockClick){lockFails++;if(lockFails>=2&&!noLock){noLock=true;toast('Зажмите левую кнопку мыши и тяните, чтобы смотреть')}}lockClick=false}
 function lock(fromClick){if(isTouch||noLock||locked||(mode!=='play'&&mode!=='space'))return;lockClick=!!fromClick;try{const p=cv.requestPointerLock();if(p&&p.catch)p.catch(lockFailed)}catch(e){lockFailed()}}
@@ -2230,7 +2464,7 @@ function setMode(m){mode=m;const play=m==='play',space=m==='space',act=play||spa
   if((m==='menu'||m==='title'||m==='prologue'||m==='ending')&&document.pointerLockElement)document.exitPointerLock()}
 window.addEventListener('keydown',e=>{
   if(mode==='dialog'){if((e.code==='KeyE'||e.code==='Space'||e.code==='Enter')&&!e.repeat){e.preventDefault();advance()}return}
-  if(mode==='menu'){if(e.code==='Escape'||(e.code==='KeyM'&&curScreen==='#map')||(e.code==='KeyJ'&&curScreen==='#menu')){closeScreen()}else if(curScreen==='#fish'&&(e.code==='KeyE'||e.code==='Space')&&!e.repeat){e.preventDefault();fishHook()}return}
+  if(mode==='menu'){if(e.code==='Escape'||(e.code==='KeyM'&&curScreen==='#map')||(e.code==='KeyJ'&&curScreen==='#menu')||(e.code==='KeyF'&&curScreen==='#bag')){closeScreen()}else if(curScreen==='#fish'&&(e.code==='KeyE'||e.code==='Space')&&!e.repeat){e.preventDefault();fishHook()}return}
   if(mode!=='play'&&mode!=='space')return;
   keys[e.code]=true;if(e.code==='Space'||e.code.indexOf('Arrow')===0)e.preventDefault();
   if(e.repeat)return;
@@ -2238,6 +2472,7 @@ window.addEventListener('keydown',e=>{
   if(e.code==='Space'&&mode==='play')jumpReq=true;
   if(e.code==='KeyQ'&&mode==='play')dropCarry();
   if(e.code==='KeyJ')openMenu('quests');
+  if(e.code==='KeyF')openBag();
   if(e.code==='KeyM')SPX.openMap();
   if(e.code==='KeyV'&&mode==='space')SPX.setCam();
   if((e.code==='KeyW'||e.code==='KeyS')&&mode==='space')SPX.stopAuto();
@@ -2259,12 +2494,12 @@ function endT(e){for(const t of e.changedTouches){if(t.identifier===joy.id){joy.
 window.addEventListener('touchend',endT);window.addEventListener('touchcancel',endT);
 const tbtn=(id,down,up)=>{const b=$(id);b.addEventListener('touchstart',e=>{e.preventDefault();e.stopPropagation();down()},{passive:false});b.addEventListener('touchend',e=>{e.preventDefault();if(up)up()},{passive:false});b.addEventListener('click',e=>{if(!isTouch){down();if(up)setTimeout(up,120)}})};
 tbtn('#tE',()=>{ePressed=true;eJust=true},()=>{ePressed=false});
-tbtn('#tJump',()=>{jumpReq=true});
+tbtn('#tJump',()=>{jumpReq=true;keys.Space=true},()=>{keys.Space=false});
 tbtn('#tAlt',()=>{if(mode==='space')boostHeld=true;else throwReq=true},()=>{boostHeld=false});
 tbtn('#tMap',()=>{if(mode==='space'||mode==='play')SPX.openMap()});
 $('#bPause').addEventListener('click',e=>{e.stopPropagation();if(mode==='play'||mode==='space')openMenu()});
 $('#bJournal').addEventListener('click',e=>{e.stopPropagation();if(mode==='play'||mode==='space')openMenu('quests')});
-$('#bagPill').addEventListener('click',e=>{e.stopPropagation();if(mode==='play'||mode==='space')openMenu('kapik')});
+$('#bagPill').addEventListener('click',e=>{e.stopPropagation();if(mode==='play'||mode==='space')openBag()});
 window.addEventListener('pointerdown',e=>{if(mode==='dialog'&&isTouch&&!e.target.closest('#dlg')){advance()}});
 
 /* ---------- INTERACTION ---------- */
@@ -2288,9 +2523,15 @@ function landOn(id){fadeTo('Посадка: '+PL[id].name,()=>{SPX.exit();camera
 function toTitle(){save();if(screenRet==='space'||mode==='space')SPX.exit();camera.far=3200;camera.updateProjectionMatrix();$('#dlg').hidden=true;$('#timer').hidden=true;AU.engine(false);showTitle()}
 function afterArrive(id){
   if(id==='base'&&nRescued()===4&&!S.ending){say([['yuzik','Мы дома!'],['snezhok','И тут тепло.'],['gribok','Можно я теперь посплю? Долго-долго.'],['vintik','А я разберу тарелку и сделаю её быстрее!'],['kapik','Сначала пруд. Все вместе. Как раньше.']],()=>{S.ending=true;save();showEnding()});return}
+  if(S.ending&&!qs('c2'))setTimeout(()=>{if(!qs('c2'))qset('c2',1)},1500);
   if(!S.seen[id]&&L.arrive){S.seen[id]=1;save();say(L.arrive)}else if(!S.seen[id]){S.seen[id]=1;save()}}
-function showEnding(){setMode('ending');$('#endArt').innerHTML=['kapik','yuzik','snezhok','gribok','vintik'].map((k,i)=>`<img alt="" class="${i?'':'big'}" src="${portrait(k)}">`).join('');$('#end').hidden=false}
-$('#endOk').addEventListener('click',()=>{$('#end').hidden=true;setMode('play');lock()});
+function showEnding(ch){ch=ch||1;setMode('ending');const who=ch===2?['kapik','pushinka','yuzik','snezhok','gribok','vintik']:['kapik','yuzik','snezhok','gribok','vintik'];
+  $('#endArt').innerHTML=who.map((k,i)=>`<img alt="" class="${i?'':'big'}" src="${portrait(k)}">`).join('');
+  $('#endTitle').innerHTML=ch===2?'Пух здоров<span>Конец второй главы</span>':'Все дома<span>Конец первой главы</span>';
+  $('#endText').textContent=ch===2?'Великий Пух больше не чихает ураганами, а завод Шестерёнки дымит чистым паром. Братья спят спокойно. А белки-летяги научили Капика планировать.':'Капик вернул всех четырёх братьев. Пруд снова тёплый, мандарины снова сладкие. Но Радист Крот уже ловит странный сигнал...';
+  $('#endReward').hidden=ch!==2;if(ch===2&&!S.paints.fluffy){S.paints.fluffy=1;save()}
+  $('#endOk').textContent=ch===2?'Гулять дальше':'Дальше: глава 2';$('#end').hidden=false;AU.sfx('quest')}
+$('#endOk').addEventListener('click',()=>{$('#end').hidden=true;setMode('play');lock();if(!qs('c2'))setTimeout(()=>{qset('c2',1);say([['kapik','Ой. Радист Крот машет мне с вышки. Похоже, что-то случилось.']])},700)});
 
 /* ---------- TITLE & PROLOGUE ---------- */
 const SLIDES=[
@@ -2309,7 +2550,7 @@ function startCont(){AU.init();S=loadSave()||freshSave();AU.vol();$('#title').hi
 $('#bPlay').addEventListener('click',()=>{const sv=loadSave();if(sv&&sv.prologue)startCont();else startNew()});
 $('#bNew').addEventListener('click',()=>{AU.init();$('#tConfirm').hidden=false});
 $('#bNewYes').addEventListener('click',startNew);$('#bNewNo').addEventListener('click',()=>{$('#tConfirm').hidden=true});
-$('#bSet').addEventListener('click',()=>{AU.init();openMenu('settings')});
+$('#bSet').addEventListener('click',()=>{AU.init();openMenu('settings');$('#title').hidden=true});
 $('#proNext').addEventListener('click',()=>{AU.sfx('ui');if(slide<SLIDES.length-1){slide++;showSlide()}else endPrologue()});
 $('#proSkip').addEventListener('click',endPrologue);
 
@@ -2328,7 +2569,7 @@ function step(dt){T+=dt;UNI.time.value=T;
     camera.position.set(P.x,P.camY+(P.ground?Math.sin(P.bob)*.045*Math.min(1,sp/5):0),P.z);camera.rotation.set(P.pitch,P.yaw,0);
     const wf=70+(sp>7?6:0);if(Math.abs(camera.fov-wf)>.05){camera.fov=Math.abs(camera.fov-wf)>15?wf:lerp(camera.fov,wf,Math.min(1,dt*5));camera.updateProjectionMatrix()}
   }else if(mode==='space'){
-    const inp={thr:(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0)-joy.y,str:(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0)+joy.x,vert:(keys.Space?1:0)-(keys.KeyC||keys.ControlLeft?1:0),boost:keys.ShiftLeft||keys.ShiftRight||boostHeld,lx:MX*sens*.75,ly:MY*sens*.75*inv,eHeld:ePressed};
+    const inp={thr:(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0)-joy.y,str:(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0)+joy.x,vert:(keys.Space?1:0)-(keys.KeyC||keys.ControlLeft?1:0),boost:keys.ShiftLeft||keys.ShiftRight||boostHeld,roll:(keys.KeyQ?1:0)-(keys.KeyR?1:0),lx:MX*sens*.75,ly:MY*sens*.75*inv,eHeld:ePressed};
     if(isTouch&&Math.abs(joy.y)>.3)SPX.stopAuto();SPX.update(dt,inp);
   }else if(mode==='title'||mode==='prologue'||(mode==='menu'&&screenRet==='title'))SPX.titleView(T,dt);
   MX=0;MY=0;eJust=false;jumpReq=false;throwReq=false;

@@ -65,7 +65,9 @@ function buildP4(){
   /* chimney with souvenir */
   cyl(FX-5,7.3,FZ-4,1,6.6,0x8a5a4a,{g:G.cyl16});vis(G.cyl16,0x3b3438,FX-5,13.95,FZ-4,1.1,.1,1.1);
   [[0,1.2],[Math.PI/2,2.4],[Math.PI,3.6],[Math.PI*1.5,4.8]].forEach(b=>box(FX-5+Math.cos(b[0])*1.6,7.3+b[1]-.3,FZ-4+Math.sin(b[0])*1.6,1,.3,1,0x5a6068,{surf:'metal'}));
-  souvenir('p4',FX-5,13.9,FZ-4);tick((t,dt)=>{if(Math.random()<dt*5)FXW.burst(FX-5,14.2,FZ-4,{col:0x553a3a,n:1,spd:.4,up:1.6,g:-.4,life:3,size:1.2})});
+  souvenir('p4',FX-5,13.9,FZ-4);L.chimney=[FX-5,FZ-4];const filt=new THREE.Group();filt.position.set(FX-5,14,FZ-4);L.group.add(filt);mesh(G.cyl16,mat(0xfff6e0),0,.15,0,1.15,.3,1.15,filt);for(let i=0;i<8;i++){const a=i/8*TAU;mesh(G.sph,bmat(0xfffbe8),Math.cos(a)*.9,.35,Math.sin(a)*.9,.22,.22,.22,filt)}filt.visible=!!S.got.filterOn;
+  tick((t,dt)=>{if(Math.random()<dt*5)FXW.burst(FX-5,14.2,FZ-4,{col:S.got.filterOn?0xf4f4f4:0x553a3a,n:1,spd:.4,up:1.6,g:-.4,life:3,size:S.got.filterOn?.7:1.2})});
+  inter({x:FX-5,y:13.2,z:FZ-4,r:2.6,hold:1.2,label:'Удерживайте E - поставить пуховый фильтр',cond:()=>qs('c2')===5&&!S.got.filterOn,act:()=>{S.got.filterOn=1;save();filt.visible=true;filt.scale.setScalar(.01);tween(.5,p=>filt.scale.setScalar(Math.max(.01,p)));AU.sfx('repair');FXW.burst(FX-5,14.4,FZ-4,{col:0xfffbe8,n:40,spd:4,life:1});qset('c2',6);banner('Фильтр на месте','Дым стал белым','Лети на Одуванчию и поднимись к венчику Пуха')}});
   /* courier quest */
   const pos=npc('posylkin',FX-4,7.3,FZ+3,{yaw:Math.PI/2,pose:'hold',talk:posTalk,mark:()=>!S.tr?null:qs('s4b')===0?'!':null});
   vis(G.box,0xffab4a,FX+4,7.32,FZ-3,2.2,.04,2.2);const dl=textSprite('ДОСТАВКА',{size:36,h:.4,bg:'#ffab4a',fg:'#2a1606'});dl.position.set(FX+4,8.6,FZ-3);L.group.add(dl);

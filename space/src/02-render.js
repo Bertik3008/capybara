@@ -74,22 +74,22 @@ const ATLAS=(()=>{const N=256,c=document.createElement('canvas');c.width=c.heigh
   const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;t.anisotropy=4;t.userData={shared:true};return t})();
 function groundTex(kind){const N=512,c=document.createElement('canvas');c.width=c.height=N;const g=c.getContext('2d'),img=g.createImageData(N,N),d=img.data,r=rng(kind.length*13);
   const n1=tileNoise(N,8,kind.length),n2=tileNoise(N,32,kind.length+3),n3=tileNoise(N,128,kind.length+7);
-  for(let y=0;y<N;y++)for(let x=0;x<N;x++){let v=.9+(n1(x,y)-.5)*.16+(n2(x,y)-.5)*.1+(n3(x,y)-.5)*.08;
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++){let v=.9+(n1(x,y)-.5)*.12+(n2(x,y)-.5)*.05+(n3(x,y)-.5)*.02;
     if(kind==='metal'){const px=x%256,py=y%256;v=.85+(n3(x,(y*4)%N)-.5)*.05;if(px<3||py<3)v*=.6;if(px%64<2&&py%64<2)v=1}
     if(kind==='snow')v=.96+(n2(x,y)-.5)*.05;
     const i=(y*N+x)*4;v=clamp(v,0,1)*255;d[i]=d[i+1]=d[i+2]=v;d[i+3]=255}
   g.putImageData(img,0,0);
-  if(kind==='grass'||kind==='moss'){for(let i=0;i<9000;i++){const x=r()*N,y=r()*N,l=3+r()*7,a=-Math.PI/2+(r()-.5)*.8,b=r();g.strokeStyle=b<.5?`rgba(0,0,0,${.12+r()*.12})`:`rgba(255,255,255,${.1+r()*.12})`;g.lineWidth=1+r();g.beginPath();g.moveTo(x,y);g.lineTo(x+Math.cos(a)*l,y+Math.sin(a)*l);g.stroke()}}
+  if(kind==='grass'||kind==='moss'){for(let i=0;i<2200;i++){const x=r()*N,y=r()*N,l=3+r()*6,a=-Math.PI/2+(r()-.5)*.8,b=r();g.strokeStyle=b<.5?`rgba(0,0,0,${.05+r()*.05})`:`rgba(255,255,255,${.05+r()*.05})`;g.lineWidth=1+r();g.beginPath();g.moveTo(x,y);g.lineTo(x+Math.cos(a)*l,y+Math.sin(a)*l);g.stroke()}}
   if(kind==='snow'){for(let i=0;i<600;i++){g.fillStyle=`rgba(255,255,255,${.4+r()*.6})`;g.fillRect(r()*N,r()*N,1.5,1.5)}for(let i=0;i<120;i++){g.fillStyle='rgba(120,150,180,.08)';g.beginPath();g.ellipse(r()*N,r()*N,6+r()*14,3+r()*6,r()*3,0,TAU);g.fill()}}
   const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.encoding=THREE.sRGBEncoding;t.anisotropy=8;return t}
 function pathTex(kind){const W=256,H=512,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d'),r=rng(kind.length*7+1);
   const base={dirt:'#d9c2a0',cobble:'#c9c2b8',snow:'#eef4f8',metal:'#9aa2aa',moss:'#b8a8d0'}[kind]||'#d9c2a0';g.fillStyle=base;g.fillRect(0,0,W,H);
   const n=tileNoise(H,16,kind.length);const img=g.getImageData(0,0,W,H),d=img.data;
-  for(let y=0;y<H;y++)for(let x=0;x<W;x++){const i=(y*W+x)*4,v=.85+(n(x%H,y)-.5)*.3;d[i]*=v;d[i+1]*=v;d[i+2]*=v;const edge=Math.min(x,W-1-x)/W,rag=.06+n((x*3)%H,(y*2)%H)*.12;d[i+3]=edge<rag?0:255}
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){const i=(y*W+x)*4,v=.9+(n(x%H,y)-.5)*.14;d[i]*=v;d[i+1]*=v;d[i+2]*=v;const edge=Math.min(x,W-1-x)/W,rag=.06+n((x*3)%H,(y*2)%H)*.12;d[i+3]=edge<rag?0:255}
   g.putImageData(img,0,0);g.globalCompositeOperation='source-atop';
   if(kind==='cobble'){for(let yy=0;yy<H;yy+=26)for(let xx=-10;xx<W;xx+=32){const ox=(yy/26)%2?16:0;g.fillStyle=`rgba(${150+r()*40|0},${145+r()*35|0},${135+r()*35|0},1)`;g.beginPath();g.ellipse(xx+ox+r()*4,yy+13,13,10,0,0,TAU);g.fill();g.strokeStyle='rgba(60,50,40,.5)';g.lineWidth=2;g.stroke()}}
   else if(kind==='metal'){g.fillStyle='rgba(60,64,70,.6)';for(let y=0;y<H;y+=64)g.fillRect(0,y,W,3);g.fillStyle='#e8b23a';for(let y=0;y<H;y+=40){g.save();g.translate(0,y);g.transform(1,0,-.6,1,0,0);g.fillRect(14,0,14,20);g.fillRect(W-28,0,14,20);g.restore()}}
-  else{for(let i=0;i<(kind==='snow'?60:260);i++){const x=r()*W,y=r()*H,s=1.5+r()*4;g.fillStyle=kind==='snow'?'rgba(140,170,200,.25)':kind==='moss'?`rgba(${200+r()*55|0},${170+r()*60|0},255,.6)`:`rgba(${90+r()*60|0},${70+r()*50|0},${50+r()*40|0},.75)`;g.beginPath();g.ellipse(x,y,s,s*.7,r()*3,0,TAU);g.fill()}
+  else{for(let i=0;i<(kind==='snow'?30:70);i++){const x=r()*W,y=r()*H,s=1.5+r()*4;g.fillStyle=kind==='snow'?'rgba(140,170,200,.25)':kind==='moss'?`rgba(${200+r()*55|0},${170+r()*60|0},255,.6)`:`rgba(${120+r()*50|0},${100+r()*40|0},${75+r()*30|0},.35)`;g.beginPath();g.ellipse(x,y,s,s*.7,r()*3,0,TAU);g.fill()}
     if(kind==='snow')for(let y=20;y<H;y+=46){g.fillStyle='rgba(120,150,180,.25)';g.beginPath();g.ellipse(W*.4,y,9,14,0,0,TAU);g.fill();g.beginPath();g.ellipse(W*.6,y+23,9,14,0,0,TAU);g.fill()}}
   const t=new THREE.CanvasTexture(c);t.wrapT=THREE.RepeatWrapping;t.encoding=THREE.sRGBEncoding;t.anisotropy=8;return t}
 const glowTex=(()=>{const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');const gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(.25,'rgba(255,255,255,.5)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(0,0,64,64);const t=new THREE.CanvasTexture(c);t.userData={shared:true};return t})();
@@ -106,7 +106,7 @@ function atlasMat(){const m=new THREE.MeshStandardMaterial({vertexColors:true,ma
       #else
       vec4 texelColor=texture2D(map,tuv);
       #endif
-      texelColor=mapTexelToLinear(texelColor);diffuseColor*=texelColor;
+      texelColor=mapTexelToLinear(texelColor);texelColor.rgb=mix(vec3(0.78),texelColor.rgb,0.5);diffuseColor*=texelColor;
       #endif`)};m.userData.shared=true;return m}
 const batchMat=atlasMat();
 const glowBatchMat=new THREE.MeshBasicMaterial({vertexColors:true,toneMapped:false});glowBatchMat.userData.shared=true;

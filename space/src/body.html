@@ -52,7 +52,7 @@
     <button id="bSet">Настройки</button>
   </nav>
   <div class="tconfirm" id="tConfirm" hidden><p>Начать заново? Сохранение удалится.</p><div class="btns"><button id="bNewYes" class="primary">Начать заново</button><button id="bNewNo" class="ghost">Отмена</button></div></div>
-  <p class="tfoot">Версия 3</p>
+  <p class="tfoot">Версия 4 · глава 2</p>
 </div>
 
 <div id="pro" class="screen" hidden>
@@ -101,6 +101,14 @@
   </div>
 </div>
 
+<div id="bag" class="screen menu" hidden>
+  <div class="sheet">
+    <div class="sheetHead"><h2>Сумка</h2><div class="wallet"><span class="coin"></span><span id="bagCoins">0</span></div><button data-close class="primary">Закрыть</button></div>
+    <p class="sub" id="bagSub"></p>
+    <div class="cards" id="bagList"></div>
+  </div>
+</div>
+
 <div id="map" class="screen menu" hidden>
   <div class="mapSheet">
     <div class="mapWrap"><canvas id="mapc"></canvas></div>
@@ -129,8 +137,9 @@
 <div id="end" class="screen" hidden>
   <div class="titleCard">
     <div class="art" id="endArt"></div>
-    <h1>Все дома<span>Конец первой главы</span></h1>
-    <p class="lede">Капик вернул всех четырёх братьев. Пруд снова тёплый, мандарины снова сладкие. На базе и в космосе остались секреты.</p>
+    <h1 id="endTitle">Все дома<span>Конец первой главы</span></h1>
+    <p class="lede" id="endText"></p>
+    <p class="reward" id="endReward" hidden><span class="coin"></span>+50 монет и покраска тарелки «Пушистая»</p>
     <button id="endOk" class="primary">Гулять дальше</button>
   </div>
 </div>

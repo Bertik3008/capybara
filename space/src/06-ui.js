@@ -30,7 +30,7 @@ UI.refresh=()=>{UI.coins();UI.inv();UI.bros();lastObj='';objT=0};
 
 /* ---------- OBJECTIVE + MARKER ---------- */
 let lastObj='',objT=0,curObj=null;
-function getObjective(){if(mode==='space')return spaceObjective();if(!L)return null;return L.objective?L.objective():null}
+function getObjective(){if(mode==='space')return spaceObjective();if(!L)return null;const c=chapterObj();if(c)return c;return L.objective?L.objective():null}
 function updObjective(dt){objT-=dt;if(objT<=0){objT=.25;curObj=getObjective();const t=curObj?curObj.text:'';if(t!==lastObj){lastObj=t;$('#obj').textContent=t;$('#objTag').textContent=curObj&&curObj.tag||'Задача'}$('#objBox').hidden=!t}
   const dEl=$('#objDist');if(curObj&&curObj.pos&&mode!=='space'){const d=Math.hypot(curObj.pos[0]-P.x,curObj.pos[2]-P.z);dEl.textContent=Math.round(d)+' м'}else if(curObj&&curObj.dist!=null)dEl.textContent=curObj.dist;else dEl.textContent='';
   updMarker(curObj&&curObj.pos)}
@@ -62,7 +62,7 @@ function showPrompt(lab,p){const pr=$('#prompt');if(!lab){pr.hidden=true;return}
 /* ---------- SCREENS ---------- */
 let curScreen=null,screenRet='play';
 function openScreen(sel){if(curScreen)$(curScreen).hidden=true;else screenRet=mode==='space'?'space':mode==='title'?'title':'play';for(const k in keys)keys[k]=false;ePressed=false;curScreen=sel;$(sel).hidden=false;if(screenRet!=='title')setMode('menu');AU.sfx('ui')}
-function closeScreen(){if(curScreen)$(curScreen).hidden=true;const was=curScreen;curScreen=null;if(screenRet==='title'){return}setMode(screenRet);lock();
+function closeScreen(){if(curScreen)$(curScreen).hidden=true;const was=curScreen;curScreen=null;if(screenRet==='title'){$('#title').hidden=false;return}setMode(screenRet);lock();
   if((UI.rebuildAfter||UI.hatChanged)&&screenRet==='play'){UI.rebuildAfter=UI.hatChanged=false;rebuildHere()}else if((UI.hatChanged||UI.rebuildAfter)&&screenRet==='space'){UI.hatChanged=UI.rebuildAfter=false;SPX.repaint()}}
 $$('[data-close]').forEach(b=>b.addEventListener('click',closeScreen));
 
@@ -74,7 +74,7 @@ $('#mResume').addEventListener('click',closeScreen);
 $('#mExit').addEventListener('click',()=>{closeScreen();toTitle()});
 function renderMenu(){$$('#menuTabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===menuTab));const B=$('#menuBody');
   $('#menuTitle').textContent={quests:'Журнал заданий',kapik:'Капик и сумка',settings:'Настройки',controls:'Управление'}[menuTab];
-  if(menuTab==='quests'){const order=['base','p1','p2','p3','p4'];let h='';
+  if(menuTab==='quests'){const order=['base','p1','p2','p3','p4','p5'];let h='';
     for(const pl of order){const ids=Object.keys(QUESTS).filter(id=>QUESTS[id].pl===pl&&qs(id)>0);if(!ids.length)continue;h+=`<div class="qsec">${PL[pl].name}</div>`;
       ids.sort((a,b)=>(qdone(a)-qdone(b))||(QUESTS[b].main||0)-(QUESTS[a].main||0)).forEach(id=>{const q=QUESTS[id],st=qs(id),done=st===99;
         h+=`<div class="card ${done?'done':''} ${L&&L.id===pl&&!done?'cur':''}"><div class="thumb"><img alt="" src="${portrait(q.giver)}"></div><div class="cardMain"><b>${q.t}</b><span>${done?'Выполнено':q.steps[Math.min(st,q.steps.length)-1]}</span><div class="tags">${q.main?'<span class="tag gold">Главное</span>':'<span class="tag">Побочное</span>'}${q.rw?`<span class="tag">Награда: ${coinsWord(q.rw)}</span>`:''}${done?'<span class="tag ok">Готово</span>':''}</div></div></div>`})}
@@ -97,8 +97,8 @@ function renderMenu(){$$('#menuTabs [data-tab]').forEach(b=>b.setAttribute('aria
     B.querySelectorAll('input').forEach(i=>i.addEventListener('input',up));
     $('#sQ').onclick=e=>{const b=e.target.closest('[data-q]');if(!b)return;s.q=+b.dataset.q;save();applyQuality();applyShadows();UI.rebuildAfter=true;renderMenu()};
     const sk=$('#sSkip');if(sk)sk.onclick=()=>{S.tut=TUT.length;save();renderMenu();toast('Обучение пропущено')}}
-  else{const rows=isTouch?[['Джойстик слева','ходьба'],['Правая часть экрана','поворот камеры'],['Прыжок','прыжок; в воздухе ещё раз - двойной прыжок (нужны Пружинные лапы)'],['E','действие; удерживать, чтобы собирать и садиться в НЛО'],['Бросок','снежок на Ледоре'],['Карта','карта звёздной системы'],['В космосе: джойстик','газ и сдвиг'],['В космосе: правая часть','поворот тарелки']]
-    :[['W A S D','ходьба'],['Мышь','поворот камеры'],['Shift','бег'],['Пробел','прыжок; в воздухе ещё раз - двойной прыжок (нужны Пружинные лапы)'],['E','действие; удерживать, чтобы собирать и садиться в НЛО'],['Q','бросить предмет из лап'],['M','карта звёздной системы'],['Левая кнопка мыши','бросить снежок на Ледоре'],['J','журнал заданий'],['Esc','пауза'],['В космосе: W S','газ вперёд и назад'],['В космосе: мышь','поворот тарелки'],['В космосе: Shift','форсаж'],['В космосе: пробел и C','вверх и вниз'],['В космосе: V','вид из кабины или снаружи']];
+  else{const rows=isTouch?[['Джойстик слева','ходьба'],['Правая часть экрана','поворот камеры'],['Прыжок','прыжок; в воздухе ещё раз - двойной прыжок (нужны Пружинные лапы)'],['E','действие; удерживать, чтобы собирать и садиться в НЛО'],['Бросок','снежок на Ледоре'],['Карта','карта звёздной системы'],['В космосе: джойстик','газ и сдвиг'],['В космосе: правая часть','поворот тарелки, можно крутить сальто']]
+    :[['W A S D','ходьба'],['Мышь','поворот камеры'],['Shift','бег'],['Пробел','прыжок; в воздухе ещё раз - двойной прыжок (нужны Пружинные лапы)'],['E','действие; удерживать, чтобы собирать и садиться в НЛО'],['Q','бросить предмет из лап'],['M','карта звёздной системы'],['Левая кнопка мыши','бросить снежок на Ледоре'],['J','журнал заданий'],['Esc','пауза'],['В космосе: W S','газ вперёд и назад'],['В космосе: мышь','поворот тарелки; можно крутить сальто'],['В космосе: Q и R','крен влево и вправо'],['В космосе: Shift','форсаж'],['В космосе: пробел и C','вверх и вниз'],['В космосе: V','вид из кабины или снаружи']];
     B.innerHTML=`<dl class="ctlgrid">${rows.map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('')}</dl>`}
 }
 function applyShadows(){wscene.traverse(o=>{if(o.material){(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.needsUpdate=true)}})}
@@ -124,7 +124,7 @@ function renderShop(){$$('#shopTabs [data-tab]').forEach(b=>b.setAttribute('aria
   const row=(thumb,name,desc,own,price,attr,useLabel)=>`<div class="card ${own?'done':''}"><div class="thumb ${thumb.sw?'sw':''}" ${thumb.sw?`style="background:${thumb.sw}"`:''}>${thumb.img?`<img alt="" src="${thumb.img}">`:thumb.svg||''}</div><div class="cardMain"><b>${name}</b><span>${desc}</span></div>${own?(useLabel?`<button ${attr} data-use="1">${useLabel}</button>`:'<span class="tag ok">Куплено</span>'):`<button ${attr} ${S.coins<price?'disabled':''} class="primary"><span class="price"><span class="coin"></span>${price}</span></button>`}</div>`;
   if(shopTab==='gear')UPG.gear.forEach(u=>h+=row({svg:svgI(u.id)},u.name,u.desc,u.own?u.own():S.up[u.id],u.price,`data-buy="${u.id}"`));
   else if(shopTab==='ship'){UPG.ship.forEach(u=>h+=row({svg:svgI(u.id)},u.name,u.desc,S.up[u.id],u.price,`data-buy="${u.id}"`));h+='<div class="qsec">Покраска тарелки</div>';
-    for(const k in PAINTS){const p=PAINTS[k],own=S.paints[k];h+=row({sw:'#'+p.col.toString(16).padStart(6,'0')},p.name,own?(S.paint===k?'Тарелка сейчас в этом цвете':'Уже куплена'):'Новая краска для дедушкиной тарелки',own,p.price,`data-paint="${k}"`,own&&S.paint!==k?'Покрасить':null)}}
+    for(const k in PAINTS){const p=PAINTS[k],own=S.paints[k];if(p.secret&&!own)continue;h+=row({sw:'#'+p.col.toString(16).padStart(6,'0')},p.name,own?(S.paint===k?'Тарелка сейчас в этом цвете':'Уже куплена'):'Новая краска для дедушкиной тарелки',own,p.price,`data-paint="${k}"`,own&&S.paint!==k?'Покрасить':null)}}
   else if(shopTab==='hats'){for(const k in HAT_INFO){if(k==='none')continue;const hi=HAT_INFO[k],own=S.hats[k];h+=row({img:portraitHat(k)},hi.name,own?(S.hat===k?'Сейчас на Капике':'Уже куплена'):'Видно в разговорах и в окне тарелки',own,hi.price,`data-hat="${k}"`,own&&S.hat!==k?'Надеть':null)}}
   else UPG.decor.forEach(u=>h+=row({svg:svgI(u.id)},u.name,u.desc,S.decor[u.id],u.price,`data-decor="${u.id}"`));
   $('#shopList').innerHTML=h}

@@ -1,7 +1,7 @@
 /* ---------- MAIN: input, modes, travel, loop ---------- */
 const keys={};let ePressed=false,eJust=false,jumpReq=false,throwReq=false,boostHeld=false;
 let locked=false,noLock=isTouch||!('requestPointerLock' in cv),lockFails=0,drag=null,MX=0,MY=0;
-const BUILD={base:buildBase,p1:buildP1,p2:buildP2,p3:buildP3,p4:buildP4};
+const BUILD={base:buildBase,p1:buildP1,p2:buildP2,p3:buildP3,p4:buildP4,p5:buildP5};
 let lockClick=false;
 function lockFailed(){if(lockClick){lockFails++;if(lockFails>=2&&!noLock){noLock=true;toast('Зажмите левую кнопку мыши и тяните, чтобы смотреть')}}lockClick=false}
 function lock(fromClick){if(isTouch||noLock||locked||(mode!=='play'&&mode!=='space'))return;lockClick=!!fromClick;try{const p=cv.requestPointerLock();if(p&&p.catch)p.catch(lockFailed)}catch(e){lockFailed()}}
@@ -17,7 +17,7 @@ function setMode(m){mode=m;const play=m==='play',space=m==='space',act=play||spa
   if((m==='menu'||m==='title'||m==='prologue'||m==='ending')&&document.pointerLockElement)document.exitPointerLock()}
 window.addEventListener('keydown',e=>{
   if(mode==='dialog'){if((e.code==='KeyE'||e.code==='Space'||e.code==='Enter')&&!e.repeat){e.preventDefault();advance()}return}
-  if(mode==='menu'){if(e.code==='Escape'||(e.code==='KeyM'&&curScreen==='#map')||(e.code==='KeyJ'&&curScreen==='#menu')){closeScreen()}else if(curScreen==='#fish'&&(e.code==='KeyE'||e.code==='Space')&&!e.repeat){e.preventDefault();fishHook()}return}
+  if(mode==='menu'){if(e.code==='Escape'||(e.code==='KeyM'&&curScreen==='#map')||(e.code==='KeyJ'&&curScreen==='#menu')||(e.code==='KeyF'&&curScreen==='#bag')){closeScreen()}else if(curScreen==='#fish'&&(e.code==='KeyE'||e.code==='Space')&&!e.repeat){e.preventDefault();fishHook()}return}
   if(mode!=='play'&&mode!=='space')return;
   keys[e.code]=true;if(e.code==='Space'||e.code.indexOf('Arrow')===0)e.preventDefault();
   if(e.repeat)return;
@@ -25,6 +25,7 @@ window.addEventListener('keydown',e=>{
   if(e.code==='Space'&&mode==='play')jumpReq=true;
   if(e.code==='KeyQ'&&mode==='play')dropCarry();
   if(e.code==='KeyJ')openMenu('quests');
+  if(e.code==='KeyF')openBag();
   if(e.code==='KeyM')SPX.openMap();
   if(e.code==='KeyV'&&mode==='space')SPX.setCam();
   if((e.code==='KeyW'||e.code==='KeyS')&&mode==='space')SPX.stopAuto();
@@ -46,12 +47,12 @@ function endT(e){for(const t of e.changedTouches){if(t.identifier===joy.id){joy.
 window.addEventListener('touchend',endT);window.addEventListener('touchcancel',endT);
 const tbtn=(id,down,up)=>{const b=$(id);b.addEventListener('touchstart',e=>{e.preventDefault();e.stopPropagation();down()},{passive:false});b.addEventListener('touchend',e=>{e.preventDefault();if(up)up()},{passive:false});b.addEventListener('click',e=>{if(!isTouch){down();if(up)setTimeout(up,120)}})};
 tbtn('#tE',()=>{ePressed=true;eJust=true},()=>{ePressed=false});
-tbtn('#tJump',()=>{jumpReq=true});
+tbtn('#tJump',()=>{jumpReq=true;keys.Space=true},()=>{keys.Space=false});
 tbtn('#tAlt',()=>{if(mode==='space')boostHeld=true;else throwReq=true},()=>{boostHeld=false});
 tbtn('#tMap',()=>{if(mode==='space'||mode==='play')SPX.openMap()});
 $('#bPause').addEventListener('click',e=>{e.stopPropagation();if(mode==='play'||mode==='space')openMenu()});
 $('#bJournal').addEventListener('click',e=>{e.stopPropagation();if(mode==='play'||mode==='space')openMenu('quests')});
-$('#bagPill').addEventListener('click',e=>{e.stopPropagation();if(mode==='play'||mode==='space')openMenu('kapik')});
+$('#bagPill').addEventListener('click',e=>{e.stopPropagation();if(mode==='play'||mode==='space')openBag()});
 window.addEventListener('pointerdown',e=>{if(mode==='dialog'&&isTouch&&!e.target.closest('#dlg')){advance()}});
 
 /* ---------- INTERACTION ---------- */
@@ -75,9 +76,15 @@ function landOn(id){fadeTo('Посадка: '+PL[id].name,()=>{SPX.exit();camera
 function toTitle(){save();if(screenRet==='space'||mode==='space')SPX.exit();camera.far=3200;camera.updateProjectionMatrix();$('#dlg').hidden=true;$('#timer').hidden=true;AU.engine(false);showTitle()}
 function afterArrive(id){
   if(id==='base'&&nRescued()===4&&!S.ending){say([['yuzik','Мы дома!'],['snezhok','И тут тепло.'],['gribok','Можно я теперь посплю? Долго-долго.'],['vintik','А я разберу тарелку и сделаю её быстрее!'],['kapik','Сначала пруд. Все вместе. Как раньше.']],()=>{S.ending=true;save();showEnding()});return}
+  if(S.ending&&!qs('c2'))setTimeout(()=>{if(!qs('c2'))qset('c2',1)},1500);
   if(!S.seen[id]&&L.arrive){S.seen[id]=1;save();say(L.arrive)}else if(!S.seen[id]){S.seen[id]=1;save()}}
-function showEnding(){setMode('ending');$('#endArt').innerHTML=['kapik','yuzik','snezhok','gribok','vintik'].map((k,i)=>`<img alt="" class="${i?'':'big'}" src="${portrait(k)}">`).join('');$('#end').hidden=false}
-$('#endOk').addEventListener('click',()=>{$('#end').hidden=true;setMode('play');lock()});
+function showEnding(ch){ch=ch||1;setMode('ending');const who=ch===2?['kapik','pushinka','yuzik','snezhok','gribok','vintik']:['kapik','yuzik','snezhok','gribok','vintik'];
+  $('#endArt').innerHTML=who.map((k,i)=>`<img alt="" class="${i?'':'big'}" src="${portrait(k)}">`).join('');
+  $('#endTitle').innerHTML=ch===2?'Пух здоров<span>Конец второй главы</span>':'Все дома<span>Конец первой главы</span>';
+  $('#endText').textContent=ch===2?'Великий Пух больше не чихает ураганами, а завод Шестерёнки дымит чистым паром. Братья спят спокойно. А белки-летяги научили Капика планировать.':'Капик вернул всех четырёх братьев. Пруд снова тёплый, мандарины снова сладкие. Но Радист Крот уже ловит странный сигнал...';
+  $('#endReward').hidden=ch!==2;if(ch===2&&!S.paints.fluffy){S.paints.fluffy=1;save()}
+  $('#endOk').textContent=ch===2?'Гулять дальше':'Дальше: глава 2';$('#end').hidden=false;AU.sfx('quest')}
+$('#endOk').addEventListener('click',()=>{$('#end').hidden=true;setMode('play');lock();if(!qs('c2'))setTimeout(()=>{qset('c2',1);say([['kapik','Ой. Радист Крот машет мне с вышки. Похоже, что-то случилось.']])},700)});
 
 /* ---------- TITLE & PROLOGUE ---------- */
 const SLIDES=[
@@ -96,7 +103,7 @@ function startCont(){AU.init();S=loadSave()||freshSave();AU.vol();$('#title').hi
 $('#bPlay').addEventListener('click',()=>{const sv=loadSave();if(sv&&sv.prologue)startCont();else startNew()});
 $('#bNew').addEventListener('click',()=>{AU.init();$('#tConfirm').hidden=false});
 $('#bNewYes').addEventListener('click',startNew);$('#bNewNo').addEventListener('click',()=>{$('#tConfirm').hidden=true});
-$('#bSet').addEventListener('click',()=>{AU.init();openMenu('settings')});
+$('#bSet').addEventListener('click',()=>{AU.init();openMenu('settings');$('#title').hidden=true});
 $('#proNext').addEventListener('click',()=>{AU.sfx('ui');if(slide<SLIDES.length-1){slide++;showSlide()}else endPrologue()});
 $('#proSkip').addEventListener('click',endPrologue);
 
@@ -115,7 +122,7 @@ function step(dt){T+=dt;UNI.time.value=T;
     camera.position.set(P.x,P.camY+(P.ground?Math.sin(P.bob)*.045*Math.min(1,sp/5):0),P.z);camera.rotation.set(P.pitch,P.yaw,0);
     const wf=70+(sp>7?6:0);if(Math.abs(camera.fov-wf)>.05){camera.fov=Math.abs(camera.fov-wf)>15?wf:lerp(camera.fov,wf,Math.min(1,dt*5));camera.updateProjectionMatrix()}
   }else if(mode==='space'){
-    const inp={thr:(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0)-joy.y,str:(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0)+joy.x,vert:(keys.Space?1:0)-(keys.KeyC||keys.ControlLeft?1:0),boost:keys.ShiftLeft||keys.ShiftRight||boostHeld,lx:MX*sens*.75,ly:MY*sens*.75*inv,eHeld:ePressed};
+    const inp={thr:(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0)-joy.y,str:(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0)+joy.x,vert:(keys.Space?1:0)-(keys.KeyC||keys.ControlLeft?1:0),boost:keys.ShiftLeft||keys.ShiftRight||boostHeld,roll:(keys.KeyQ?1:0)-(keys.KeyR?1:0),lx:MX*sens*.75,ly:MY*sens*.75*inv,eHeld:ePressed};
     if(isTouch&&Math.abs(joy.y)>.3)SPX.stopAuto();SPX.update(dt,inp);
   }else if(mode==='title'||mode==='prologue'||(mode==='menu'&&screenRet==='title'))SPX.titleView(T,dt);
   MX=0;MY=0;eJust=false;jumpReq=false;throwReq=false;

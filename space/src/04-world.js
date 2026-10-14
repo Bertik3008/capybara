@@ -130,7 +130,7 @@ function fence(x0,z0,x1,z1,col,o){o=o||{};const d=Math.hypot(x1-x0,z1-z0),n=Math
   for(let i=0;i<=n;i++){const t=i/n;vis(G.box,col,lerp(x0,x1,t),h/2,lerp(z0,z1,t),.14,h,.14,0,0,0,.04,TX.planks)}vis(G.box,col,(x0+x1)/2,h*.75,(z0+z1)/2,.06,.14,d,0,ry,0,.03,TX.planks);vis(G.box,col,(x0+x1)/2,h*.38,(z0+z1)/2,.06,.14,d,0,ry,0,.03,TX.planks);
   if(!o.nc){const w=Math.abs(x1-x0)<.01?.2:Math.abs(x1-x0),dd=Math.abs(z1-z0)<.01?.2:Math.abs(z1-z0);box((x0+x1)/2,0,(z0+z1)/2,w,h,dd,0,{nv:true})}}
 function crate(x,y,z,s,col){box(x,y,z,s,s,s,col||0xb07a42,{tex:TX.planks});vis(G.box,0x7a4a2a,x,y+s/2,z,s*1.02,s*.12,s*1.02,0,0,0,.02,TX.planks);vis(G.box,0x7a4a2a,x,y+s-.04,z,s*1.03,.06,s*1.03,0,0,0,.02,TX.planks)}
-function sign(x,y,z,ry,lines,o){o=o||{};vis(G.cyl,0x6b4628,x,y+.7,z,.07,1.4,.07,0,0,0,.03,TX.bark);const tex=signTex(lines,o);const m=mesh(new THREE.BoxGeometry(o.w||1.6,o.h||.8,.06),[stdMat(0x6b4628),stdMat(0x6b4628),stdMat(0x6b4628),stdMat(0x6b4628),new THREE.MeshStandardMaterial({map:tex,roughness:.8}),new THREE.MeshStandardMaterial({map:tex,roughness:.8})],x,y+1.5,z,1,1,1,L.group);m.rotation.y=ry||0;m.castShadow=true}
+function sign(){/* signs removed in v4: text was hard to read and looked mirrored */}
 function flag(x,z,col,h){vis(G.cyl,0xdddddd,x,(h||3)/2,z,.05,h||3,.05);const f=mesh(new THREE.PlaneGeometry(.9,.55,6,1),stdMat(col,{side:THREE.DoubleSide}),x+.45,(h||3)-.35,z,1,1,1,L.group);const p=f.geometry.attributes.position,b=Float32Array.from(p.array);
   L.ticks.push(t=>{for(let i=0;i<p.count;i++){const xx=b[i*3];p.setZ(i,Math.sin(t*5+xx*5+x)*.08*(xx+.45))}p.needsUpdate=true});return f}
 /* building with an interior: walls with a door gap; returns inner bounds */

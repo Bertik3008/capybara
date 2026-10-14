@@ -74,7 +74,7 @@ $('#mResume').addEventListener('click',closeScreen);
 $('#mExit').addEventListener('click',()=>{closeScreen();toTitle()});
 function renderMenu(){$$('#menuTabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===menuTab));const B=$('#menuBody');
   $('#menuTitle').textContent={quests:'Журнал заданий',kapik:'Капик и сумка',settings:'Настройки',controls:'Управление'}[menuTab];
-  if(menuTab==='quests'){const order=['base','p1','p2','p3','p4','p5'];let h='';
+  if(menuTab==='quests'){const order=['base','p1','p2','p3','p4','p5','p6'];let h='';
     for(const pl of order){const ids=Object.keys(QUESTS).filter(id=>QUESTS[id].pl===pl&&qs(id)>0);if(!ids.length)continue;h+=`<div class="qsec">${PL[pl].name}</div>`;
       ids.sort((a,b)=>(qdone(a)-qdone(b))||(QUESTS[b].main||0)-(QUESTS[a].main||0)).forEach(id=>{const q=QUESTS[id],st=qs(id),done=st===99;
         h+=`<div class="card ${done?'done':''} ${L&&L.id===pl&&!done?'cur':''}"><div class="thumb"><img alt="" src="${portrait(q.giver)}"></div><div class="cardMain"><b>${q.t}</b><span>${done?'Выполнено':q.steps[Math.min(st,q.steps.length)-1]}</span><div class="tags">${q.main?'<span class="tag gold">Главное</span>':'<span class="tag">Побочное</span>'}${q.rw?`<span class="tag">Награда: ${coinsWord(q.rw)}</span>`:''}${done?'<span class="tag ok">Готово</span>':''}</div></div></div>`})}
@@ -125,7 +125,7 @@ function renderShop(){$$('#shopTabs [data-tab]').forEach(b=>b.setAttribute('aria
   if(shopTab==='gear')UPG.gear.forEach(u=>h+=row({svg:svgI(u.id)},u.name,u.desc,u.own?u.own():S.up[u.id],u.price,`data-buy="${u.id}"`));
   else if(shopTab==='ship'){UPG.ship.forEach(u=>h+=row({svg:svgI(u.id)},u.name,u.desc,S.up[u.id],u.price,`data-buy="${u.id}"`));h+='<div class="qsec">Покраска тарелки</div>';
     for(const k in PAINTS){const p=PAINTS[k],own=S.paints[k];if(p.secret&&!own)continue;h+=row({sw:'#'+p.col.toString(16).padStart(6,'0')},p.name,own?(S.paint===k?'Тарелка сейчас в этом цвете':'Уже куплена'):'Новая краска для дедушкиной тарелки',own,p.price,`data-paint="${k}"`,own&&S.paint!==k?'Покрасить':null)}}
-  else if(shopTab==='hats'){for(const k in HAT_INFO){if(k==='none')continue;const hi=HAT_INFO[k],own=S.hats[k];h+=row({img:portraitHat(k)},hi.name,own?(S.hat===k?'Сейчас на Капике':'Уже куплена'):'Видно в разговорах и в окне тарелки',own,hi.price,`data-hat="${k}"`,own&&S.hat!==k?'Надеть':null)}}
+  else if(shopTab==='hats'){for(const k in HAT_INFO){if(k==='none')continue;const hi=HAT_INFO[k],own=S.hats[k];if(hi.secret&&!own)continue;h+=row({img:portraitHat(k)},hi.name,own?(S.hat===k?'Сейчас на Капике':'Уже куплена'):'Видно в разговорах и в окне тарелки',own,hi.price,`data-hat="${k}"`,own&&S.hat!==k?'Надеть':null)}}
   else UPG.decor.forEach(u=>h+=row({svg:svgI(u.id)},u.name,u.desc,S.decor[u.id],u.price,`data-decor="${u.id}"`));
   $('#shopList').innerHTML=h}
 $('#shopList').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;
@@ -138,14 +138,23 @@ $('#shopList').addEventListener('click',e=>{const b=e.target.closest('button');i
 
 /* ---------- MINI-GAME (fishing and workshops share one timing bar) ---------- */
 const MINI={on:false,t:0,zone:[.4,.6],caught:0,o:null,spd:1.3,v:.5};
-function openMini(o){MINI.on=true;MINI.o=o;MINI.t=Math.random()*5;MINI.caught=0;MINI.spd=1.3;$('#miniTitle').textContent=o.title;$('#miniHelp').textContent=o.help;$('#fHook').textContent=o.btn||'Жать';newZone();openScreen('#fish');updMiniUI()}
-function newZone(){const w=Math.max(.1,.22-MINI.caught*.025),a=.08+Math.random()*(.84-w);MINI.zone=[a,a+w];$('#fzone').style.left=a*100+'%';$('#fzone').style.width=w*100+'%'}
-function updMiniUI(){const o=MINI.o;$('#fishCount').textContent=o.loop?`${o.unit}: ${MINI.caught}`:`${o.unit}: ${MINI.caught} из ${o.need}`}
-function fishTick(dt){if(!MINI.on)return;MINI.t+=dt*MINI.spd;const v=(Math.sin(MINI.t*2.2)+1)/2*.96+.02;MINI.v=v;$('#fneedle').style.left=v*100+'%'}
-function fishHook(){if(!MINI.on)return;const v=MINI.v,o=MINI.o;if(v>=MINI.zone[0]&&v<=MINI.zone[1]){AU.sfx('reel');AU.sfx('item');MINI.spd=Math.min(3.2,MINI.spd+.25);
+function openMini(o){MINI.on=true;MINI.o=o;MINI.kind=o.kind||'timing';MINI.v=0;MINI.holding=false;MINI.t=Math.random()*5;MINI.caught=0;MINI.spd=1.3;$('#fneedle').style.display=MINI.kind==='mash'?'none':'';$('#miniTitle').textContent=o.title;$('#miniHelp').textContent=o.help;$('#fHook').textContent=o.btn||'Жать';newZone();openScreen('#fish');updMiniUI()}
+function newZone(){if(MINI.kind==='mash'){$('#fzone').style.left='0';$('#fzone').style.width='0';return}const w=Math.max(.1,(MINI.kind==='hold'?.2:.22)-MINI.caught*.025),a=(MINI.kind==='hold'?.35:.08)+Math.random()*((MINI.kind==='hold'?.6:.84)-w);MINI.zone=[a,a+w];$('#fzone').style.left=a*100+'%';$('#fzone').style.width=w*100+'%'}
+function updMiniUI(){const o=MINI.o;$('#fishCount').textContent=MINI.kind==='mash'?`${o.unit}: ${Math.round(MINI.v*100)}%`:o.loop?`${o.unit}: ${MINI.caught}`:`${o.unit}: ${MINI.caught} из ${o.need}`}
+function fishTick(dt){if(!MINI.on)return;
+  if(MINI.kind==='mash'){MINI.v=Math.max(0,MINI.v-.3*dt);$('#fzone').style.width=MINI.v*100+'%';updMiniUI();return}
+  if(MINI.kind==='hold'){if(MINI.holding){MINI.v+=dt*.62;if(MINI.v>=1){MINI.v=0;MINI.holding=false;AU.sfx('bad');toast('Перебор! Отпускайте раньше')}}else MINI.v=Math.max(0,MINI.v-dt*1.5);$('#fneedle').style.left=MINI.v*100+'%';return}
+  MINI.t+=dt*MINI.spd;const v=(Math.sin(MINI.t*2.2)+1)/2*.96+.02;MINI.v=v;$('#fneedle').style.left=v*100+'%'}
+function miniWin(){const o=MINI.o;MINI.on=false;setTimeout(()=>{closeScreen();if(o.onWin)o.onWin()},450)}
+function fishRelease(){if(!MINI.on||MINI.kind!=='hold'||!MINI.holding)return;MINI.holding=false;const v=MINI.v,o=MINI.o;
+  if(v>=MINI.zone[0]&&v<=MINI.zone[1]){AU.sfx('item');MINI.caught++;updMiniUI();if(MINI.caught>=o.need){miniWin();return}newZone()}else{AU.sfx('bad');toast(v<MINI.zone[0]?'Рано отпустили':'Поздно, перегрели')}MINI.v=0}
+function fishHook(){if(!MINI.on)return;
+  if(MINI.kind==='mash'){MINI.v=Math.min(1,MINI.v+.09);AU.sfx('ui');if(MINI.v>=1){AU.sfx('item');miniWin()}return}
+  if(MINI.kind==='hold'){MINI.holding=true;return}
+  const v=MINI.v,o=MINI.o;if(v>=MINI.zone[0]&&v<=MINI.zone[1]){AU.sfx('reel');AU.sfx('item');MINI.spd=Math.min(3.2,MINI.spd+.25);
     if(o.loop){if(!o.onCatch()){MINI.on=false;setTimeout(closeScreen,600);return}MINI.caught++;updMiniUI();newZone();return}
     MINI.caught++;updMiniUI();if(MINI.caught>=o.need){MINI.on=false;setTimeout(()=>{closeScreen();if(o.onWin)o.onWin()},450);return}newZone()}else{AU.sfx('bad');toast(o.loop?'Сорвалась':'Мимо, ещё раз')}}
-$('#fHook').addEventListener('click',fishHook);$('#fQuit').addEventListener('click',()=>{MINI.on=false;closeScreen()});
+$('#fHook').addEventListener('pointerdown',e=>{e.preventDefault();fishHook()});$('#fHook').addEventListener('pointerup',fishRelease);$('#fHook').addEventListener('pointerleave',fishRelease);window.addEventListener('keyup',e=>{if(curScreen==='#fish'&&(e.code==='KeyE'||e.code==='Space'))fishRelease()});$('#fQuit').addEventListener('click',()=>{MINI.on=false;closeScreen()});
 
 /* ---------- TUTORIAL ---------- */
 const KC=k=>`<span class="kc">${k}</span>`;

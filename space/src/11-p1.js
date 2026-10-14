@@ -80,12 +80,14 @@ function buildP1(){
   cyl(-12,0,35,1.1,1.1,0x8a5a32,{tex:TX.planks});vis(G.cyl,0x6b3a22,-12,1.15,35,1.15,.1,1.15,0,0,0,.02,TX.planks);for(const s2 of[-1,1])vis(G.box,0x6b4628,-12+s2*1.2,1.4,35,.2,2.8,.2,0,0,0,.02,TX.bark);vis(G.box,0x6b4628,-12,2.75,35,2.6,.25,.3,0,0,0,.02,TX.bark);
   const screw=new THREE.Group();screw.position.set(-12,2,35);L.group.add(screw);mesh(G.cyl,mat(0x9aa6ad,{metal:.8}),0,0,0,.12,1.6,.12,screw);mesh(G.cyl,mat(0x8a5a32),0,-.8,0,.8,.12,.8,screw);mesh(G.box,mat(0x6b4628),0,.75,0,1.6,.1,.1,screw);
   for(let i=0;i<6;i++)vis(G.cyl,0xff8a2e,-14.6+i*.32,.3,37.3,.12,.6,.12,0,0,0,.02);vis(G.box,0x8a5a32,-13.8,.4,37.3,2.4,.8,.6,0,0,0,.02,TX.planks);
-  workshop(-12,0,33.6,{title:'Сокодавильня',help:'Крутите пресс: жмите, когда метка в зелёной зоне. Три точных нажатия - банка сока.',from:'mandarin',need:5,to:'juice',btn:'Давить!',onMade:()=>tween(1,p=>{screw.rotation.y=p*TAU*2})});
+  workshop(-12,0,33.6,{title:'Сокодавильня',kind:'mash',help:'Жмите E или кнопку как можно быстрее, пока банка не наполнится соком.',from:'mandarin',need:5,to:'juice',btn:'Давить!',onMade:()=>tween(1,p=>{screw.rotation.y=p*TAU*2})});
   /* tree house with the racer kid */
   const THX=36,TZ=-4;cyl(THX,0,TZ,.8,7,0x6b4628);vis(G.ico1,0x4a8a3c,THX,8.6,TZ,3.4,2.2,3.4);vis(G.ico1,0x5a9a40,THX+1.4,9.6,TZ-.6,2,1.6,2);
   box(THX,4.5,TZ,4.4,.3,4.4,0x9a6a3a);railRect(THX-2.2,TZ-2.2,THX+2.2,TZ+2.2,4.8,0x7a4a2a,{side:'n',at:0,w:2.2});
   [[Math.PI,1.2],[Math.PI*1.25,2.4],[Math.PI*1.5,3.6]].forEach((s,i)=>{const sx=THX+Math.cos(s[0])*3.2,sz=TZ+Math.sin(s[0])*3.2;box(sx,s[1]-.25,sz,1.3,.25,1.3,0x9a6a3a);vis(G.box,0x6b4628,sx,(s[1]-.25)/2,sz,.12,s[1]-.25,.12)});
-  const mork=npc('morkovka',THX+.8,4.8,TZ+.6,{yaw:-Math.PI/2,pose:'wave',talk:morkTalk,mark:()=>S.tr&&!qdone('s1b')?'!':null});
+  const mork=npc('morkovka',THX+.8,4.8,TZ+.6,{yaw:-Math.PI/2,pose:'wave',talk:morkTalk,mark:()=>S.tr&&(!qdone('s1b')||qs('c3')===2)?'!':null});
+  {const ch=new THREE.Group();mesh(G.box,mat(0xc94f3a),0,.2,0,.7,.4,.45,ch);mesh(G.box,mat(0xffd36b),0,.42,0,.74,.06,.49,ch);mesh(G.cyl16,mat(0xff9a2e),0,.56,0,.08,.5,.08,ch).rotation.z=Math.PI/2;mesh(G.sph,mat(0xff8a1e),-.05,.7,0,.13,.12,.13,ch);mesh(G.box,mat(0x4f9a3a),-.02,.84,0,.1,.02,.05,ch);
+    itemPick('blaster',THX-1.3,4.8,TZ-1.3,ch,()=>qs('c3')>=2,()=>{S.got.blaster=1;S.gunOff=false;if(qs('c3')<4)qset('c3',4);banner('Мандаринострел!','Стреляет холодными мандариновыми дольками',isTouch?'Кнопка «Пиу!» - выстрел':'Левая кнопка мыши - выстрел · G - убрать');AU.sfx('quest');setMode('play')})}
   /* race */
   const gates=[[24,-8],[8,-13],[-6,-22],[-26,-22],[-32,2],[-14,13]];const gObj=gates.map((g,i)=>{vis(G.box,0xf4ead8,g[0]-1.8,1.6,g[1],.2,3.2,.2);vis(G.box,0xf4ead8,g[0]+1.8,1.6,g[1],.2,3.2,.2);vis(G.box,0xff6b6b,g[0],3.2,g[1],3.8,.3,.25);
     const ring=mesh(new THREE.TorusGeometry(1.8,.08,6,32),new THREE.MeshBasicMaterial({color:0xffd36b,transparent:true,opacity:0}),g[0],1.7,g[1],1,1,1,L.group);return ring});
@@ -106,7 +108,7 @@ function buildP1(){
   npc('farmhand',-6,0,-6,{walk:[[-6,-6],[8,-10],[8,2],[-6,2]],speed:1.3,talk:n=>{if(needTr('farmhand'))return;talk(n,[['farmhand',pick(['Мандаринчики только с виду милые. Убегают быстрее ветра. Заходи с дальней стороны и гони к загону.','Грушка опять рисует на водонапорной башне. Говорит, это искусство.','Лифт ветряка крутит колесо в загоне. Нет мандаринчиков, нет лифта.'])]])}});
   flowers(r,70,[0xffd36b,0xff8fb1,0xffffff,0xff9a2e],4,50);
   grass(650,[0x6f9a3a,0x5f8a34,0x7faa48],22);
-  makeGround({c1:0x7da044,c2:0x6a9038,mount:0xb07a50,snow:0xfff0d8,path:0xb07a3a,seed:21,snowY:16,mh:24});
+  makeGround({edge:'trees',crowns:[0x4c8a35,0x5a9a3a,0x6aa840],c1:0x7da044,c2:0x6a9038,mount:0xb07a50,snow:0xfff0d8,path:0xb07a3a,seed:21,snowY:16,mh:24});
   finishLevel();
   AU.music('p1');AU.ambient('birds');
   L.arrive=[['kapik','Пахнет мандаринами! Юзик точно где-то рядом.'],['kapik','Здесь живут фермеры. Наверное, кто-то из них его видел.']];
@@ -127,6 +129,8 @@ function grushkaTalk(n){if(needTr('grushka'))return;const st=qs('s1a');
   if(st===1){talk(n,[['grushka','Ведро на крыше теплицы. Залезь по ящикам у южной стены.']]);return}
   talk(n,[['grushka',pick(['Как тебе мандарин? Я считаю, шедевр.','Отсюда видно всю долину. И твою тарелку тоже.'])]])}
 function morkTalk(n){if(needTr('morkovka'))return;
+  if(qs('c3')===2){talk(n,[['morkovka','Король Рогожар? Огненный? Ух! Тогда тебе нужен мой Мандаринострел!'],['morkovka','Он стреляет холодными мандариновыми дольками. Шлёп - и всё шипит!'],['morkovka','Он в красном сундучке прямо тут, в домике. Бери, только верни потом! Ну... когда-нибудь.']],()=>qset('c3',3));return}
+  if(qs('c3')===3){talk(n,[['morkovka','Красный сундучок в углу домика! Хватай!']]);return}
   if(qdone('s1b')){talk(n,[['morkovka','Ты быстрее ветра! Даже быстрее мандаринчиков.']]);return}
   if(L.race&&L.race.on){talk(n,[['morkovka','Беги же! Время идёт!']]);return}
   talk(n,[['morkovka','Эй, капибара! Спорим, ты не пробежишь мои 6 флажков за 35 секунд?'],['morkovka','Флажки светятся по очереди. Первый у загона. Выиграешь, отдам 12 монет из копилки!'],['kapik','Спорим.']],()=>{if(!qs('s1b'))qset('s1b',1);morkTalk.start()})}

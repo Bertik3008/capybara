@@ -30,7 +30,7 @@ $('#tradeList').addEventListener('click',e=>{const b=e.target.closest('[data-sel
 /* workshop: turn raw goods into a pricier product with a timing mini-game */
 function workshop(x,y,z,o){inter({x,y,z,r:o.r||2.4,label:()=>`E - ${o.title}: ${o.need} ${RES[o.from].one} → ${RES[o.to].one}`,act:()=>{
   if((S.inv[o.from]||0)<o.need){say([['kapik',`Нужно ${o.need} шт.: ${RES[o.from].name.toLowerCase()}. Сейчас в сумке ${S.inv[o.from]||0}.`]]);AU.sfx('bad');return}
-  openMini({title:o.title,help:o.help,need:3,btn:o.btn||'Жать!',unit:'Готово',onWin:()=>{takeRes(o.from,o.need);S.inv[o.to]=(S.inv[o.to]||0)+1;save();UI.inv(true);banner('Сделано',RES[o.to].name,`Стоит ${coinsWord(RES[o.to].price)} у любого торговца`);AU.sfx('quest');if(o.onMade)o.onMade()}})}})}
+  openMini({title:o.title,help:o.help,need:3,kind:o.kind,btn:o.btn||'Жать!',unit:o.kind==='mash'?'Готовность':'Готово',onWin:()=>{takeRes(o.from,o.need);S.inv[o.to]=(S.inv[o.to]||0)+1;save();UI.inv(true);banner('Сделано',RES[o.to].name,`Стоит ${coinsWord(RES[o.to].price)} у любого торговца`);AU.sfx('quest');if(o.onMade)o.onMade()}})}})}
 /* fishing spot: needs grandpa's rod */
 function fishingSpot(x,y,z,o){o=o||{};inter({x,y,z,r:o.r||2,label:'E - рыбачить',cond:o.cond,act:()=>{if(!S.got['rod']){say([['kapik','Без удочки не порыбачишь. Дедушкина удочка лежала где-то в амбаре на базе.']]);return}
   openMini({title:'Рыбалка',help:'Жмите E или кнопку, когда поплавок в зелёной зоне.',need:1,btn:'Подсечь',unit:'Поймано',loop:true,onCatch:()=>{const k=addRes('fish',1);if(o.onFish&&k)o.onFish();return k>0}})}})}

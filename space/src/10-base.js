@@ -6,6 +6,9 @@ function buildBase(){
   path([[0,6],[0,-10]],1.6);path([[0,4],[-6,-2],[-10,-6]],1.3);path([[0,4],[6,-1],[11,-2]],1.3);path([[0,6],[-5,13],[-10,19]],1.1);path([[0,6],[5,10],[8.6,10.4]],1.1);path([[6,-1],[14,6],[20,10]],1.1);
   skyBody(0xffb38a,[-190,95,-300],62,0xffe0b8);skyBody(0xd8e0ff,[220,140,-160],12);
   placeUFO(0,-14);
+  if(qs('c3')===1){vis(G.disc,0x1a1414,3.5,.03,-5.5,2.2,.02,1.6);const nt=mesh(G.box,stdMat(0xe8d8b0,{roughness:1}),3.5,.06,-5.5,.5,.02,.36,L.group);nt.rotation.y=.4;mesh(G.box,stdMat(0x3a1a10),3.62,.075,-5.42,.18,.01,.12,L.group);
+    tick((t,dt)=>{if(qs('c3')===1&&Math.random()<dt*4)FXW.burst(3.5+(Math.random()-.5)*2,.2,-5.5+(Math.random()-.5)*1.4,{col:0x554444,n:1,spd:.2,up:1.2,g:-.3,life:2.2,size:.7})});
+    inter({x:3.5,y:0,z:-5.5,r:2.2,label:'E - прочитать обгоревшую записку',cond:()=>qs('c3')===1,act:()=>say([['kapik','Бумага ещё тёплая... Тут пахнет углём и серой.'],['rogozhar','«Пушистикам. Я, Король Рогожар, забрал четырёх самых спокойных капибар галактики на Магмару. Мне нужен покой. Не ищи. Всё равно сгоришь!»'],['kapik','Ну уж нет. Мне нужно что-то холодное... Морковка на Мандарине хвасталась игрушечным Мандаринострелом!']],()=>{qset('c3',2);banner('Глава 3','Бессонный король Магмары','Лети на Мандарину к Морковке')})})}
   /* shop */
   const wood=0xa0683c,dk=0x7a4a2a;
   box(-17.2,0,-6,.4,3.2,8.4,wood,{tex:TX.planks});box(-14.6,0,-10.1,5.6,3.2,.4,wood,{tex:TX.planks});box(-14.6,0,-1.9,5.6,3.2,.4,wood,{tex:TX.planks});
@@ -58,14 +61,16 @@ function buildBase(){
     box(HX,0,11.75,1,.6,4,0,{nv:true})}
   if(D.fountain){cyl(-6,0,5,2,.6,0x9a96a8,{g:G.cyl16,tex:TX.stone});water(-6,5,1.75,{safe:true,y:.62,col:0x6fd8f0});cyl(-6,0,5,.3,1.8,0x9a96a8,{tex:TX.stone});vis(G.cyl16,0x9a96a8,-6,1.8,5,.9,.15,.9,0,0,0,.02,TX.stone);tick(t=>{if(Math.random()<.5)FXW.burst(-6,2,5,{col:0x9fd8ff,n:2,spd:1.2,up:3,g:8,life:.8,size:.18})})}
   if(D.onsen){cyl(17.5,0,17,2.4,.5,0x7a7684,{g:G.cyl16,tex:TX.stone});water(17.5,17,2.1,{safe:true,y:.48,col:0x8fe6f0});for(let i=0;i<10;i++){const a=i/10*TAU;vis(G.dod,0x6a6674,17.5+Math.cos(a)*2.5,.45,17+Math.sin(a)*2.5,.5,.4,.5,0,i,0,.04,TX.stone)}tick(t=>{if(Math.random()<.25)FXW.burst(17.5+(Math.random()-.5)*3,.6,17+(Math.random()-.5)*3,{col:0xaaaaaa,n:1,spd:.3,up:.8,g:-.3,life:2,size:.7})})}
-  if(D.telescope){vis(G.cyl,0x5a5a6a,18.5,5.9,0,.06,1.2,.06);vis(G.cyl,0xb28cff,18.5,6.7,0,.18,1.6,.18,.9,0,0,.02,TX.metal);vis(G.cyl,0x333344,18.5,6.65,.75,.2,.1,.2,.9,0,0)}
-  /* brothers */
-  if(S.rescued.p1)npc('yuzik',6.5,0,12,{yaw:2.3,pose:'sit',talk:n=>talk(n,[['yuzik',pick(['Капик, а на базе мандарины есть? Купи дерево у Выдры, а?','Я посторожу пруд. И мандарины, если найдутся.','На Мандарине я видел золотой мандарин. Высоко-высоко, на самой крыше ветряка.'])]])});
-  if(S.rescued.p2){if(D.onsen)npc('snezhok',17.5,.1,17,{yaw:-2.5,pose:'sit',nc:true,talk:n=>talk(n,[['snezhok','Горячий источник! Капик, ты лучший брат во всей галактике.']])});else npc('snezhok',12.5,0,10.5,{yaw:-.6,pose:'sit',talk:n=>talk(n,[['snezhok',pick(['Тут тепло. Но я всё равно не сниму шарф.','Апчхи! Это не простуда, это радость.','Выдра говорит, бывают горячие источники. Вот бы такой у пруда.'])]])})}
-  if(S.rescued.p3){if(D.hammock)npc('gribok',-21,.66,11.75,{yaw:Math.PI,pose:'lie',nc:true,talk:n=>talk(n,[['gribok','Хр-р... Гамак... лучший подарок... хр-р...']])});else npc('gribok',-6,0,11,{yaw:.5,pose:'lie',talk:n=>talk(n,[['gribok',pick(['Мм... можно я посплю прямо тут, на траве?','Улитки научили меня жить медленно. Очень медленно.','Хорошо бы гамак. Только никому не говори.'])]])})}
-  if(S.rescued.p4)npc('vintik',4.5,0,-8.5,{yaw:-.6,pose:'hammer',talk:n=>talk(n,[['vintik',pick(['Я открутил у тарелки одну лишнюю гайку. Она точно была лишней.','Если поставить на тарелку форсаж, она полетит быстрее! В лавке есть.','Магнетрон спит. Я оставил ему записку: «Не балуйся».'])]])});
+  if(D.telescope){const TX0=7,TZ0=-7;cyl(TX0,0,TZ0,1.3,.12,0x9a96a8,{g:G.cyl16,tex:TX.stone});
+    for(let i=0;i<3;i++){const a=i/3*TAU+.3,fx=TX0+Math.cos(a)*.7,fz=TZ0+Math.sin(a)*.7;const len=Math.hypot(.7,1.3);vis(G.cyl,0x5a4630,(fx+TX0)/2,.12+.65,(fz+TZ0)/2,.045,len,.045,Math.sin(a)*Math.atan2(.7,1.3)*-1,0,Math.cos(a)*Math.atan2(.7,1.3),.02,TX.bark)}
+    vis(G.sph,0x3a3a4a,TX0,1.45,TZ0,.16,.16,.16);const tube=new THREE.Group();tube.position.set(TX0,1.55,TZ0);tube.rotation.set(-.6,.8,0,'YXZ');L.group.add(tube);
+    mesh(G.cyl16,stdMat(0xb28cff,{metalness:.5,roughness:.35}),0,0,-.2,.14,1.5,.14,tube).rotation.x=Math.PI/2;mesh(G.cyl16,stdMat(0xffd36b,{metalness:.7,roughness:.3}),0,0,.58,.18,.12,.18,tube).rotation.x=Math.PI/2;mesh(G.cyl16,stdMat(0xffd36b,{metalness:.7,roughness:.3}),0,0,-.9,.12,.1,.12,tube).rotation.x=Math.PI/2;
+    mesh(G.disc,bmat(0x9fe9ff),0,0,.65,.15,.01,.15,tube).rotation.x=Math.PI/2;mesh(G.cyl,stdMat(0x2a2a33),0,-.06,-1.0,.05,.16,.05,tube).rotation.x=Math.PI/2;
+    inter({x:TX0,y:.5,z:TZ0,r:2.2,label:'E - посмотреть в телескоп',act:()=>SPX.scopeStart()})}
+  /* brothers live in the yard now */
+  const Y=buildYard();buildBrothers(Y,D);
   /* scenery */
-  const r=rng(11),avoid=[[0,-14,7],[-14,-6,6],[16,-2,9],[9,16,7],[-10,20,4],[0,6,4],[-6,5,3],[17.5,17,3.5],[-21,11.75,4],[-4,17,3],[24,12,9]];
+  const r=rng(11),avoid=[[27,-6,10],[3.3,16.4,2],[7,-7,2.5],[0,-14,7],[-14,-6,6],[16,-2,9],[9,16,7],[-10,20,4],[0,6,4],[-6,5,3],[17.5,17,3.5],[-21,11.75,4],[-4,17,3],[24,12,9]];
   scatter(r,38,22,58,avoid,(x,z,s)=>tree(x,z,s*1.15,pick([0x3f7a35,0x4a8a3c,0x5a9a40]),{fruit:r()<.25?0xffd36b:null}));
   scatter(r,18,12,58,avoid,(x,z,s)=>rock(x,z,s*.8,0x8d8a9a));
   scatter(r,16,8,40,avoid,(x,z,s)=>{vis(G.sph,0x4a8a3c,x,.4*s,z,.8*s,.6*s,.8*s,0,0,0,.05,TX.leaves);vis(G.sph,0x5a9a44,x+.4*s,.35*s,z+.2*s,.5*s,.4*s,.5*s,0,0,0,.05,TX.leaves)});
@@ -74,7 +79,7 @@ function buildBase(){
   fence(-26,-20,-26,-30,0xa0683c);fence(-26,-30,-16,-30,0xa0683c);
   flowers(r,90,[0xffd36b,0xff8fb1,0xb28cff,0xffffff],4,48);
   grass(900,[0x6fae52,0x5a9a40,0x7fbf5a],12);
-  makeGround({c1:0x5f9a48,c2:0x4c8a3c,mount:0x6b5a7a,snow:0xd8c8e8,seed:3,snowY:15,mh:20});
+  makeGround({edge:'trees',c1:0x5f9a48,c2:0x4c8a3c,mount:0x6b5a7a,snow:0xd8c8e8,seed:3,snowY:15,mh:20});
   finishLevel();
   AU.music('base');AU.ambient('birds');
   const nearestBush=()=>{let b=null,bd=1e9;for(const n of L.nodes)if(n.ready&&n.kind==='berry'){const d=Math.hypot(n.x-P.x,n.z-P.z);if(d<bd){bd=d;b=n}}return b};

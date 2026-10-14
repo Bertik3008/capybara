@@ -36,7 +36,7 @@ function buildP2(){
   /* smokehouse inside the first igloo */
   vis(G.cyl,0x5a5a6a,-25,.6,6,.7,1.2,.7,0,0,0,.03,TX.stone);gvis(G.sph,0xff8a2e,-25,.35,6,.45,.2,.45);const smk=glow(0xff8a3a,3,.6);smk.position.set(-25,.8,6);L.group.add(smk);for(let i=0;i<4;i++)vis(G.box,0x9fd8f0,-24+i*.0,1.7,5+i*.6,.5,.12,.08);
   tick(t=>{smk.material.opacity=.45+Math.sin(t*9)*.1;if(Math.random()<.05)FXW.burst(-25,1.4,6,{col:0x999999,n:1,spd:.2,up:.6,g:-.2,life:2,size:.6})});
-  workshop(-25,0,6,{title:'Коптильня',help:'Подкладывайте можжевельник вовремя: три точных нажатия - копчёная рыба.',from:'fish',need:3,to:'smoked',btn:'Подложить',r:2.6});
+  workshop(-25,0,6,{title:'Коптильня',kind:'hold',help:'Удерживайте E, чтобы раздуть жар, и отпустите в зелёной зоне. Три удачные копчёнки.',from:'fish',need:3,to:'smoked',btn:'Подложить',r:2.6});
   sign(-20.6,0,7.6,Math.PI/2,['КОПТИЛЬНЯ'],{fs:56,w:1.6,h:.55,bg:'#5a7a9a'});
   for(let i=0;i<3;i++){vis(G.cone,0xbfe8ff,-31+i*.6,.6,-7.4+(i%2)*.8,.25,1.2,.25,0,0,0,.05,TX.ice);vis(G.sph,0xdff6ff,-31.6+i*.7,.4,-6.4,.3,.35,.3,0,0,0,.04,TX.ice)}
   const sleepy=npc('penguin',-35.6,0,12,{yaw:0,pose:'lie',nc:true});
@@ -75,7 +75,7 @@ function buildP2(){
   const sg2=new THREE.BufferGeometry();sg2.setAttribute('position',new THREE.BufferAttribute(pos,3));const snow=new THREE.Points(sg2,new THREE.PointsMaterial({color:0xffffff,size:.22,map:glowTex,transparent:true,opacity:.9,depthWrite:false}));snow.frustumCulled=false;L.group.add(snow);
   tick((t,dt)=>{for(let i=0;i<sn;i++){let y=pos[i*3+1]-dt*(2+(i%5)*.3);if(y<0)y+=30;pos[i*3+1]=y;pos[i*3]+=Math.sin(t+i)*dt*.3}sg2.attributes.position.needsUpdate=true;snow.position.set(P.x,0,P.z)});
   grass(250,[0xdfeef6,0xc8e0ec],32,{scale:.8});
-  makeGround({c1:0xd6e6f0,c2:0xc2d8e6,mount:0x7a98b0,snow:0xeef6fb,path:0xa8c4d6,seed:31,snowY:12,mh:26});
+  makeGround({edge:'pines',c1:0xd6e6f0,c2:0xc2d8e6,mount:0x7a98b0,snow:0xeef6fb,path:0xa8c4d6,seed:31,snowY:12,mh:26});
   finishLevel();
   AU.music('p2');AU.ambient('wind');
   L.arrive=[['kapik','Бр-р-р! Тут ужасно холодно. И небо светится.'],['kapik','Снежок где-то здесь. В его шарфе он не замёрзнет... надеюсь.']];

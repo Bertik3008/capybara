@@ -36,6 +36,9 @@ const AU=(()=>{
     p2:{bpm:70,root:64,mode:MIN,prog:[0,5,2,6],pad:'sine',bass:[0],arp:4,arpI:'bell',lead:'bell',dens:.2,seed:19,drums:{h:'........x.......',hv:.015}},
     p3:{bpm:82,root:62,mode:DOR,prog:[0,3,0,6],pad:'triangle',bass:[0,10],arp:2,arpI:'wood',lead:'flute',dens:.3,seed:23,drums:{w:'x..x..x...x..x..'}},
     p4:{bpm:114,root:57,mode:MIN,prog:[0,5,6,4],pad:'sawtooth',bass:[0,2,4,6,8,10,12,14],bassT:'sawtooth',arp:1,arpI:'square',lead:'square',dens:.18,seed:29,drums:{k:'x...x...x...x...',h:'..x...x...x...x.',c:'....x.......x...',hv:.025}},
+    p5:{bpm:96,root:65,mode:LYD,prog:[0,4,1,4],pad:'sine',bass:[0,8],arp:2,arpI:'bell',lead:'flute',dens:.36,seed:41,drums:{h:'x...x...x...x...',w:'..x...x...x...x.',hv:.012}},
+    p6:{bpm:100,root:52,mode:[0,1,3,5,7,8,10],prog:[0,1,0,6],pad:'sawtooth',bass:[0,3,8,11],bassT:'sawtooth',arp:2,arpI:'pluck',lead:'square',dens:.26,seed:53,drums:{k:'x.....x...x.....',c:'....x.......x...',h:'..x...x...x...x.',hv:.02}},
+    boss:{bpm:136,root:52,mode:[0,1,3,5,7,8,10],prog:[0,1,6,1],pad:'sawtooth',bass:[0,2,4,6,8,10,12,14],bassT:'sawtooth',arp:1,arpI:'square',lead:'square',dens:.32,seed:61,drums:{k:'x...x...x...x...',h:'x.x.x.x.x.x.x.x.',c:'....x.......x...',hv:.03}},
     space:{bpm:68,root:55,mode:LYD,prog:[0,1,0,4],pad:'sawtooth',bass:[0],arp:4,arpI:'bell',lead:'bell',dens:.14,seed:31,drums:null}
   };
   let cur=null,next=0,step=0,leadBar=null,leadIdx=-1;
@@ -86,6 +89,11 @@ const AU=(()=>{
     switch(n){
       case'coin':tone(t,1318,.07,{type:'square',v:.03,lp:4000});tone(t+.06,1976,.14,{type:'square',v:.03,lp:4000});break;
       case'chest':[523,659,784,1047,1319].forEach((f,i)=>tone(t+i*.06,f,.25,{type:'triangle',v:.06,wet:.3}));noise(t+.25,.4,{ft:'highpass',f:6000,v:.03});break;
+      case'pop':tone(t,900,.08,{type:'triangle',v:.06,slide:.5});tone(t+.03,1500,.06,{v:.03,slide:1.6});break;
+      case'splat':noise(t,.12,{ft:'bandpass',f:1200,v:.07});tone(t,320,.1,{v:.04,slide:.4});break;
+      case'fire':noise(t,.35,{f:900,v:.07});tone(t,130,.3,{type:'sawtooth',v:.03,slide:.6,lp:800});break;
+      case'roar':tone(t,95,.9,{type:'sawtooth',v:.08,slide:.7,lp:700});noise(t,.6,{f:400,v:.05});break;
+      case'sizzle':noise(t,.5,{ft:'highpass',f:3500,v:.04});break;
       case'jump':tone(t,300,.12,{v:.05,slide:1.8});break;
       case'djump':tone(t,500,.16,{v:.05,slide:2,type:'triangle'});noise(t,.15,{ft:'bandpass',f:2500,v:.03});break;
       case'land':noise(t,.1,{f:500,v:.07});break;

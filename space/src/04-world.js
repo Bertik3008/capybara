@@ -98,14 +98,27 @@ function makeGround(o){
   const N=110,S2=230,g=new THREE.PlaneGeometry(S2,S2,N,N);g.rotateX(-Math.PI/2);const pos=g.attributes.position,col=new Float32Array(pos.count*3),uv=g.attributes.uv;
   const c1=new THREE.Color(o.c1),c2=new THREE.Color(o.c2),cm=new THREE.Color(o.mount),cs=new THREE.Color(o.snow||o.mount),tmp=new THREE.Color();
   for(let i=0;i<pos.count;i++){const x=pos.getX(i),z=pos.getZ(i),r=Math.hypot(x,z);let y=0;const n=fbm(x*.05+o.seed,z*.05);tmp.copy(c1).lerp(c2,clamp(n*1.7-.45,0,1));
-    if(r>66){const k=r-66;y=(1-Math.exp(-k/12))*(o.mh||20)*(.55+fbm(x*.04,z*.04+o.seed)*.9)+fbm(x*.15,z*.15)*2;tmp.copy(cm).lerp(c1,clamp(1-k/8,0,1)*.6);if(y>(o.snowY||22))tmp.lerp(cs,clamp((y-(o.snowY||22))/6,0,1))}
+    if(r>64){y=hillY(x,z,o);const k=r-64;tmp.copy(c2).lerp(cm,clamp(k/22,0,1));if(y>(o.snowY||22))tmp.lerp(cs,clamp((y-(o.snowY||22))/8,0,1)*.85)}
     else{for(const p of L.paths){const d=distPoly(x,z,p.pts);if(d<p.w*1.8)tmp.multiplyScalar(lerp(.86,1,clamp((d-p.w*.9)/(p.w*.9),0,1)))}}
     tmp.convertSRGBToLinear();pos.setY(i,y);col[i*3]=tmp.r;col[i*3+1]=tmp.g;col[i*3+2]=tmp.b;uv.setXY(i,x/2.6,z/2.6)}
   g.setAttribute('color',new THREE.BufferAttribute(col,3));g.computeVertexNormals();
   const kind={grass:'grass',snow:'snow',moss:'moss',metal:'metal'}[L.surface]||'grass';const tx=groundTex(kind);
   const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({vertexColors:true,map:tx,roughness:kind==='snow'?.75:.95,metalness:kind==='metal'?.2:0}));m.receiveShadow=true;L.group.add(m);
   L.paths.forEach((p,i)=>ribbon(p.pts,p.w*.85,p.kind||L.pathKind,p.col,.025+i*.004));
+  edgeRing(o);
 }
+/* smooth rolling hills around the playable area (v5: no jagged rocks) */
+function hillY(x,z,o){const r=Math.hypot(x,z),k=Math.max(0,r-64);if(!k)return 0;const a=Math.atan2(z,x);const wave=.65+.22*Math.sin(a*3+o.seed)+.13*Math.sin(a*7+o.seed*2);return (1-Math.exp(-k/18))*(o.mh||20)*.8*wave+Math.sin(k*.25)*.4}
+/* themed props that crown the hills and form a soft border of the planet */
+function edgeRing(o){const th=o.edge||'trees',r=rng(o.seed*7+3),n=th==='pipes'?26:46;
+  for(let i=0;i<n;i++){const a=i/n*TAU+(r()-.5)*.1,d=67+r()*14,x=Math.cos(a)*d,z=Math.sin(a)*d,y=hillY(x,z,o)-.2,s=(1+r()*.8)*(1+(d-67)/12);
+    if(th==='trees'){vis(G.trunk,0x6b4628,x,y+1.6*s,z,.3*s,3.2*s,.3*s,0,0,0,.03,TX.bark);vis(G.sph,pick(o.crowns||[0x4c8a35,0x5a9a3a,0x3f7a35]),x,y+3.9*s,z,1.9*s,1.6*s,1.9*s,0,r()*6,0,.06,TX.leaves);vis(G.sph,pick(o.crowns||[0x5a9a3a]),x+.8*s,y+3.3*s,z+.4*s,1.2*s,1*s,1.2*s,0,0,0,.06,TX.leaves)}
+    else if(th==='pines'){vis(G.trunk,0x5a3a26,x,y+.8*s,z,.25*s,1.6*s,.25*s);for(let k=0;k<3;k++){vis(G.cone,0x2f5a4a,x,y+(1.8+k*1.2)*s,z,(1.6-k*.4)*s,1.6*s,(1.6-k*.4)*s);vis(G.cone,0xf2f8ff,x,y+(2.1+k*1.2)*s,z,(1.1-k*.3)*s,.6*s,(1.1-k*.3)*s)}}
+    else if(th==='shrooms'){vis(G.cyl,0xe8dcc8,x,y+2*s,z,.35*s,4*s,.35*s);vis(G.hemi,pick([0xb06ad6,0x7fe3e8,0xff8fb1,0x9b7dff]),x,y+3.9*s,z,2*s,1.1*s,2*s,0,0,0,.04);gvis(G.disc,0xd7a0ff,x,y+3.85*s,z,1.9*s,.05,1.9*s)}
+    else if(th==='pipes'){const h=(4+r()*6)*s;vis(G.cyl16,pick([0x8a5a4a,0x6a7078,0x9aa2aa]),x,y+h/2,z,.9*s,h,.9*s,0,0,0,.03,TX.metal);vis(G.cyl16,0x3b3438,x,y+h,z,1*s,.25,1*s);if(r()<.5)vis(G.box,pick([0xc94f3a,0x3a6ad6,0xe8b23a]),x+2*s,y+1.3*s,z,2.4*s,2.6*s,5*s,0,a,0,.02,TX.corr)}
+    else if(th==='puffs'){vis(G.cyl,0x6a9a4a,x,y+2.5*s,z,.12*s,5*s,.12*s);gvis(G.sph,0xfffbe8,x,y+5.2*s,z,1.1*s,1.1*s,1.1*s);vis(G.sph,0x8ad05a,x,y+.4*s,z,1.4*s,.4*s,1.4*s)}
+    else if(th==='basalt'){for(let k=0;k<4;k++){const h=(2+r()*5)*s;vis(G.cyl6,pick([0x2a1a1a,0x3a2424,0x1f1416]),x+(k%2)*1.1*s,y+h/2,z+(k>1?1:0)*1.1*s,.6*s,h,.6*s,0,r(),0,.03,TX.stone)}if(r()<.4)gvis(G.sph,0xff6a2a,x,y+.3,z,.9*s,.3,.9*s)}
+  }}
 function distPoly(x,z,pts){let best=1e9;for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1],dx=b[0]-a[0],dz=b[1]-a[1],l=dx*dx+dz*dz;let t=l?((x-a[0])*dx+(z-a[1])*dz)/l:0;t=clamp(t,0,1);const d=Math.hypot(x-a[0]-dx*t,z-a[1]-dz*t);if(d<best)best=d}return best}
 const bladeGeo=(()=>{const g=new THREE.BufferGeometry(),w=.06;const p=[-w/2,0,0,w/2,0,0,-w*.35,.18,0,w*.35,.18,0,-w*.15,.34,0,w*.15,.34,0,0,.45,0];const c=[.6,.6,.6,.6,.6,.6,.85,.85,.85,.85,.85,.85,1.05,1.05,1.05,1.05,1.05,1.05,1.2,1.2,1.2];
   g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));g.setAttribute('color',new THREE.Float32BufferAttribute(c,3));g.setIndex([0,1,2,1,3,2,2,3,4,3,5,4,4,5,6]);g.computeVertexNormals();g.userData.shared=true;return g})();
@@ -161,7 +174,15 @@ function placeUFO(x,z,o){o=o||{};cyl(x,0,z,4.6,.15,o.pad||0x8a8aa0,{g:G.disc,tex
   const u=makeUFO(S.paint,true);u.position.set(x,2.09,z);u.rotation.y=.4;L.group.add(u);L.ufo=u;cyl(x,0,z,3,3.2,0,{nv:true});
   const beam=mesh(new THREE.CylinderGeometry(1.2,2.4,1.2,32,1,true),new THREE.MeshBasicMaterial({color:0x9ff3ff,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false}),x,.75,z,1,1,1,L.group);
   tick((t,dt)=>{u.userData.update(t,0,false);beam.material.opacity=clamp((7.5-Math.hypot(P.x-x,P.z-z))/4,0,.25)});
-  inter({x,y:0,z,r:5.6,label:'Удерживайте E - сесть в НЛО',hold:1,act:takeoff});L.ufoPos=[x,z]}
+  /* boarding ladder on the side facing the spawn point */
+  const sd=L.spawn.z>z?1:-1,lz=z+sd*4.35,tz=z+sd*3.05,ln=Math.hypot(2.55,lz-tz),ang=Math.atan2(tz-lz,2.55);
+  for(const s2 of[-1,1])vis(G.cyl,0xc8ccd6,x+s2*.36,1.28,(lz+tz)/2,.045,ln,.045,ang,0,0,.02,TX.metal);
+  for(let i=1;i<7;i++){const k=i/7;vis(G.cyl,0xdfe6ef,x,k*2.55,lerp(lz,tz,k),.03,.72,.03,0,0,Math.PI/2,.02,TX.metal)}
+  vis(G.box,0x3a4256,x,2.62,tz-sd*.12,.9,.08,.5,0,0,0,.02,TX.metal);gvis(G.box,0x9ff3ff,x,2.72,tz-sd*.35,.7,.02,.06);
+  inter({x,y:0,z,r:5.8,label:'Удерживайте E - подняться по лестнице в НЛО',hold:.8,act:()=>climbIn(x,lz,tz,sd)});L.ufoPos=[x,z]}
+function climbIn(x,lz,tz,sd){if(P.carry)dropCarry();setMode('cut');const a=new THREE.Vector3(P.x,P.camY,P.z),b=new THREE.Vector3(x,EYE,lz+sd*.6),c=new THREE.Vector3(x,2.6+EYE*.6,tz-sd*.2);AU.sfx('step');const ty=sd>0?0:Math.PI;
+  tween(.45,p=>{camera.position.lerpVectors(a,b,p);camera.rotation.set(lerp(P.pitch,.2,p),P.yaw+Math.atan2(Math.sin(ty-P.yaw),Math.cos(ty-P.yaw))*p,0)},()=>{
+    tween(.9,p=>{camera.position.lerpVectors(b,c,p);camera.position.y+=Math.sin(p*Math.PI*6)*.04;if(Math.random()<.08)AU.sfx('step')},()=>takeoff())})}
 
 function skyBody(col,pos,r,ring){const c=lc(col);const m=mesh(G.sphHi,new THREE.MeshStandardMaterial({color:c,emissive:c.clone().multiplyScalar(.5),roughness:1,fog:false}),pos[0],pos[1],pos[2],r,r,r,L.group);
   if(ring){const t=new THREE.Mesh(new THREE.RingGeometry(r*1.35,r*2.1,96),new THREE.MeshBasicMaterial({color:lc(ring),fog:false,side:THREE.DoubleSide,transparent:true,opacity:.5,depthWrite:false}));t.position.copy(m.position);t.rotation.set(-1.25,.35,0);L.group.add(t)}return m}
@@ -231,9 +252,10 @@ function updPicks(t,dt){for(let i=L.picks.length-1;i>=0;i--){const p=L.picks[i];
   const dx=P.x-p.x,dz=P.z-p.z,dy=(P.y+.9)-p.y;if(dx*dx+dz*dz<1.4&&Math.abs(dy)<1.5){p.got=true;p.obj.visible=false;if(!p.tmp)S.got[p.id]=1;
     AU.sfx(p.tmp?'pickup':'item');FXW.burst(p.x,p.y+.3,p.z,{col:0xffffff,n:p.tmp?8:18,spd:3,up:3,life:.6});if(p.onGet)p.onGet();save()}}}
 
-function updProj(dt){for(let i=L.proj.length-1;i>=0;i--){const b=L.proj[i];b.vy-=14*dt;b.x+=b.vx*dt;b.y+=b.vy*dt;b.z+=b.vz*dt;b.m.position.set(b.x,b.y,b.z);b.life-=dt;let hit=b.y<0||b.life<0;
+function updProj(dt){for(let i=L.proj.length-1;i>=0;i--){const b=L.proj[i];b.vy-=(b.g||14)*dt;if(b.kind==='mand'){b.m.rotation.x+=dt*14;b.m.rotation.y+=dt*9}b.x+=b.vx*dt;b.y+=b.vy*dt;b.z+=b.vz*dt;b.m.position.set(b.x,b.y,b.z);b.life-=dt;let hit=b.y<0||b.life<0;
   for(const t of L.targets){if(!t.on)continue;if((b.x-t.x)**2+(b.y-t.y)**2+(b.z-t.z)**2<t.r*t.r){t.hit(t);hit=true;break}}
+  if(!hit&&b.kind==='mand'&&splatNPC(b))hit=true;
   if(!hit)for(const c of L.solids){if(c.on&&c.k==='b'&&b.x>c.x0&&b.x<c.x1&&b.y>c.y0&&b.y<c.y1&&b.z>c.z0&&b.z<c.z1){hit=true;break}}
-  if(hit){FXW.burst(b.x,Math.max(b.y,.1),b.z,{col:0xffffff,n:12,spd:2.5,up:1.5,life:.5,size:.25});L.group.remove(b.m);L.proj.splice(i,1)}}}
-function throwBall(){if(!L.canThrow)return;const dir=new THREE.Vector3(0,0,-1).applyEuler(camera.rotation);const m=mesh(G.sph,mat(0xf4f8fb),0,0,0,.14,.14,.14,L.group);
+  if(hit){FXW.burst(b.x,Math.max(b.y,.1),b.z,{col:b.kind==='mand'?0xff9a2e:0xffffff,n:12,spd:2.5,up:1.5,life:.5,size:.25});if(b.kind==='mand')AU.sfx('splat');L.group.remove(b.m);L.proj.splice(i,1)}}}
+function throwBall(){if(!canShoot())return;if(gunOn()){shootMandarin();return}const dir=new THREE.Vector3(0,0,-1).applyEuler(camera.rotation);const m=mesh(G.sph,mat(0xf4f8fb),0,0,0,.14,.14,.14,L.group);
   L.proj.push({m,x:camera.position.x+dir.x*.6,y:camera.position.y-.15+dir.y*.6,z:camera.position.z+dir.z*.6,vx:dir.x*24,vy:dir.y*24+2.5,vz:dir.z*24,life:3});AU.sfx('throw')}

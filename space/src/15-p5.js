@@ -1,6 +1,11 @@
 /* ---------- LEVEL: P5 «Одуванчия» (глава 2) ---------- */
 /* chapter-2 objective shown on every other planet while the chapter runs */
-function chapterObj(){const st=qs('c2');if(!st||st===99||!L)return null;const id=L.id;
+function chapterObj(){const s3=qs('c3');if(s3&&s3<99&&L){const id=L.id;
+    if(s3===1)return id==='base'?{text:'Братьев нет! У тарелки лежит обгоревшая записка',pos:[3.5,1.2,-5.5],tag:'Глава 3'}:{text:'Лети на базу: братья пропали',pos:null,tag:'Глава 3'};
+    if(s3===2)return id==='p1'?{text:'Найди Морковку в домике на дереве на востоке сада',pos:[36.8,6.6,-3.4],tag:'Глава 3'}:{text:'Лети на Мандарину: у Морковки есть игрушечный Мандаринострел',pos:null,tag:'Глава 3'};
+    if(s3===3)return id==='p1'?{text:'Забери Мандаринострел из сундучка в домике на дереве',pos:[34.7,5.8,-5.3],tag:'Глава 3'}:{text:'Лети на Мандарину за Мандаринострелом',pos:null,tag:'Глава 3'};
+    if(id!=='p6')return{text:'Лети на Магмару: открой карту клавишей M',pos:null,tag:'Глава 3'};return null}
+  const st=qs('c2');if(!st||st===99||!L)return null;const id=L.id;
   if(st===1)return id==='base'?{text:'Радист Крот машет с вышки: он поймал странный сигнал',pos:[-10,9.5,20],tag:'Глава 2'}:{text:'Лети на базу: Радист Крот поймал странный сигнал',pos:null,tag:'Глава 2'};
   if(id==='p5')return null;
   if(st===4){if(!(S.inv.juice>0))return{text:'Для лекарства нужен мандариновый сок: 5 мандаринов в сокодавильне на Мандарине',pos:null,tag:'Глава 2'};
@@ -44,7 +49,7 @@ function buildP5(){
   tick((t,dt)=>{puff.rotation.y=t*.05;const sick=qs('c2')!==99;puff.scale.setScalar(1+Math.sin(t*(sick?2.4:1))*(sick?.025:.01));face.material.opacity=.9;
     for(const d of drafts){d.m.material.opacity=.07+Math.sin(t*3)*.03;for(let i=0;i<5;i++){const k=((t*.35+i/5)%1);const rg=d['r'+i];rg.position.y=d.y0+k*(d.y1-d.y0);rg.material.opacity=.35*Math.sin(k*Math.PI)}
       if(Math.random()<dt*10)FXW.burst(d.x+(Math.random()-.5)*d.r,d.y0+Math.random()*(d.y1-d.y0),d.z+(Math.random()-.5)*d.r,{col:0xfff8d8,n:1,spd:.3,up:4,g:-2,life:1.2,size:.25});
-      if(Math.hypot(P.x-d.x,P.z-d.z)<d.r&&P.y>=d.y0-.2&&P.y<d.y1){P.vy=Math.min(9,Math.max(P.vy,0)+42*dt);P.ground=false;if(!S.seen.draft){S.seen.draft=1;save();toast('Ветер подхватил Капика! Двигайтесь в сторону листа')}}}});
+      if(Math.hypot(P.x-d.x,P.z-d.z)<d.r&&P.y>=d.y0-.2&&P.y<d.y1){P.vy=P.y<d.y1-1.4?Math.min(9,Math.max(P.vy,0)+42*dt):Math.max(1.3,P.vy-26*dt);P.ground=false;if(!S.seen.draft){S.seen.draft=1;save();toast('Ветер подхватил Капика! Двигайтесь в сторону листа')}}}});
   /* glider: hold jump while falling */
   tick((t,dt)=>{if(!S.got.glider||P.ground||P.ladder||!keys.Space||P.vy>-2.4)return;P.vy=-2.4;if(Math.random()<dt*12)FXW.burst(P.x,P.y+2.2,P.z,{col:0xfffbe8,n:1,spd:.5,up:.5,g:0,life:.6,size:.25})});
   /* ---- Pushinka at the stem base ---- */
@@ -59,7 +64,7 @@ function buildP5(){
   box(18,0,7.2,3.2,.9,.9,0x8a5a32,{tex:TX.planks});for(let i=0;i<3;i++)vis(G.sph,0xf4d0e8,17+i*1,1.05,7.2,.32,.12,.24);
   npc('shishkin',18,0,8.4,{yaw:Math.PI,trader:1,talk:shishkinTalk,mark:()=>!S.tr?null:qs('s5b')===0?'!':qs('s5b')===1&&(S.inv.pillow||0)>=2?'?':null});
   vis(G.box,0x6b4628,21.6,.55,6.6,1.6,1.1,1,0,0,0,.02,TX.planks);vis(G.cyl,0xf4d0e8,21.6,1.2,6.6,.5,.2,.4);
-  workshop(21.6,0,6.6,{title:'Подушечная',help:'Взбивайте пух в такт: три точных нажатия - пуховая подушка.',from:'fluff',need:5,to:'pillow',btn:'Взбить',r:2.2});
+  workshop(21.6,0,6.6,{title:'Подушечная',kind:'mash',help:'Взбивайте пух: жмите E или кнопку быстро-быстро, пока подушка не станет пышной.',from:'fluff',need:5,to:'pillow',btn:'Взбить',r:2.2});
   /* bee on a giant flower tower (bouncy heads) */
   const gflower=(x,z,top,r,col,pow)=>{vis(G.cyl,0x5aa04a,x,top/2,z,.25,top,.25);for(let i=0;i<8;i++){const a=i/8*TAU;vis(G.sph,col,x+Math.cos(a)*r*.75,top+.05,z+Math.sin(a)*r*.75,r*.45,.12,r*.28,0,-a,0)}vis(G.sph,0xffd36b,x,top+.12,z,r*.45,.2,r*.45);
     return addC({k:'c',x,z,r:r*.9,y0:top-.2,y1:top+.2,t:pow?'bounce':'solid',pow:pow||0,surf:'moss'})};
@@ -86,9 +91,9 @@ function buildP5(){
   scatter(r,6,14,50,avoid,(x,z,s)=>rock(x,z,s*.7,0x9a9a8a));
   tick((t,dt)=>{if(Math.random()<dt*6){const a=Math.random()*TAU,d=Math.random()*30;FXW.burst(P.x+Math.cos(a)*d,1+Math.random()*6,P.z+Math.sin(a)*d,{col:0xfffbe8,n:1,spd:.6,up:.4,g:-.2,life:4,size:.2})}});
   grass(520,[0x6aa83a,0x5a9a3a,0x8ac850],61);
-  makeGround({c1:0x7ab84a,c2:0x6aa840,mount:0x8aa070,snow:0xfffbe8,path:0xc8b080,seed:61,snowY:14,mh:20});
+  makeGround({edge:'puffs',c1:0x7ab84a,c2:0x6aa840,mount:0x8aa070,snow:0xfffbe8,path:0xc8b080,seed:61,snowY:14,mh:20});
   finishLevel();
-  AU.music('p1');AU.ambient('birds');
+  AU.music('p5');AU.ambient('birds');
   L.arrive=[['kapik','Одуванчия... Всё вокруг в пуху. Даже воздух щекочет нос.'],['kapik','А вот и Великий Пух. Какой огромный! Кажется, у него насморк.']];
   L.objective=()=>{const st=qs('c2');
     if(!S.tr)return{text:'Без переводчика не обойтись',pos:null};

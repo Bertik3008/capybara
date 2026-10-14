@@ -77,7 +77,7 @@ function buildP4(){
   if(!qdone('s4b'))carryItem('crate',ITEMS.crate,7,0,29.2,{name:'Ящик с гайками',label:'взять ящик с гайками',when:()=>qs('s4b')===1});
   /* smelter in the warehouse */
   vis(G.cyl,0x5a4a44,9.6,.9,29.2,.8,1.8,.8,0,0,0,.03,TX.brick);vis(G.cone,0x5a4a44,9.6,2.3,29.2,.8,1,.8,0,0,0,.03,TX.brick);gvis(G.box,0xff7a2e,9.6,.7,28.4,.6,.5,.05);const sm=glow(0xff7a2e,3,.7);sm.position.set(9.6,.8,28.2);L.group.add(sm);tick(t=>{sm.material.opacity=.5+Math.sin(t*11)*.15});
-  workshop(9.6,0,28,{title:'Плавильня',help:'Раздувайте мехами вовремя: три точных нажатия - готовая шестерня.',from:'scrap',need:5,to:'cog',btn:'Раздуть',r:2.2});
+  workshop(9.6,0,28,{title:'Плавильня',kind:'hold',help:'Удерживайте E, чтобы нагреть металл, и отпустите в зелёной зоне. Перегреете - начнёте заново.',from:'scrap',need:5,to:'cog',btn:'Раздуть',r:2.2});
   /* broken cleaners */
   const CL=[[14,0,-3],[-18,7.3,26.4],[9.6,0,26.4],[CX+6,12.7,CZ]];
   CL.forEach((p,i)=>{const done=!!S.got['cl'+i];const n=npc('cleaner',p[0],p[1],p[2],{yaw:i,pose:done?'idle':'lie',nc:true,walk:done&&p[1]===0?[[p[0],p[2]],[p[0]+2,p[2]+1],[p[0],p[2]+2]]:null,speed:.8});
@@ -98,7 +98,7 @@ function buildP4(){
   scatter(r,14,10,58,avoid,(x,z,s)=>crate(x,0,z,1+r()*.4,pick([0x9a7a4a,0xb07a42])));
   scatter(r,8,16,58,avoid,(x,z,s)=>container(x,0,z,6,r()<.5,pick([0xc94f3a,0x3a6ad6,0x4f9a6a,0xffab4a])));
   for(let i=0;i<6;i++){const a=i/6*TAU+.3;vis(G.cyl,0x3b4348,Math.cos(a)*40,4,Math.sin(a)*40,.15,8,.15);gvis(G.sph,0xffd36b,Math.cos(a)*40,8.1,Math.sin(a)*40,.25,.25,.25)}
-  makeGround({c1:0x6a6e74,c2:0x5a5e64,mount:0x4a3c38,snow:0x7a6a5a,path:0x9a8a5a,seed:51,snowY:30,mh:16});
+  makeGround({edge:'pipes',c1:0x6a6e74,c2:0x5a5e64,mount:0x4a3c38,snow:0x7a6a5a,path:0x9a8a5a,seed:51,snowY:30,mh:16});
   finishLevel();
   AU.music('p4');AU.ambient('hum');
   L.arrive=[['kapik','Сплошное железо. Пахнет маслом и искрами.'],['kapik','Винтик тут как дома. Надеюсь, он ничего не разобрал.']];

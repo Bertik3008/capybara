@@ -22,6 +22,9 @@
   <div id="toasts"></div>
   <div id="banner" hidden><small id="bannerTag"></small><b id="bannerTitle"></b><span id="bannerSub"></span></div>
   <div id="timer" hidden></div>
+  <div id="heat" hidden><small>Жар</small><div><i id="heatFill"></i></div></div>
+  <div id="bossBar" hidden><b>Король Рогожар</b><div><i id="bossFill"></i></div></div>
+  <div id="gunHint" hidden></div>
   <div id="carryTag" hidden></div>
   <div id="clickhint" hidden>Кликните по экрану, чтобы управлять камерой</div>
   <div id="shud" hidden>
@@ -52,7 +55,7 @@
     <button id="bSet">Настройки</button>
   </nav>
   <div class="tconfirm" id="tConfirm" hidden><p>Начать заново? Сохранение удалится.</p><div class="btns"><button id="bNewYes" class="primary">Начать заново</button><button id="bNewNo" class="ghost">Отмена</button></div></div>
-  <p class="tfoot">Версия 4 · глава 2</p>
+  <p class="tfoot">Версия 5 · глава 3</p>
 </div>
 
 <div id="pro" class="screen" hidden>
@@ -109,6 +112,21 @@
   </div>
 </div>
 
+<div id="bro" class="screen menu" hidden>
+  <div class="sheet">
+    <div class="shopHead"><div class="portrait"><img id="broPic" alt=""></div><div style="flex:1;min-width:0"><h2 id="broName"></h2><div class="hearts" id="broHearts"></div><p class="sub" id="broMood" style="margin:4px 0 0"></p></div></div>
+    <div class="broBtns">
+      <button id="broTalk">Поговорить</button>
+      <button id="broFeed">Угостить</button>
+      <button id="broPet">Почесать за ушком</button>
+      <button id="broPlay" class="primary">Догонялки</button>
+      <button id="broGift" class="primary" hidden>Принять подарок</button>
+    </div>
+    <p class="sub">Сердечки растут от угощений, догонялок и почёсываний. Пять сердечек - и брат что-то подарит.</p>
+    <button class="ghost" data-close>Отойти</button>
+  </div>
+</div>
+
 <div id="map" class="screen menu" hidden>
   <div class="mapSheet">
     <div class="mapWrap"><canvas id="mapc"></canvas></div>
@@ -142,6 +160,13 @@
     <p class="reward" id="endReward" hidden><span class="coin"></span>+50 монет и покраска тарелки «Пушистая»</p>
     <button id="endOk" class="primary">Гулять дальше</button>
   </div>
+</div>
+
+<div id="scope" hidden>
+  <div class="scopeRing"></div>
+  <div class="scopeCard"><small>Телескоп · <span id="scopeN"></span></small><b id="scopeName"></b><p id="scopeTxt"></p>
+    <div class="btns"><button id="scPrev">◀ Назад</button><button id="scNext" class="primary">Дальше ▶</button><button id="scExit" class="ghost">Отойти</button></div>
+    <p class="scHint">A и D - другая цель · мышь - чуть повести трубой · E - отойти</p></div>
 </div>
 
 <div id="fade"><div id="fadeText"></div></div>

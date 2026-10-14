@@ -4,7 +4,7 @@ const ICON={
   tr:'<path d="M4 5h16v10H9l-5 4z"/><path d="M8 9h8M8 12h5"/>',
   jump2:'<path d="M12 3v6M9 6l3-3 3 3"/><path d="M6 21c2-2 4-2 6 0s4 2 6 0M6 17c2-2 4-2 6 0s4 2 6 0M6 13c2-2 4-2 6 0s4 2 6 0"/>',
   run:'<path d="M5 18h13a2 2 0 0 0 2-2l-6-2-2-6H7l-2 10z"/><path d="M3 21h17"/>',
-  magnet:'<path d="M6 4v8a6 6 0 0 0 12 0V4h-4v8a2 2 0 0 1-4 0V4z"/><path d="M6 8h4M14 8h4"/>',
+  bag:'<path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
   boost:'<path d="M12 3c3 4 5 7 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-6 1-9z"/>',
   shield:'<path d="M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
   auto:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
@@ -13,7 +13,8 @@ const ICON={
   hammock:'<path d="M3 4v16M21 4v16M3 9c4 6 14 6 18 0"/>',
   fountain:'<path d="M5 20h14l-1-5H6z"/><path d="M12 15V7M12 7c-3 0-4 2-5 4M12 7c3 0 4 2 5 4"/>',
   onsen:'<path d="M3 14h18v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"/><path d="M8 10c-1-2 1-3 0-5M12 10c-1-2 1-3 0-5M16 10c-1-2 1-3 0-5"/>',
-  telescope:'<path d="M4 12l12-6 2 4-12 6z"/><path d="M10 14l-3 7M12 13l3 8"/>'
+  telescope:'<path d="M4 12l12-6 2 4-12 6z"/><path d="M10 14l-3 7M12 13l3 8"/>',
+  garden:'<path d="M4 20h16"/><path d="M8 20v-5M12 20v-8M16 20v-6"/><circle cx="8" cy="14" r="2"/><circle cx="12" cy="10" r="2.5"/><circle cx="16" cy="13" r="2"/>'
 };
 const svgI=k=>`<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#ffab4a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICON[k]||''}</svg>`;
 
@@ -21,17 +22,15 @@ function toast(t){const d=document.createElement('div');d.className='toast';d.te
 let banT=0;
 function banner(tag,title,sub){$('#bannerTag').textContent=tag;$('#bannerTitle').textContent=title;$('#bannerSub').textContent=sub||'';const b=$('#banner');b.hidden=true;void b.offsetWidth;b.hidden=false;clearTimeout(banT);banT=setTimeout(()=>b.hidden=true,3600)}
 function flash(color){const f=$('#flash');f.style.transition='none';f.style.background=color;f.style.opacity='.6';requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.transition='opacity .7s';f.style.opacity='0'}))}
-UI.coins=d=>{$('#coins').textContent=S.coins;if(d){const p=$('#coinPill');p.classList.remove('bump');void p.offsetWidth;p.classList.add('bump')}if(!$('#shop').hidden)renderShop()};
+UI.coins=d=>{$('#coins').textContent=S.coins;if(d){const p=$('#coinPill');p.classList.remove('bump');void p.offsetWidth;p.classList.add('bump')}if(!$('#shop').hidden)renderShop();if(!$('#trade').hidden)renderTrade()};
+UI.inv=bump=>{$('#bagN').textContent=`${invCount()}/${cap()}`;const p=$('#bagPill');p.classList.toggle('full',invCount()>=cap());if(bump){p.classList.remove('bump');void p.offsetWidth;p.classList.add('bump')}};
 UI.bros=()=>{$('#bros').innerHTML=PIDS.map(p=>`<span class="bro ${S.rescued[p]?'on':''}" title="${CAST[PL[p].bro].name}"><img alt="" src="${portrait(PL[p].bro)}"></span>`).join('')};
 UI.objFlash=()=>{const o=$('#objBox');o.classList.remove('flash');void o.offsetWidth;o.classList.add('flash');lastObj=''};
-UI.refresh=()=>{UI.coins();UI.bros();lastObj='';objT=0};
+UI.refresh=()=>{UI.coins();UI.inv();UI.bros();lastObj='';objT=0};
 
 /* ---------- OBJECTIVE + MARKER ---------- */
 let lastObj='',objT=0,curObj=null;
-function getObjective(){
-  if(mode==='space'||mode==='map')return spaceObjective();
-  if(!L)return null;const o=L.objective?L.objective():null;return o;
-}
+function getObjective(){if(mode==='space')return spaceObjective();if(!L)return null;return L.objective?L.objective():null}
 function updObjective(dt){objT-=dt;if(objT<=0){objT=.25;curObj=getObjective();const t=curObj?curObj.text:'';if(t!==lastObj){lastObj=t;$('#obj').textContent=t;$('#objTag').textContent=curObj&&curObj.tag||'Задача'}$('#objBox').hidden=!t}
   const dEl=$('#objDist');if(curObj&&curObj.pos&&mode!=='space'){const d=Math.hypot(curObj.pos[0]-P.x,curObj.pos[2]-P.z);dEl.textContent=Math.round(d)+' м'}else if(curObj&&curObj.dist!=null)dEl.textContent=curObj.dist;else dEl.textContent='';
   updMarker(curObj&&curObj.pos)}
@@ -43,17 +42,18 @@ function updMarker(pos){const mk=$('#marker');if(!pos||(mode!=='play'&&mode!=='s
   if(off){let dx=sx-W/2,dy=sy-H/2;if(behind&&Math.abs(dy)<1)dy=1;const k=Math.min((W/2-m)/Math.max(Math.abs(dx),1e-6),(H/2-m-35)/Math.max(Math.abs(dy),1e-6));sx=W/2+dx*k;sy=H/2+dy*k;const a=Math.atan2(dy,dx);b.style.transform=`translate(${Math.cos(a)*22}px,${Math.sin(a)*22}px) rotate(${a*180/Math.PI-90}deg)`}
   mk.classList.toggle('off',off);mk.hidden=false;mk.style.transform=`translate(${sx}px,${sy}px)`;$('#markerD').textContent=Math.round(dist)+' м'}
 
-/* ---------- DIALOG ---------- */
+/* ---------- DIALOG: storybook style ---------- */
+const DCOL={kapik:'#ff9a2e',yuzik:'#ff9a2e',snezhok:'#3fb6c8',gribok:'#d8453c',vintik:'#c99a3a',otter:'#4a7bd1',mole:'#3a8a5a',citron:'#c94f3a',grushka:'#4f9a3a',morkovka:'#e07a1f',farmhand:'#4f9a3a',brr:'#2a8aa8',fyu:'#d84a4a',usach:'#2c5a8a',penguin:'#2a8aa8',sliz:'#8a4ab0',kvaba:'#8a4ab0',kvak:'#3a9a4a',frog:'#3a9a4a',shurup:'#e07a1f',bolt:'#2a8aa8',posylkin:'#3a6ad6',magnetron:'#c03030',cleaner:'#3a9a6a',robot:'#2a8aa8'};
 let dlgQ=[],dlgEnd=null,typing=null,curText='',dlgRet='play';
-function say(lines,onEnd){dlgQ=lines.slice();dlgEnd=onEnd||null;if(mode!=='dialog')dlgRet=mode==='space'?'space':'play';for(const k in keys)keys[k]=false;setMode('dialog');$('#dlg').hidden=false;$('#dlgHint').textContent=isTouch?'Нажмите, чтобы продолжить':'E, пробел или клик - дальше';nextLine()}
+function say(lines,onEnd){dlgQ=lines.slice();dlgEnd=onEnd||null;if(mode!=='dialog')dlgRet=mode==='space'?'space':'play';for(const k in keys)keys[k]=false;setMode('dialog');const d=$('#dlg');d.hidden=false;d.classList.remove('in');void d.offsetWidth;d.classList.add('in');nextLine()}
 function nextLine(){
   if(!dlgQ.length){$('#dlg').hidden=true;clearInterval(typing);typing=null;const f=dlgEnd;dlgEnd=null;setMode(dlgRet);lock();if(f)f();return}
-  const ln=dlgQ.shift(),c=CAST[ln[0]],alien=ln[2]==='alien';
-  $('#dlgPic').src=portrait(ln[0]);$('#dlgName').textContent=alien?'???':c.name;const el=$('#dlgText');el.classList.toggle('alien',alien);
+  const ln=dlgQ.shift(),c=CAST[ln[0]],alien=ln[2]==='alien';const d=$('#dlg');d.style.setProperty('--sp',alien?'#7a5ab0':(DCOL[ln[0]]||'#ff9a2e'));d.classList.toggle('kapik',ln[0]==='kapik');
+  $('#dlgPic').src=portrait(ln[0]);$('#dlgName').textContent=alien?'???':c.name;const el=$('#dlgText');el.classList.toggle('alien',alien);$('#dlgNext').classList.remove('on');
   curText=ln[1];el.textContent='';let i=0;clearInterval(typing);
-  typing=setInterval(()=>{i+=2;el.textContent=curText.slice(0,i);if(i%6===0)AU.sfx('talk',c.voice*(.9+Math.random()*.25));if(i>=curText.length){clearInterval(typing);typing=null}},17);
+  typing=setInterval(()=>{i+=2;el.textContent=curText.slice(0,i);if(i%6===0)AU.sfx('talk',c.voice*(.9+Math.random()*.25));if(i>=curText.length){clearInterval(typing);typing=null;$('#dlgNext').classList.add('on')}},17);
 }
-function advance(){if(typing){clearInterval(typing);typing=null;$('#dlgText').textContent=curText;return}nextLine()}
+function advance(){if(typing){clearInterval(typing);typing=null;$('#dlgText').textContent=curText;$('#dlgNext').classList.add('on');return}nextLine()}
 $('#dlg').addEventListener('click',e=>{e.stopPropagation();advance()});
 
 /* ---------- PROMPT ---------- */
@@ -61,63 +61,65 @@ function showPrompt(lab,p){const pr=$('#prompt');if(!lab){pr.hidden=true;return}
 
 /* ---------- SCREENS ---------- */
 let curScreen=null,screenRet='play';
-function openScreen(sel){if(curScreen)$(curScreen).hidden=true;else screenRet=mode==='space'?'space':'play';for(const k in keys)keys[k]=false;ePressed=false;curScreen=sel;$(sel).hidden=false;setMode('menu');AU.sfx('ui')}
-function closeScreen(){if(curScreen)$(curScreen).hidden=true;const was=curScreen;curScreen=null;setMode(screenRet);lock();
-  if((UI.rebuildAfter||UI.hatChanged)&&screenRet==='play'){UI.rebuildAfter=UI.hatChanged=false;rebuildHere()}else if((UI.hatChanged||UI.rebuildAfter)&&screenRet==='space'){UI.hatChanged=false;SPX.repaint()}if(was==='#map'&&UI.onMapClose){const f=UI.onMapClose;UI.onMapClose=null;f()}}
+function openScreen(sel){if(curScreen)$(curScreen).hidden=true;else screenRet=mode==='space'?'space':mode==='title'?'title':'play';for(const k in keys)keys[k]=false;ePressed=false;curScreen=sel;$(sel).hidden=false;if(screenRet!=='title')setMode('menu');AU.sfx('ui')}
+function closeScreen(){if(curScreen)$(curScreen).hidden=true;const was=curScreen;curScreen=null;if(screenRet==='title'){return}setMode(screenRet);lock();
+  if((UI.rebuildAfter||UI.hatChanged)&&screenRet==='play'){UI.rebuildAfter=UI.hatChanged=false;rebuildHere()}else if((UI.hatChanged||UI.rebuildAfter)&&screenRet==='space'){UI.hatChanged=UI.rebuildAfter=false;SPX.repaint()}}
 $$('[data-close]').forEach(b=>b.addEventListener('click',closeScreen));
 
 /* pause menu */
 let menuTab='quests';
-function openMenu(tab){menuTab=tab||menuTab;openScreen('#menu');renderMenu()}
+function openMenu(tab){menuTab=tab||menuTab;const fromTitle=mode==='title';if(fromTitle&&(menuTab==='quests'||menuTab==='kapik'))menuTab='settings';openScreen('#menu');$('#menu').classList.toggle('fromTitle',fromTitle);$('#mResume').textContent=fromTitle?'Назад':'Продолжить';renderMenu()}
 $('#menuTabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;menuTab=b.dataset.tab;AU.sfx('ui');renderMenu()});
 $('#mResume').addEventListener('click',closeScreen);
+$('#mExit').addEventListener('click',()=>{closeScreen();toTitle()});
 function renderMenu(){$$('#menuTabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===menuTab));const B=$('#menuBody');
-  $('#menuTitle').textContent={quests:'Журнал заданий',kapik:'Капик',settings:'Настройки',controls:'Управление'}[menuTab];
+  $('#menuTitle').textContent={quests:'Журнал заданий',kapik:'Капик и сумка',settings:'Настройки',controls:'Управление'}[menuTab];
   if(menuTab==='quests'){const order=['base','p1','p2','p3','p4'];let h='';
     for(const pl of order){const ids=Object.keys(QUESTS).filter(id=>QUESTS[id].pl===pl&&qs(id)>0);if(!ids.length)continue;h+=`<div class="qsec">${PL[pl].name}</div>`;
       ids.sort((a,b)=>(qdone(a)-qdone(b))||(QUESTS[b].main||0)-(QUESTS[a].main||0)).forEach(id=>{const q=QUESTS[id],st=qs(id),done=st===99;
         h+=`<div class="card ${done?'done':''} ${L&&L.id===pl&&!done?'cur':''}"><div class="thumb"><img alt="" src="${portrait(q.giver)}"></div><div class="cardMain"><b>${q.t}</b><span>${done?'Выполнено':q.steps[Math.min(st,q.steps.length)-1]}</span><div class="tags">${q.main?'<span class="tag gold">Главное</span>':'<span class="tag">Побочное</span>'}${q.rw?`<span class="tag">Награда: ${coinsWord(q.rw)}</span>`:''}${done?'<span class="tag ok">Готово</span>':''}</div></div></div>`})}
     const hid=Object.keys(QUESTS).filter(id=>!qs(id)).length;B.innerHTML=`<div class="cards">${h||'<div class="empty">Пока заданий нет. Поговорите с жителями: над теми, у кого есть дело, горит оранжевый «!».</div>'}</div>${hid?`<p class="sub" style="margin-top:12px">Ещё не найдено заданий: ${hid}. Ищите жителей в необычных местах.</p>`:''}`}
-  else if(menuTab==='kapik'){const own=Object.keys(HAT_INFO).filter(h=>S.hats[h]);const done=Object.keys(QUESTS).filter(qdone).length;
-    B.innerHTML=`<div class="card"><div class="thumb" style="flex-basis:96px;height:96px"><img alt="" src="${portrait('kapik')}"></div><div class="cardMain"><b>Капик</b><span>Братьев спасено: ${PIDS.filter(p=>S.rescued[p]).length} из 4 · Заданий выполнено: ${done} из ${Object.keys(QUESTS).length} · Сувениров: ${Object.keys(S.souv).length} из 4</span></div></div>
-    <div class="qsec">Шапки</div><div class="cards">${own.map(h=>`<div class="card ${S.hat===h?'cur':''}"><div class="thumb"><img alt="" src="${portraitHat(h)}"></div><div class="cardMain"><b>${HAT_INFO[h].name}</b></div><button data-hat="${h}" ${S.hat===h?'disabled':''}>${S.hat===h?'Надета':'Надеть'}</button></div>`).join('')}</div>
-    <p class="sub" style="margin-top:4px">Новые шапки продаются в лавке Тётушки Выдры.</p>`;
+  else if(menuTab==='kapik'){const own=Object.keys(HAT_INFO).filter(h=>S.hats[h]);const done=Object.keys(QUESTS).filter(qdone).length;const ks=Object.keys(S.inv).filter(k=>S.inv[k]>0);
+    B.innerHTML=`<div class="card"><div class="thumb" style="flex-basis:96px;height:96px"><img alt="" src="${portrait('kapik')}"></div><div class="cardMain"><b>Капик</b><span>Братьев спасено: ${PIDS.filter(p=>S.rescued[p]).length} из 4 · Заданий: ${done} из ${Object.keys(QUESTS).length} · Сувениров: ${Object.keys(S.souv).length} из 4${S.got.rod?' · Удочка есть':''}</span></div></div>
+    <div class="qsec">Сумка · ${invCount()} из ${cap()}</div><div class="cards">${ks.length?ks.map(k=>`<div class="card"><div class="thumb" style="background:${RES[k].col}33"><span class="resdot" style="background:${RES[k].col}"></span></div><div class="cardMain"><b>${RES[k].name}</b><span>${S.inv[k]} шт. · ${coinsWord(RES[k].price)} за штуку у торговцев</span></div></div>`).join(''):'<div class="empty">Сумка пуста. Собирайте ягоды, мандарины, рыбу, светогрибы и железо, продавайте торговцам.</div>'}</div>
+    <div class="qsec">Шапки</div><div class="cards">${own.map(h=>`<div class="card ${S.hat===h?'cur':''}"><div class="thumb"><img alt="" src="${portraitHat(h)}"></div><div class="cardMain"><b>${HAT_INFO[h].name}</b></div><button data-hat="${h}" ${S.hat===h?'disabled':''}>${S.hat===h?'Надета':'Надеть'}</button></div>`).join('')}</div>`;
     B.querySelectorAll('[data-hat]').forEach(b=>b.onclick=()=>{S.hat=b.dataset.hat;save();AU.sfx('ui');renderMenu();UI.hatChanged=true})}
-  else if(menuTab==='settings'){const s=S.set;B.innerHTML=`<div class="cards">
+  else if(menuTab==='settings'){const s=S.set,q=Q.q;B.innerHTML=`<div class="cards">
+    <div class="setrow"><span>Графика</span><div class="seg" id="sQ">${['Быстро','Сбалансированно','Красиво'].map((n,i)=>`<button data-q="${i}" aria-pressed="${q===i}">${n}</button>`).join('')}</div></div>
     <div class="setrow"><label for="sMus">Музыка</label><input id="sMus" type="range" min="0" max="1" step=".05" value="${s.music}"></div>
     <div class="setrow"><label for="sSfx">Звуки</label><input id="sSfx" type="range" min="0" max="1" step=".05" value="${s.sfx}"></div>
     <div class="setrow"><label for="sSens">Чувствительность камеры</label><input id="sSens" type="range" min=".3" max="2.5" step=".05" value="${s.sens}"></div>
     <label class="check"><input id="sInv" type="checkbox" ${s.invert?'checked':''}>Инвертировать камеру по вертикали</label>
-    <label class="check"><input id="sSh" type="checkbox" ${s.shadows?'checked':''}>Тени (красивее, но тяжелее для слабых устройств)</label>
     <label class="check"><input id="sHint" type="checkbox" ${s.hints?'checked':''}>Подсказки обучения</label></div>
-    <div class="btns" style="justify-content:flex-start;margin-top:8px">${S.tut<TUT.length?'<button id="sSkip">Пропустить обучение</button>':''}<button id="sReset" class="ghost">Начать игру заново</button></div>`;
-    const up=()=>{s.music=+$('#sMus').value;s.sfx=+$('#sSfx').value;s.sens=+$('#sSens').value;s.invert=$('#sInv').checked;s.shadows=$('#sSh').checked;s.hints=$('#sHint').checked;save();AU.vol();applyShadows()};
+    <p class="sub" style="margin-top:6px">«Быстро» без теней и с меньшим разрешением, для слабых телефонов. «Красиво» с мягкими тенями и густой травой.</p>
+    <div class="btns" style="justify-content:flex-start;margin-top:8px">${S.tut<TUT.length&&mode!=='title'?'<button id="sSkip">Пропустить обучение</button>':''}</div>`;
+    const up=()=>{s.music=+$('#sMus').value;s.sfx=+$('#sSfx').value;s.sens=+$('#sSens').value;s.invert=$('#sInv').checked;s.hints=$('#sHint').checked;save();AU.vol()};
     B.querySelectorAll('input').forEach(i=>i.addEventListener('input',up));
-    const sk=$('#sSkip');if(sk)sk.onclick=()=>{S.tut=TUT.length;save();renderMenu();toast('Обучение пропущено')};
-    let arm=false;$('#sReset').onclick=e=>{if(!arm){arm=true;e.target.textContent='Точно? Прогресс удалится. Нажмите ещё раз';setTimeout(()=>{arm=false;if(e.target.isConnected)e.target.textContent='Начать игру заново'},3500);return}wipeSave();location.reload()}}
-  else{const rows=isTouch?[['Джойстик слева','ходьба'],['Правая часть экрана','поворот камеры'],['Прыжок','прыжок; в воздухе ещё раз - двойной прыжок (нужны Пружинные лапы)'],['E','действие; удерживать у НЛО и у планеты'],['Бросок','снежок на Ледоре'],['В космосе: джойстик','газ и сдвиг'],['В космосе: правая часть','поворот тарелки'],['Карта','борткомпьютер']]
-    :[['W A S D','ходьба'],['Мышь','поворот камеры'],['Shift','бег'],['Пробел','прыжок; в воздухе ещё раз - двойной прыжок (нужны Пружинные лапы)'],['E','действие; удерживать у НЛО и у планеты'],['Q','бросить предмет из лап'],['Левая кнопка мыши','бросить снежок на Ледоре'],['J','журнал заданий'],['Esc','пауза'],['В космосе: W S','газ вперёд и назад'],['В космосе: мышь','поворот тарелки'],['В космосе: Shift','форсаж'],['В космосе: пробел и C','вверх и вниз'],['В космосе: M','карта борткомпьютера'],['В космосе: V','вид из кабины или сзади']];
-    B.innerHTML=`<dl class="ctlgrid">${rows.map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('')}</dl>${isTouch?'':'<p class="sub" style="margin-top:12px">Если мышь не захватывается, нажмите на экран игры. В браузере без захвата мыши камеру можно вращать, зажав левую кнопку.</p>'}`}
+    $('#sQ').onclick=e=>{const b=e.target.closest('[data-q]');if(!b)return;s.q=+b.dataset.q;save();applyQuality();applyShadows();UI.rebuildAfter=true;renderMenu()};
+    const sk=$('#sSkip');if(sk)sk.onclick=()=>{S.tut=TUT.length;save();renderMenu();toast('Обучение пропущено')}}
+  else{const rows=isTouch?[['Джойстик слева','ходьба'],['Правая часть экрана','поворот камеры'],['Прыжок','прыжок; в воздухе ещё раз - двойной прыжок (нужны Пружинные лапы)'],['E','действие; удерживать, чтобы собирать и садиться в НЛО'],['Бросок','снежок на Ледоре'],['Карта','карта звёздной системы'],['В космосе: джойстик','газ и сдвиг'],['В космосе: правая часть','поворот тарелки']]
+    :[['W A S D','ходьба'],['Мышь','поворот камеры'],['Shift','бег'],['Пробел','прыжок; в воздухе ещё раз - двойной прыжок (нужны Пружинные лапы)'],['E','действие; удерживать, чтобы собирать и садиться в НЛО'],['Q','бросить предмет из лап'],['M','карта звёздной системы'],['Левая кнопка мыши','бросить снежок на Ледоре'],['J','журнал заданий'],['Esc','пауза'],['В космосе: W S','газ вперёд и назад'],['В космосе: мышь','поворот тарелки'],['В космосе: Shift','форсаж'],['В космосе: пробел и C','вверх и вниз'],['В космосе: V','вид из кабины или снаружи']];
+    B.innerHTML=`<dl class="ctlgrid">${rows.map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('')}</dl>`}
 }
-function applyShadows(){renderer.shadowMap.enabled=!!S.set.shadows;sun.castShadow=!!S.set.shadows;wscene.traverse(o=>{if(o.material){(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.needsUpdate=true)}})}
+function applyShadows(){wscene.traverse(o=>{if(o.material){(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.needsUpdate=true)}})}
 
 /* ---------- SHOP ---------- */
 const UPG={
   gear:[{id:'tr',name:'Универсальный переводчик',price:10,desc:'Капик понимает жителей всех четырёх планет',own:()=>S.tr,buy:()=>{S.tr=true;if(qs('m0')!==99)qcomplete('m0')}},
-    {id:'jump2',name:'Пружинные лапы',price:30,desc:'Двойной прыжок: прыгните ещё раз в воздухе. Открывает самые высокие тайники'},
-    {id:'run',name:'Ботинки-скороходы',price:20,desc:'Капик бегает на 18% быстрее'},
-    {id:'magnet',name:'Монетный магнит',price:25,desc:'Монеты сами летят к Капику с расстояния 5 м'}],
-  ship:[{id:'boost',name:'Форсаж+',price:25,desc:'Форсаж тарелки на 40% мощнее и восстанавливается быстрее'},
-    {id:'shield',name:'Щит-отражатель',price:20,desc:'Астероиды почти не тормозят тарелку'},
-    {id:'auto',name:'Автопилот',price:40,desc:'Тарелка сама летит к планете, выбранной на карте'}],
-  decor:[{id:'lights',name:'Гирлянды',price:15,desc:'Разноцветные огни над площадкой НЛО'},{id:'tree',name:'Мандариновое дерево',price:15,desc:'Юзик будет счастлив'},
-    {id:'hammock',name:'Гамак',price:20,desc:'Для Грибка, который любит поспать'},{id:'fountain',name:'Фонтан',price:25,desc:'Каменный фонтан в центре базы'},
-    {id:'onsen',name:'Горячий источник',price:30,desc:'Тёплая купель у пруда. Капибары это обожают'},{id:'telescope',name:'Телескоп',price:20,desc:'Ставится на крышу амбара. В него видно все планеты'}]
+    {id:'bag',name:'Большая сумка',price:25,desc:'Вмещает 30 находок вместо 12'},
+    {id:'run',name:'Ботинки-скороходы',price:35,desc:'Капик бегает на 18% быстрее'},
+    {id:'jump2',name:'Пружинные лапы',price:45,desc:'Двойной прыжок: прыгните ещё раз в воздухе. Открывает самые высокие тайники'}],
+  ship:[{id:'boost',name:'Форсаж+',price:40,desc:'Форсаж тарелки на 40% мощнее и восстанавливается быстрее'},
+    {id:'shield',name:'Щит-отражатель',price:35,desc:'Астероиды почти не тормозят тарелку'},
+    {id:'auto',name:'Автопилот',price:70,desc:'Тарелка сама летит к планете, выбранной на карте'}],
+  decor:[{id:'garden',name:'Ягодная грядка',price:20,desc:'Ещё четыре куста звёздных ягод у амбара'},{id:'lights',name:'Гирлянды',price:20,desc:'Разноцветные огни над площадкой НЛО'},{id:'tree',name:'Мандариновое дерево',price:25,desc:'Юзик будет счастлив. Дерево можно трясти'},
+    {id:'hammock',name:'Гамак',price:30,desc:'Для Грибка, который любит поспать'},{id:'fountain',name:'Фонтан',price:40,desc:'Каменный фонтан в центре базы'},
+    {id:'onsen',name:'Горячий источник',price:55,desc:'Тёплая купель у пруда. Капибары это обожают'},{id:'telescope',name:'Телескоп',price:35,desc:'Ставится на крышу амбара. В него видно все планеты'}]
 };
 let shopTab='gear';
-const SHOP_LINES=['Переводчики, лапы, ботинки. Всё для храброй капибары.','Монеты не пахнут, а мандарины пахнут. Плати монетами.','Купишь гамак - братья скажут спасибо.'];
+const SHOP_LINES=['Переводчики, лапы, ботинки. Всё для храброй капибары.','Монеты не пахнут, а мандарины пахнут. Плати монетами.','Купишь гамак - братья скажут спасибо.','Ягоды, рыбу и всё прочее принимаю на вкладке «Продать».'];
 function openShop(){openScreen('#shop');$('#shopPic').src=portrait('otter');$('#shopSay').innerHTML='<b>Тётушка Выдра:</b> '+(S.tr?pick(SHOP_LINES):'Без переводчика на других планетах ты услышишь только «блорп». Он стоит 10 монет.');renderShop()}
-$('#shopTabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;shopTab=b.dataset.tab;AU.sfx('ui');renderShop()});
+$('#shopTabs').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;if(b.dataset.tab==='sell'){openTrade('otter');return}shopTab=b.dataset.tab;AU.sfx('ui');renderShop()});
 function renderShop(){$$('#shopTabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===shopTab));$('#shopCoins').textContent=S.coins;let h='';
   const row=(thumb,name,desc,own,price,attr,useLabel)=>`<div class="card ${own?'done':''}"><div class="thumb ${thumb.sw?'sw':''}" ${thumb.sw?`style="background:${thumb.sw}"`:''}>${thumb.img?`<img alt="" src="${thumb.img}">`:thumb.svg||''}</div><div class="cardMain"><b>${name}</b><span>${desc}</span></div>${own?(useLabel?`<button ${attr} data-use="1">${useLabel}</button>`:'<span class="tag ok">Куплено</span>'):`<button ${attr} ${S.coins<price?'disabled':''} class="primary"><span class="price"><span class="coin"></span>${price}</span></button>`}</div>`;
   if(shopTab==='gear')UPG.gear.forEach(u=>h+=row({svg:svgI(u.id)},u.name,u.desc,u.own?u.own():S.up[u.id],u.price,`data-buy="${u.id}"`));
@@ -128,21 +130,22 @@ function renderShop(){$$('#shopTabs [data-tab]').forEach(b=>b.setAttribute('aria
   $('#shopList').innerHTML=h}
 $('#shopList').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;
   const pay=p=>{if(S.coins<p){AU.sfx('bad');return false}S.coins-=p;AU.sfx('buy');UI.coins();return true};
-  if(b.dataset.buy){const u=[...UPG.gear,...UPG.ship].find(x=>x.id===b.dataset.buy);if(!pay(u.price))return;if(u.buy)u.buy();else S.up[u.id]=true;toast('Куплено: '+u.name)}
+  if(b.dataset.buy){const u=[...UPG.gear,...UPG.ship].find(x=>x.id===b.dataset.buy);if(!pay(u.price))return;if(u.buy)u.buy();else S.up[u.id]=true;toast('Куплено: '+u.name);UI.inv()}
   else if(b.dataset.paint){const k=b.dataset.paint;if(!S.paints[k]){if(!pay(PAINTS[k].price))return;S.paints[k]=1}S.paint=k;AU.sfx('ui');toast('Тарелка: '+PAINTS[k].name.toLowerCase()+' покраска');UI.rebuildAfter=true}
   else if(b.dataset.hat){const k=b.dataset.hat;if(!S.hats[k]){if(!pay(HAT_INFO[k].price))return;S.hats[k]=1}S.hat=k;toast('Капик надел: '+HAT_INFO[k].name.toLowerCase());UI.rebuildAfter=true}
   else if(b.dataset.decor){const u=UPG.decor.find(x=>x.id===b.dataset.decor);if(!pay(u.price))return;S.decor[u.id]=1;toast(u.name+' появится на базе');UI.rebuildAfter=true}
-  save();renderShop();if(S.tut===6&&S.tr)tutCheck()});
+  save();renderShop()});
 
-/* ---------- FISHING ---------- */
-const FISH={on:false,t:0,zone:[.4,.6],caught:0,need:3,spd:1.4,cb:null};
-function openFish(need,cb){FISH.on=true;FISH.t=Math.random()*5;FISH.caught=0;FISH.need=need;FISH.spd=1.3;FISH.cb=cb;newZone();openScreen('#fish');updFishUI()}
-function newZone(){const w=.22-FISH.caught*.03,a=.08+Math.random()*(.84-w);FISH.zone=[a,a+w];$('#fzone').style.left=a*100+'%';$('#fzone').style.width=w*100+'%'}
-function updFishUI(){$('#fishCount').textContent=`Поймано: ${FISH.caught} из ${FISH.need}`}
-function fishTick(dt){if(!FISH.on)return;FISH.t+=dt*FISH.spd;const v=(Math.sin(FISH.t*2.2)+1)/2*.96+.02;FISH.v=v;$('#fneedle').style.left=v*100+'%'}
-function fishHook(){if(!FISH.on)return;const v=FISH.v;if(v>=FISH.zone[0]&&v<=FISH.zone[1]){FISH.caught++;AU.sfx('reel');AU.sfx('item');updFishUI();FISH.spd+=.35;
-    if(FISH.caught>=FISH.need){FISH.on=false;setTimeout(()=>{closeScreen();if(FISH.cb)FISH.cb()},500);return}newZone()}else{AU.sfx('bad');toast('Рыба сорвалась')}}
-$('#fHook').addEventListener('click',fishHook);$('#fQuit').addEventListener('click',()=>{FISH.on=false;closeScreen()});
+/* ---------- MINI-GAME (fishing and workshops share one timing bar) ---------- */
+const MINI={on:false,t:0,zone:[.4,.6],caught:0,o:null,spd:1.3,v:.5};
+function openMini(o){MINI.on=true;MINI.o=o;MINI.t=Math.random()*5;MINI.caught=0;MINI.spd=1.3;$('#miniTitle').textContent=o.title;$('#miniHelp').textContent=o.help;$('#fHook').textContent=o.btn||'Жать';newZone();openScreen('#fish');updMiniUI()}
+function newZone(){const w=Math.max(.1,.22-MINI.caught*.025),a=.08+Math.random()*(.84-w);MINI.zone=[a,a+w];$('#fzone').style.left=a*100+'%';$('#fzone').style.width=w*100+'%'}
+function updMiniUI(){const o=MINI.o;$('#fishCount').textContent=o.loop?`${o.unit}: ${MINI.caught}`:`${o.unit}: ${MINI.caught} из ${o.need}`}
+function fishTick(dt){if(!MINI.on)return;MINI.t+=dt*MINI.spd;const v=(Math.sin(MINI.t*2.2)+1)/2*.96+.02;MINI.v=v;$('#fneedle').style.left=v*100+'%'}
+function fishHook(){if(!MINI.on)return;const v=MINI.v,o=MINI.o;if(v>=MINI.zone[0]&&v<=MINI.zone[1]){AU.sfx('reel');AU.sfx('item');MINI.spd=Math.min(3.2,MINI.spd+.25);
+    if(o.loop){if(!o.onCatch()){MINI.on=false;setTimeout(closeScreen,600);return}MINI.caught++;updMiniUI();newZone();return}
+    MINI.caught++;updMiniUI();if(MINI.caught>=o.need){MINI.on=false;setTimeout(()=>{closeScreen();if(o.onWin)o.onWin()},450);return}newZone()}else{AU.sfx('bad');toast(o.loop?'Сорвалась':'Мимо, ещё раз')}}
+$('#fHook').addEventListener('click',fishHook);$('#fQuit').addEventListener('click',()=>{MINI.on=false;closeScreen()});
 
 /* ---------- TUTORIAL ---------- */
 const KC=k=>`<span class="kc">${k}</span>`;
@@ -150,12 +153,12 @@ const TUT=[
   {t:()=>isTouch?'Проведите пальцем по правой части экрана, чтобы осмотреться':'Двигайте мышью, чтобы осмотреться',ok:()=>tutLook>2.2},
   {t:()=>isTouch?'Двигайте джойстик слева, чтобы идти':`Идите: ${KC('W')}${KC('A')}${KC('S')}${KC('D')}, бег: ${KC('Shift')}`,ok:()=>tutMove>2.5},
   {t:()=>isTouch?'Нажмите «Прыжок»':`Прыгните: ${KC('Пробел')}`,ok:()=>tutJump},
-  {t:()=>'Зайдите в амбар справа. Монеты на этой планете лежат внутри построек',ok:()=>L&&L.id==='base'&&tutBarn},
-  {t:()=>`Подойдите к сундуку и нажмите ${KC('E')}`,ok:()=>S.got['b-ch1']},
-  {t:()=>'Заберитесь по тюкам сена на сеновал и соберите монеты. Наберите 10 монет',ok:()=>S.coins>=10||S.tr},
-  {t:()=>'Купите универсальный переводчик в лавке Тётушки Выдры слева от тарелки',ok:()=>S.tr},
+  {t:()=>`Поговорите с Тётушкой Выдрой в лавке слева от тарелки: ${KC('E')}`,ok:()=>qs('m0')>=2},
+  {t:()=>`Соберите звёздные ягоды: удерживайте ${KC('E')} у кустов с синими огоньками`,ok:()=>(S.inv.berry||0)>=8||qs('m0')>=3},
+  {t:()=>'Отнесите ягоды Тётушке Выдре и получите первые монеты',ok:()=>qs('m0')>=3},
+  {t:()=>'Купите универсальный переводчик в лавке',ok:()=>S.tr},
   {t:()=>`Подойдите к тарелке и удерживайте ${KC('E')}, чтобы взлететь`,ok:()=>mode==='space'||(L&&L.id!=='base')},
-  {t:()=>isTouch?'Это открытый космос. Джойстик - газ, правая часть экрана - руль. Летите к Мандарине по оранжевому маркеру и удерживайте E у планеты':`Мышь - руль, ${KC('W')} - газ, ${KC('Shift')} - форсаж, ${KC('M')} - карта. Летите к Мандарине по оранжевому маркеру и удерживайте ${KC('E')} у планеты`,ok:()=>L&&L.id==='p1'&&mode!=='space'}
+  {t:()=>isTouch?'Вы в кабине! Джойстик - газ, правая часть экрана - руль. «Карта» - курс. Летите к Мандарине и удерживайте E у планеты':`Вы в кабине! Мышь - руль, ${KC('W')} - газ, ${KC('Shift')} - форсаж, ${KC('M')} - карта. Летите к Мандарине и удерживайте ${KC('E')} у планеты`,ok:()=>L&&L.id==='p1'&&mode!=='space'}
 ];
 let tutLook=0,tutMove=0,tutJump=false,tutBarn=false,tutShown=-1;
 function tutCheck(){if(S.tut>=TUT.length)return;let ch=false;while(S.tut<TUT.length&&TUT[S.tut].ok()){S.tut++;ch=true}if(ch){save();const el=$('#tut');el.classList.remove('done');void el.offsetWidth;el.classList.add('done');AU.sfx('ui')}}

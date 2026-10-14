@@ -11,35 +11,39 @@ function buildP2(){
   newLevel('p2');
   setSky({top:0x08102e,hor:0x2a5878,bot:0x1a2a3a,fog:0x2a4a62,near:35,far:150,hs:0xb8d8f0,hg:0x4a6a88,hi:.62,sc:0xcfe8ff,si:.5,sd:[.3,.55,.5],sunGlow:0x9fc8ff,stars:true});
   aurora();skyBody(0xdfe8ff,[140,110,-220],20);
-  L.spawn={x:0,y:0,z:9,yaw:0};L.surface='snow';L.waterMsg='Бр-р! Ледяная вода. Капик вернулся на точку возврата';
+  L.spawn={x:0,y:0,z:9,yaw:0};L.surface='snow';L.pathKind='snow';L.waterMsg='Бр-р! Ледяная вода. Капик вернулся на точку возврата';
   path([[0,9],[0,-18]],1.6,0xbcd4e0);path([[0,4],[12,-2]],1.3,0xbcd4e0);path([[0,6],[-20,6]],1.3,0xbcd4e0);
   placeUFO(0,16,{pad:0x9aaab8});
   /* ice tower with the elder */
-  const TX=16,TZ=-4,ice=0xbfe8ff;cyl(TX,0,TZ,1.5,9.9,0x9fd8f0,{g:G.cyl6});vis(G.cyl6,0xffffff,TX,9.95,TZ,1.55,.1,1.55);
-  for(let i=0;i<8;i++){const a=Math.PI*.5+i*TAU/8,h=(i+1)*1.1;const x=TX+Math.cos(a)*2.75,z=TZ+Math.sin(a)*2.75;box(x,0,z,1.5,h,1.5,ice,{jit:.08});vis(G.box,0xffffff,x,h+.04,z,1.56,.1,1.56)}
-  const brr=npc('brr',TX,9.9,TZ,{yaw:Math.PI/2,pose:'staff',talk:brrTalk,mark:()=>S.tr&&qs('m2')<2?'!':null,r:2.4});
-  for(let i=0;i<4;i++){const l=glow(0x7fe3e8,2.5,.6);l.position.set(TX+Math.cos(i*1.6)*1.6,10.5,TZ+Math.sin(i*1.6)*1.6);L.group.add(l)}
+  const ITX=16,TZ=-4,ice=0xbfe8ff;cyl(ITX,0,TZ,1.5,9.9,0x9fd8f0,{g:G.cyl6,tex:TX.ice});vis(G.cyl6,0xffffff,ITX,9.95,TZ,1.55,.1,1.55);
+  for(let i=0;i<8;i++){const a=Math.PI*.5+i*TAU/8,h=(i+1)*1.1;const x=ITX+Math.cos(a)*2.75,z=TZ+Math.sin(a)*2.75;box(x,0,z,1.5,h,1.5,ice,{jit:.08,tex:TX.ice});vis(G.box,0xffffff,x,h+.04,z,1.56,.1,1.56)}
+  const brr=npc('brr',ITX,9.9,TZ,{yaw:Math.PI/2,pose:'staff',talk:brrTalk,mark:()=>S.tr&&qs('m2')<2?'!':null,r:2.4});
+  for(let i=0;i<4;i++){const l=glow(0x7fe3e8,2.5,.6);l.position.set(ITX+Math.cos(i*1.6)*1.6,10.5,TZ+Math.sin(i*1.6)*1.6);L.group.add(l)}
   /* lake */
   const LX=0,LZ=-40,LR=21;water(LX,LZ,LR,{col:0x1f5a7a});for(let i=0;i<40;i++){const a=i/40*TAU;vis(G.dod,0xd8e8f0,LX+Math.cos(a)*(LR+.6),.15,LZ+Math.sin(a)*(LR+.6),.9,.45,.9,0,i)}
-  box(0,0,-20,2.2,.5,3,0x8a6a4a,{surf:'wood'});for(const s of[-1,1])vis(G.cyl,0x6b4628,s*1,0,-21.4,.1,1.2,.1);
+  box(0,0,-20,2.2,.5,3,0x8a6a4a,{surf:'wood',tex:TX.planks});for(const s of[-1,1])vis(G.cyl,0x6b4628,s*1,0,-21.4,.1,1.2,.1);
   checkpoint(0,.5,-19.6,2.2,1.6,Math.PI);
   crackTile(0,0,-23,2,2,ice);crackTile(0,0,-26,2,2,ice);
   const fa=dynBox(0,0,-29.5,3,.4,3,0,{m:mat(0xe8f6ff),surf:'ice'});fa.t='ice';mover(fa,t=>[-3.5+3.5*Math.cos(t*.6),0,-29.5]);
-  box(-8,0,-33.5,4,.7,4,0xe8f6ff,{surf:'snow'});vis(G.cone,0xbfe8ff,-9.2,1.3,-34.8,.4,1.4,.4);vis(G.cone,0xbfe8ff,-9.4,1,-32.5,.3,.9,.3);checkpoint(-8,.7,-33.5,3.6,3.6,Math.PI*.8);
+  box(-8,0,-33.5,4,.7,4,0xe8f6ff,{surf:'snow',tex:TX.snow});vis(G.cone,0xbfe8ff,-9.2,1.3,-34.8,.4,1.4,.4);vis(G.cone,0xbfe8ff,-9.4,1,-32.5,.3,.9,.3);checkpoint(-8,.7,-33.5,3.6,3.6,Math.PI*.8);
   const isl1Sign=textSprite('Точка возврата',{size:30,h:.3});isl1Sign.position.set(-8,2.3,-33.5);L.group.add(isl1Sign);
   crackTile(-4.2,0,-36,2,2,ice);crackTile(-1.4,0,-38.5,2,2,ice);crackTile(1.4,0,-41,2,2,ice);
   const fb=dynBox(4.6,0,-44.5,3,.4,3,0,{m:mat(0xe8f6ff),surf:'ice'});fb.t='ice';mover(fb,t=>[4.6,0,-44.5-3*Math.cos(t*.55)]);
-  box(4.5,0,-51,4,.8,3.5,0xe8f6ff,{surf:'snow'});vis(G.cone,0xbfe8ff,6,1.6,-52.2,.5,1.6,.5);vis(G.disc,0x0f2a3a,3.6,.81,-51.6,.45,.02,.45);
+  box(4.5,0,-51,4,.8,3.5,0xe8f6ff,{surf:'snow',tex:TX.snow});vis(G.cone,0xbfe8ff,6,1.6,-52.2,.5,1.6,.5);vis(G.disc,0x0f2a3a,3.6,.81,-51.6,.45,.02,.45);
   if(!S.rescued.p2)npc('snezhok',4.2,.8,-50.6,{yaw:Math.PI*.95,pose:'sit',talk:n=>talk(n,[['snezhok','Капик! Я хотел поймать рыбку, а льдину отнесло на середину озера.'],['snezhok','Я так замёрз, что даже шарф замёрз. Апчхи!'],['kapik','Телепорт тарелки заберёт тебя домой. Там пруд и тепло.']],()=>rescueBro('p2',n)),mark:()=>'?'});
   /* igloo village */
   igloo(-24,6);igloo(-31,-7);igloo(-35,12);
-  chest('p2-ch1',-25.2,0,6,Math.PI/2,6);coinRow('p2-i',[[-32,0,-7.6],[-31,0,-6.2],[-30,0,-7.8],[-31.5,0,-8.4],[-30.4,0,-6]]);
+  /* smokehouse inside the first igloo */
+  vis(G.cyl,0x5a5a6a,-25,.6,6,.7,1.2,.7,0,0,0,.03,TX.stone);gvis(G.sph,0xff8a2e,-25,.35,6,.45,.2,.45);const smk=glow(0xff8a3a,3,.6);smk.position.set(-25,.8,6);L.group.add(smk);for(let i=0;i<4;i++)vis(G.box,0x9fd8f0,-24+i*.0,1.7,5+i*.6,.5,.12,.08);
+  tick(t=>{smk.material.opacity=.45+Math.sin(t*9)*.1;if(Math.random()<.05)FXW.burst(-25,1.4,6,{col:0x999999,n:1,spd:.2,up:.6,g:-.2,life:2,size:.6})});
+  workshop(-25,0,6,{title:'Коптильня',help:'Подкладывайте можжевельник вовремя: три точных нажатия - копчёная рыба.',from:'fish',need:3,to:'smoked',btn:'Подложить',r:2.6});
+  sign(-20.6,0,7.6,Math.PI/2,['КОПТИЛЬНЯ'],{fs:56,w:1.6,h:.55,bg:'#5a7a9a'});
+  for(let i=0;i<3;i++){vis(G.cone,0xbfe8ff,-31+i*.6,.6,-7.4+(i%2)*.8,.25,1.2,.25,0,0,0,.05,TX.ice);vis(G.sph,0xdff6ff,-31.6+i*.7,.4,-6.4,.3,.35,.3,0,0,0,.04,TX.ice)}
   const sleepy=npc('penguin',-35.6,0,12,{yaw:0,pose:'lie',nc:true});
-  coinRow('p2-t',[[-24,2.4,6],[-31,2.4,-7]]);
   npc('penguin',-20,0,0,{walk:[[-20,0],[-28,1],[-27,14],[-19,12]],speed:1,talk:n=>{if(needTr('penguin'))return;talk(n,[['penguin',pick(['Фью-фью! Лёд у берега тонкий. Не стой на одном месте, а то провалишься.','Старейшина Брр сидит на башне и смотрит на сияние. Всегда.','Морж Усач ловит рыбу на западном пирсе. Ворчит, но добрый.'])]])}});
   npc('penguin',8,0,4,{walk:[[8,4],[14,8],[6,12]],speed:.9,pause:3});
   /* snowball range */
-  box(28,0,8,1.2,2.4,6,0xf4f8fb);box(26.6,0,5.6,1.2,.8,1.2,0xf4f8fb);box(26.6,0,6.9,1.2,1.6,1.2,0xf4f8fb);for(let z=5.4;z<=10.6;z+=1.3)vis(G.box,0xe8f2f8,28.7,2.55,z,.4,.35,.8);
+  box(28,0,8,1.2,2.4,6,0xf4f8fb,{tex:TX.snow});box(26.6,0,5.6,1.2,.8,1.2,0xf4f8fb,{tex:TX.snow});box(26.6,0,6.9,1.2,1.6,1.2,0xf4f8fb,{tex:TX.snow});for(let z=5.4;z<=10.6;z+=1.3)vis(G.box,0xe8f2f8,28.7,2.55,z,.4,.35,.8);
   const fyu=npc('fyu',28,2.4,9.6,{yaw:Math.PI/2,pose:'wave',talk:fyuTalk,mark:()=>S.tr&&!qdone('s2a')?'!':null});
   const tpos=[[36,0,2,1.4],[38,0,10,2.2],[42,0,5,3],[44,0,14,1.8],[40,0,-2,2.6],[46,0,8,3.6]];const T=[];
   tpos.forEach((p,i)=>{vis(G.cyl,0x6b4628,p[0],p[3]/2,p[2],.08,p[3],.08);const g=new THREE.Group();g.position.set(p[0],p[3],p[2]);L.group.add(g);
@@ -51,15 +55,16 @@ function buildP2(){
     if(RG.t<=0){RG.on=false;tm.hidden=true;AU.sfx('bad');toast('Время вышло. Фью ждёт на снежной стене');T.forEach(x=>{x.on=false;x.g.rotation.z=0})}});
   if(qs('s2a')>=1){L.canThrow=true}
   /* walrus pier */
-  box(-20.5,0,-36,7,.5,4,0x8a6a4a,{surf:'wood'});for(let x=-23.5;x<=-17.5;x+=2)for(const s of[-1,1])vis(G.cyl,0x6b4628,x,0,-36+s*1.9,.12,1,.12);
+  box(-20.5,0,-36,7,.5,4,0x8a6a4a,{surf:'wood',tex:TX.planks});for(let x=-23.5;x<=-17.5;x+=2)for(const s of[-1,1])vis(G.cyl,0x6b4628,x,0,-36+s*1.9,.12,1,.12);
   building({x:-26.2,z:-36,w:3.2,d:3.4,h:2.6,col:0x8a5a3a,trim:0x6b4628,door:'e',dw:1.3,dh:2.1,roof:'gable',roofCol:0x4a6a8a,rh:1.4,floor:0x7a5a3a});
-  coinRow('p2-h',[[-26.8,0,-36.8],[-25.8,0,-35.2],[-26.8,0,-35.2]]);
+  for(let i=0;i<3;i++)vis(G.cyl,0x7a4a2a,-27+i*.7,.35,-37,.25,.7,.25,0,0,0,.03,TX.planks);
   vis(G.disc,0x0a1e2a,-18.2,.51,-36,.55,.02,.55);vis(G.cyl,0x7a4a2a,-19.4,.5,-35.2,.32,.6,.32);box(-19.4,.5,-35.2,.6,.6,.6,0,{nv:true});
-  npc('usach',-19.4,1.1,-35.2,{yaw:Math.PI/2+.4,pose:'fish',talk:usachTalk,mark:()=>S.tr&&!qdone('s2b')?(qs('s2b')===0?'!':null):null,r:3});
-  inter({x:-18.2,y:.5,z:-36,r:1.4,label:'E - рыбачить в проруби',cond:()=>qs('s2b')===1,act:()=>openFish(3,()=>{say([['usach','Три рыбы! Да ещё какие толстые. Усы благодарят тебя.']],()=>qcomplete('s2b'))})});
+  npc('usach',-19.4,1.1,-35.2,{yaw:Math.PI/2+.4,pose:'fish',trader:1,talk:usachTalk,mark:()=>S.tr&&!qdone('s2b')?(qs('s2b')===0?'!':null):null,r:3});
+  for(const h of[[-14,-22.5],[13,-22],[22,-34]]){vis(G.disc,0x0a1e2a,h[0],.03,h[1],.6,.02,.6);vis(G.tor,0xdff6ff,h[0],.05,h[1],.65,.65,.4,Math.PI/2,0,0,.02,TX.ice);fishingSpot(h[0],0,h[1],{r:1.6})}
+  inter({x:-18.2,y:.5,z:-36,r:1.4,label:'E - рыбачить в проруби (задание Усача)',cond:()=>qs('s2b')===1,act:()=>openMini({title:'Прорубь Усача',help:'Удочку дал Усач. Жмите E или кнопку, когда поплавок в зелёной зоне. Нужно три рыбы.',need:3,btn:'Подсечь',unit:'Поймано',onWin:()=>{say([['usach','Три рыбы! Да ещё какие толстые. Усы благодарят тебя.']],()=>qcomplete('s2b'))}})});
   /* ice spire parkour */
-  [[24,-14,1.2],[26.2,-15.6,2.4],[28.4,-17.2,3.6],[30.6,-18.8,4.8]].forEach((p,i)=>{box(p[0],0,p[1],1.4,p[2],1.4,0xcfeefc,{jit:.08});vis(G.box,0xffffff,p[0],p[2]+.04,p[1],1.46,.1,1.46);coin('p2-p'+i,p[0],p[2],p[1])});
-  box(33,0,-20.6,1.4,6.4,1.4,0xa8dcf0,{jit:.08});vis(G.cone,0xa8dcf0,33,7.2,-20.6,.6,1.4,.6);souvenir('p2',33,6.45,-20.6);
+  [[24,-14,1.2],[26.2,-15.6,2.4],[28.4,-17.2,3.6],[30.6,-18.8,4.8]].forEach((p,i)=>{box(p[0],0,p[1],1.4,p[2],1.4,0xcfeefc,{jit:.08,tex:TX.ice});vis(G.box,0xffffff,p[0],p[2]+.04,p[1],1.46,.1,1.46)});
+  box(33,0,-20.6,1.4,6.4,1.4,0xa8dcf0,{jit:.08,tex:TX.ice});vis(G.cone,0xa8dcf0,33,7.2,-20.6,.6,1.4,.6);souvenir('p2',33,6.45,-20.6);
   /* scenery */
   const r=rng(31),avoid=[[0,16,7],[0,9,4],[16,-4,6],[0,-40,24],[-24,6,6],[-31,-7,6],[-35,12,6],[28,8,4],[40,8,9],[-21,-36,6],[28,-17,8]];
   scatter(r,40,14,58,avoid,(x,z,s)=>pine(x,z,s*1.2,0x2f5a4a,true));
@@ -75,8 +80,8 @@ function buildP2(){
   AU.music('p2');AU.ambient('wind');
   L.arrive=[['kapik','Бр-р-р! Тут ужасно холодно. И небо светится.'],['kapik','Снежок где-то здесь. В его шарфе он не замёрзнет... надеюсь.']];
   L.objective=()=>{if(S.rescued.p2)return{text:nRescued()===4?'Все братья спасены. Лети на базу':'Снежок спасён. Удерживай E у тарелки, чтобы лететь дальше',pos:[0,3.2,16]};
-    if(!S.tr)return{text:'Пингвины говорят на своём языке. Переводчик продаётся на базе',pos:[TX,11.5,TZ]};
-    if(qs('m2')<2)return{text:'Поднимись к Старейшине Брр на ледяную башню',pos:[TX,11.6,TZ]};
+    if(!S.tr)return{text:'Пингвины говорят на своём языке. Переводчик продаётся на базе',pos:[ITX,11.5,TZ]};
+    if(qs('m2')<2)return{text:'Поднимись к Старейшине Брр на ледяную башню',pos:[ITX,11.6,TZ]};
     return{text:'Переберись через Звонкое озеро к Снежку. Тонкий лёд трещит, не стой на месте',pos:[4.5,2,-51]}};
 }
 function brrTalk(n){if(needTr('brr'))return;const st=qs('m2');
@@ -87,4 +92,4 @@ function fyuTalk(n){if(needTr('fyu'))return;
   talk(n,[['fyu','Фью! Хочешь в снежный тир? Сбей все 6 мишеней за 50 секунд.'],['fyu',isTouch?'Снежки бросай кнопкой «Бросок». Выиграешь, дам 10 монет!':'Снежки бросай левой кнопкой мыши. Выиграешь, дам 10 монет!']],()=>{if(!qs('s2a'))qset('s2a',1);fyuTalk.start()})}
 function usachTalk(n){if(needTr('usach'))return;const st=qs('s2b');
   if(st===0){talk(n,[['usach','Хм-м... Усы мёрзнут, а рыба не клюёт. Стар я стал.'],['usach','Поймаешь три рыбы в проруби у края пирса, дам 12 монет. Подсекай, когда поплавок в зелёной зоне.']],()=>qset('s2b',1));return}
-  talk(n,[['usach',qdone('s2b')?'Хорошая была рыбалка. Заходи ещё.':'Прорубь у края пирса. Подсекай вовремя.']])}
+  if(qdone('s2b')){openTrade('usach');return}talk(n,[['usach','Прорубь у края пирса. Подсекай вовремя. А рыбу и прочее я куплю.']],()=>openTrade('usach'))}

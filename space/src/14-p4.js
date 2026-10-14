@@ -7,7 +7,7 @@ function buildP4(){
   newLevel('p4');
   setSky({top:0x1a2a40,hor:0xe0884a,bot:0x2a2a30,fog:0xa86a4a,near:40,far:165,hs:0xffe4cc,hg:0x4a4a52,hi:1.0,sc:0xffb478,si:.95,sd:[.6,.25,-.5],sunGlow:0xff9a50});
   skyBody(0xff6b4a,[-200,70,-210],30,0x7fe3e8);skyBody(0x9fd8e0,[160,130,-160],10);
-  L.spawn={x:0,y:0,z:9,yaw:0};L.surface='metal';
+  L.spawn={x:0,y:0,z:9,yaw:0};L.surface='metal';L.pathKind='metal';
   path([[0,9],[0,-28]],1.8,0x8a7a50);path([[0,4],[-20,-8]],1.4,0x8a7a50);path([[0,4],[16,-6]],1.4,0x8a7a50);path([[0,6],[-12,22]],1.4,0x8a7a50);path([[0,9],[8,26]],1.4,0x8a7a50);
   placeUFO(0,16,{pad:0x5a6068});
   const q=qd('m4');q.ins=q.ins||{};
@@ -32,19 +32,19 @@ function buildP4(){
   inter({x:-4.6,y:.5,z:TZ,r:3.4,label:'E - вставить энергоядро',cond:()=>P.carry&&P.carry.kind==='core',act:()=>{const id=P.carry.o.id;P.carry=null;updCarry();q.ins[id]=1;save();const n=nIns();sockCore[n-1].visible=true;AU.sfx('zap');AU.sfx('ok');FXW.burst(-4.6,1.2,SOCK[n-1][1],{col:0x7fe3e8,n:30,spd:4,life:.8});toast(`Энергоядро на месте: ${n} из 3`);
     if(n>=3){if(qs('m4')<2)S.q.m4=2;qset('m4',3);banner('Башня ожила','Лифт работает','Поднимись к капсуле с Винтиком');AU.sfx('quest');darkVisor()}}});
   const mag=npc('magnetron',7.5,0,TZ,{yaw:-Math.PI/2,nc:false,cr:1.1,talk:n=>{if(needTr('magnetron'))return;talk(n,[['magnetron',qs('m4')>=3?'Ж-ж-ж... питание... на башне... режим... сна...':'ВНИМАНИЕ. ПОСТОРОННЯЯ КАПИБАРА. ЯДРА ИЗЪЯТЫ. КАПСУЛА ЗАПЕРТА. ПОКИНЬТЕ ТЕРРИТОРИЮ.']])}});
-  const darkVisor=()=>{const v=mag.c.head.children[1];v.material=v.material.clone();v.material.color.set(0x331111)};if(qs('m4')>=3)darkVisor();
+  const darkVisor=()=>{mag.c.head.traverse(o=>{if(o.isSprite||(o.isMesh&&(o.material===glowBatchMat||o.material.isMeshBasicMaterial)))o.visible=false})};if(qs('m4')>=3)darkVisor();
   /* cores */
   const coreAt=(id,x,y,z)=>{if(q.ins[id])return;carryItem('core',ITEMS.core,x,y,z,{id,name:'Энергоядро',label:'взять энергоядро'})};
   /* container yard: core 1 */
   crate(16.2,0,-8,1.2,0x9a7a4a);container(20,0,-8,6,true,0xc94f3a);crate(18.4,2.4,-8,1.2,0x9a7a4a);container(21.5,2.4,-9,6,false,0x3a6ad6);crate(21.5,4.8,-6.9,1.2,0x9a7a4a);container(23.5,4.8,-11,6,true,0x4f9a6a);
-  coreAt('c1',25.6,7.2,-11);coinRow('p4-y',[[21.5,4.8,-8.6],[21.5,7.2,-11]]);
-  container(27,0,-1,6,true,0xffab4a,{open:true});coinRow('p4-k',[[25.5,0,-1],[27,0,-1],[28.5,0,-1]]);container(18,0,4,6,false,0x8a5ab0,{open:true});chest('p4-ch1',18,0,5.6,Math.PI,6);
+  coreAt('c1',25.6,7.2,-11);node('scrap',21.5,4.8,-8.6,{regrow:70});
+  container(27,0,-1,6,true,0xffab4a,{open:true});node('scrap',26,0,-1,{regrow:60});node('scrap',28.4,0,-1,{regrow:60});container(18,0,4,6,false,0x8a5ab0,{open:true});node('scrap',18,0,5.4,{regrow:60});
   /* crane with the raccoon: core 3 on the jib */
   const CX=-24,CZ=-12;box(CX,0,CZ,1.4,11,1.4,0xffc83d);for(let y=.5;y<11;y+=1.2)vis(G.box,0x3b4348,CX,y,CZ,1.45,.08,1.45);
   box(CX,11,CZ,2.2,2,2.2,0xffc83d);vis(G.box,0x9fe9ff,CX+1.11,12.1,CZ,.02,.8,1.4);ladder(CX,CZ+1.36,0,13,0,0x3b4348);
   box(CX+8,12.2,CZ,14,.5,1,0xffc83d,{surf:'metal'});box(CX-3,12.2,CZ,4,.5,1,0xffc83d);vis(G.box,0x5a6068,CX-4.4,11.4,CZ,1.4,1.2,1.4);for(let x=CX+1;x<CX+15;x+=1.4)vis(G.box,0x3b4348,x,12.0,CZ,.08,.3,1.02,0,0,.7);
   vis(G.cyl,0x333333,CX+13.5,10,CZ,.03,4,.03);vis(G.tor,0x8a8a8a,CX+13.5,7.8,CZ,.3,.3,.3);
-  coreAt('c3',CX+13.2,12.7,CZ);coinRow('p4-j',[[CX+4,12.7,CZ],[CX+7,12.7,CZ],[CX+10,12.7,CZ]]);
+  coreAt('c3',CX+13.2,12.7,CZ);node('scrap',CX+9,12.7,CZ,{regrow:80,r:1.6});
   const shurup=npc('shurup',CX-.5,13,CZ-.4,{yaw:Math.PI/2,pose:'dangle',talk:shurupTalk,mark:()=>S.tr&&qs('m4')<2?'!':null});
   /* factory hall: core 2 behind conveyor and laser */
   const FX=-22,FZ=22;building({x:FX,z:FZ,w:16,d:12,h:7,col:0x7a8088,trim:0x4a5258,door:'e',dw:3.6,dh:4.2,doorCol:0xffab4a,roof:'flat',roofCol:0x4a5258,rail:{gap:{side:'s',at:6,w:1.3}},railCol:0xffab4a,floor:0x5a5e64});
@@ -55,7 +55,7 @@ function buildP4(){
   let swA=0;tick((t,dt)=>{swA+=dt*1.7;sweep.rotation.y=swA;if(mode!=='play')return;const ex=Math.cos(-swA),ez=Math.sin(-swA),px=P.x-(FX+.5),pz=P.z-FZ,k=clamp(px*ex+pz*ez,0,5.6),dx=px-ex*k,dz=pz-ez*k;
     if(Math.hypot(dx,dz)<.45&&P.y<.75){AU.sfx('zap');flash('rgba(255,60,60,.6)');respawn('Лазер! Капик вернулся к входу в цех')}});
   checkpoint(FX+6.6,0,FZ,2,4,-Math.PI/2);
-  ladder(-16,FZ+6.35,0,7.3,0,0x3b4348);coinRow('p4-f',[[-18,7.3,18],[-20,7.3,18],[-24,7.3,26]]);
+  ladder(-16,FZ+6.35,0,7.3,0,0x3b4348);node('scrap',-24,7.3,26,{regrow:70});
   /* electric floor */
   const tiles=[];for(let i=0;i<3;i++)for(let j=0;j<6;j++){const x=-12.8+i*2.1,z=17+j*2.1;const m=mesh(G.box,new THREE.MeshPhongMaterial({color:0x3a3f4a,emissive:0}),x,.03,z,2,.06,2,L.group);m.receiveShadow=true;tiles.push({x,z,m,a:(i+j)%2})}
   tick((t,dt)=>{const ph=Math.floor(t/2)%2,warn=(t%2)>1.5;for(const tl of tiles){const on=tl.a===ph;tl.m.material.emissive.set(on?0x2a7a9a:warn&&tl.a!==ph?0x553311:0);tl.on=on}
@@ -73,7 +73,9 @@ function buildP4(){
   inter({x:FX+4,y:7.3,z:FZ-3,r:2.4,label:'E - поставить ящик',cond:()=>P.carry&&P.carry.kind==='crate',act:()=>{P.carry=null;updCarry();dcrate.visible=true;AU.sfx('drop');say([['posylkin','БИП-БИП. Посылка доставлена. Оценка курьеру: пять звёзд.']],()=>qcomplete('s4b'))}});
   building({x:8,z:28,w:6,d:5,h:3.2,col:0x9a7a4a,trim:0x5a4030,door:'n',dw:2,dh:2.6,doorCol:0xffab4a,roof:'gable',roofCol:0x5a6068,rh:1.4,floor:0x6a5a4a});
   if(!qdone('s4b'))carryItem('crate',ITEMS.crate,7,0,29.2,{name:'Ящик с гайками',label:'взять ящик с гайками',when:()=>qs('s4b')===1});
-  chest('p4-ch2',9.8,0,29.2,Math.PI,6);
+  /* smelter in the warehouse */
+  vis(G.cyl,0x5a4a44,9.6,.9,29.2,.8,1.8,.8,0,0,0,.03,TX.brick);vis(G.cone,0x5a4a44,9.6,2.3,29.2,.8,1,.8,0,0,0,.03,TX.brick);gvis(G.box,0xff7a2e,9.6,.7,28.4,.6,.5,.05);const sm=glow(0xff7a2e,3,.7);sm.position.set(9.6,.8,28.2);L.group.add(sm);tick(t=>{sm.material.opacity=.5+Math.sin(t*11)*.15});
+  workshop(9.6,0,28,{title:'Плавильня',help:'Раздувайте мехами вовремя: три точных нажатия - готовая шестерня.',from:'scrap',need:5,to:'cog',btn:'Раздуть',r:2.2});
   /* broken cleaners */
   const CL=[[14,0,-3],[-18,7.3,26.4],[9.6,0,26.4],[CX+6,12.7,CZ]];
   CL.forEach((p,i)=>{const done=!!S.got['cl'+i];const n=npc('cleaner',p[0],p[1],p[2],{yaw:i,pose:done?'idle':'lie',nc:true,walk:done&&p[1]===0?[[p[0],p[2]],[p[0]+2,p[2]+1],[p[0],p[2]+2]]:null,speed:.8});
@@ -83,6 +85,10 @@ function buildP4(){
   box(9,1.8,6,10,1.6,1.6,0,{nv:true,surf:'metal'});const pp=mesh(G.cyl16,mat(0x8a96a0),9,2.6,6,.8,10,.8,L.group);pp.rotation.z=Math.PI/2;pp.castShadow=true;for(const x of[5,9,13])vis(G.box,0x3b4348,x,.9,6,.3,1.8,.3);
   crate(2.6,0,6,1.2,0x9a7a4a);crate(3.9,0,6,1.2,0x9a7a4a);crate(3.9,1.2,6,1.2,0x9a7a4a);
   npc('bolt',10,3.4,6.6,{yaw:0,pose:'dangle',talk:boltTalk,mark:()=>!S.tr?null:qs('s4a')===0?'!':qs('s4a')===2?'?':null});
+  /* scrap yard */
+  for(const p of[[-8,-18],[-12,-22],[12,-20],[34,6],[30,16],[-34,8],[-30,-24]])node('scrap',p[0],0,p[1],{regrow:75});
+  box(6,0,12,3,1,1.1,0x5a6068,{tex:TX.metal});vis(G.box,0xffab4a,6,2.6,12.4,3.4,.15,1.8,0,0,0,.02,TX.corr);for(const s2 of[-1,1])vis(G.box,0x3b4348,6+s2*1.5,1.3,12.8,.12,2.6,.12,0,0,0,.02,TX.metal);
+  npc('gaykin',6,0,13.1,{yaw:Math.PI,trader:1,label:'E - скупщик Гайкин',talk:n=>{if(needTr('gaykin'))return;openTrade('gaykin')}});
   npc('robot',-6,0,-8,{walk:[[-6,-8],[6,-10],[8,0],[-6,0]],speed:1.2,talk:n=>{if(needTr('robot'))return;talk(n,[['robot',pick(['БИП. Не наступай на светящиеся плиты. Они под напряжением.','Магнетрон снял ядра с башни и раскидал их. Одно на кране, одно в цехе, одно на контейнерах.','Шуруп сидит на кране. Он знает всё про эту планету.'])]])}});
   /* scenery */
   const r=rng(51),avoid=[[0,16,7],[0,9,4],[0,-34,8],[CX,CZ,6],[22,-8,9],[FX,FZ,12],[8,28,6],[9,6,7],[-8,22,6],[27,-1,5],[18,4,5]];

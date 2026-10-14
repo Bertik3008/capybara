@@ -7,6 +7,6 @@
 ## Капик в космосе (3D)
 
 3D-игра от первого лица: капибара Капик летает на дедушкиной тарелке между планетами и спасает четырёх братьев.
-Играть: https://bertik3008.github.io/capybara/space/ (первая версия: https://bertik3008.github.io/capybara/space/v1.html)
+Играть: https://bertik3008.github.io/capybara/space/ (старые версии: https://bertik3008.github.io/capybara/space/v1.html и https://bertik3008.github.io/capybara/space/v2.html)
 
 Исходники лежат в `space/src`, игра собирается в один файл командой `python3 space/build.py`.

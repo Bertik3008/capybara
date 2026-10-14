@@ -1,6 +1,6 @@
 /* ---------- QUESTS ---------- */
 const QUESTS={
-  m0:{t:'Голос галактики',pl:'base',main:1,giver:'otter',rw:0,steps:['Собери монеты в амбаре','Купи универсальный переводчик у Тётушки Выдры']},
+  m0:{t:'Голос галактики',pl:'base',main:1,giver:'otter',rw:0,steps:['Поговори с Тётушкой Выдрой в лавке','Собери 8 звёздных ягод','Отнеси ягоды Тётушке Выдре','Купи универсальный переводчик']},
   s0:{t:'Сувениры для Крота',pl:'base',giver:'mole',rw:40,steps:['Найди 4 сувенира, по одному на каждой планете. Они спрятаны высоко','Принеси сувениры Радисту Кроту на вышку']},
   m1:{t:'Юзик на ветряке',pl:'p1',main:1,giver:'citron',rw:15,steps:['Найди фермера Цитрона: он чинит крышу амбара','Загони 5 мандаринчиков в загон у ветряка','Поднимись на лифте ветряка к Юзику']},
   s1a:{t:'Пропавшее ведро',pl:'p1',giver:'grushka',rw:8,steps:['Найди ведро краски на крыше теплицы','Отнеси ведро Грушке на водонапорную башню']},
@@ -17,7 +17,7 @@ const QUESTS={
 };
 const qs=id=>S.q[id]||0, qdone=id=>S.q[id]===99;
 function qd(id){return S.qd[id]||(S.qd[id]={})}
-function qset(id,v){const was=S.q[id]||0;S.q[id]=v;save();if(was===0&&v>0){AU.sfx('ui');banner('Новое задание',QUESTS[id].t,QUESTS[id].steps[0])}UI.objFlash()}
+function qset(id,v){const was=S.q[id]||0;S.q[id]=v;save();if(was===0&&v>0){AU.sfx('ui');banner('Новое задание',QUESTS[id].t,QUESTS[id].steps[Math.min(v,QUESTS[id].steps.length)-1])}UI.objFlash()}
 function qcomplete(id){if(qdone(id))return;S.q[id]=99;const rw=QUESTS[id].rw;save();AU.sfx('quest');banner('Задание выполнено',QUESTS[id].t,rw?'+'+coinsWord(rw):'');if(rw)setTimeout(()=>addCoins(rw),400);UI.objFlash()}
 const nRescued=()=>PIDS.filter(p=>S.rescued[p]).length;
 function rescueBro(pid,n){S.rescued[pid]=1;const id='m'+pid[1];if(qs(id)!==99){S.q[id]=98}qcomplete(id);AU.sfx('beam');UI.bros();

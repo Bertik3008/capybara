@@ -8,13 +8,16 @@ function buildP1(){
   placeUFO(0,16,{pad:0xa08a70});
   const q=qd('m1');q.caps=q.caps||0;
   /* crate stairs near landing */
-  crate(7,0,6,1.2);crate(8.4,0,6,1.2);crate(8.4,1.2,6,1.2);crate(9.8,0,6,1.2);crate(9.8,1.2,6,1.2);crate(9.8,2.4,6,1.2);coinRow('p1-c',[[9.8,3.6,6],[9.8,3.6,5.2]]);
+  crate(7,0,6,1.2);crate(8.4,0,6,1.2);crate(8.4,1.2,6,1.2);crate(9.8,0,6,1.2);crate(9.8,1.2,6,1.2);crate(9.8,2.4,6,1.2);
+  /* market stall: sells nothing, buys everything */
+  box(10,0,13,3.6,1,1,0x8a5a32,{tex:TX.planks});for(const s2 of[-1,1])vis(G.box,0x6b4628,10+s2*1.7,1.4,13.6,.14,2.8,.14,0,0,0,.02,TX.bark);for(let i=0;i<5;i++)vis(G.box,i%2?0xfff1d6:0xff8a2e,10-1.6+i*.8,2.85,13.4,.8,.1,1.6,.25,0,0,.02,TX.stripes);
+  for(let i=0;i<4;i++)vis(G.sph,0xff9a2e,9+i*.6,1.15,13,.16,.15,.16);
+  npc('clem',10,0,14.2,{yaw:Math.PI,trader:1,label:'E - торговка Клементина',talk:n=>{if(needTr('clem'))return;openTrade('clem')}});
   /* barn with farmer on the roof */
   building({x:-18,z:-8,w:12,d:10,h:5,col:0xc9572f,trim:0xf4ead8,door:'e',dw:3,dh:3.6,doorCol:0xf4ead8,roof:'flat',roofCol:0x7a3a22,rail:{gap:{side:'e',at:3,w:1.3}},railCol:0xf4ead8,floor:0xa08060});
   ladder(-11.62,-5,0,5.3,Math.PI/2,0x7a4a2a);
   box(-20,2.7,-11,7.2,.3,3,0x8a6a4a);box(-15.7,0,-11,1.4,2,1.4,0xe8c870);box(-15.7,0,-9.2,1.4,1,1.4,0xe8c870);for(const p of[[-16.6,-12.3],[-16.6,-9.7],[-23.4,-9.7]])cyl(p[0],0,p[1],.13,2.7,0x6b4628);
-  coinRow('p1-l',[[-22.5,3,-11],[-21.3,3,-11],[-20.1,3,-11],[-18.9,3,-11]]);chest('p1-ch1',-22.6,0,-5,Math.PI/2,6);
-  coinRow('p1-r',[[-22,5.3,-5],[-20,5.3,-5],[-22,5.3,-11.5]]);
+  for(let i=0;i<5;i++)vis(G.box,0xe8c870,-22.5+i*1.2,3.35,-11,1.1,.7,1.1,0,i*.2,0,.04,TX.straw);
   const citron=npc('citron',-15.8,5.3,-9.6,{yaw:Math.PI/2,pose:'hammer',talk:citronTalk,mark:()=>S.tr&&qs('m1')<2?'!':null});
   vis(G.box,0x6b3a22,-14.5,5.4,-9.6,1.6,.08,1.2);
   /* windmill */
@@ -67,17 +70,22 @@ function buildP1(){
   pane(gx,gz-gd/2,gw,.1);pane(gx,gz+gd/2,gw,.1);pane(gx-gw/2,gz,.1,gd);pane(gx+gw/2,gz-1.95,.1,2.1);pane(gx+gw/2,gz+1.95,.1,2.1);
   mesh(G.box,glass,gx,gh+.08,gz,gw+.2,.12,gd+.2,L.group).renderOrder=2;box(gx,gh,gz,gw+.2,.15,gd+.2,0,{nv:true});for(let x=gx-gw/2;x<=gx+gw/2+.01;x+=gw/4)vis(G.box,0xf4ead8,x,gh+.1,gz,.14,.14,gd+.2);
   for(const z of[gz-1.6,gz+1.6]){box(gx-.8,0,z,5.2,.7,1,0x7a4a2a);for(let i=0;i<6;i++)vis(G.sph,i%2?0xff9a2e:0x6fbf73,gx-3+i*.9,.85,z,.25,.2,.25)}
-  coinRow('p1-g',[[gx-3,.7,gz-1.6],[gx-1,.7,gz-1.6],[gx+1,.7,gz-1.6],[gx-3,.7,gz+1.6],[gx-1,.7,gz+1.6],[gx+1,.7,gz+1.6]]);
+  for(const z of[gz-1.6,gz+1.6])for(const xx of[gx-2.4,gx+.4])node('mandarin',xx,.7,z,{label:'собрать мандарины с грядки',yield:2,regrow:80,make:(g,full)=>{for(let i=0;i<3;i++){mesh(G.sph,mat(0x4f9a3a),i*.5-.5,.15,0,.22,.18,.22,g);mesh(G.sph,mat(0xff9a2e,{emissive:0x3a1a00}),i*.5-.5,.32,.05,.1,.1,.1,full)}}});
   crate(-23,0,22.6,1);box(-24.4,0,22.2,1.2,2,1.2,0xb07a42);vis(G.box,0x7a4a2a,-24.4,1,22.2,1.22,.12,1.22);
   itemPick('p1-bucket',gx-1.5,gh+.15,gz-1,ITEMS.bucket(),()=>qs('s1a')===1&&!qd('s1a').has,()=>{qd('s1a').has=1;save();toast('Ведро краски у Капика. Отнеси его Грушке');UI.objFlash()});
   /* farmhouse */
-  building({x:-12,z:34,w:8,d:7,h:3.4,col:0xf4e6c8,trim:0x9a6a4a,door:'n',dw:1.8,dh:2.6,doorCol:0x7a4a2a,roof:'gable',roofCol:0xc9572f,rh:2.4,floor:0x9a7a5a});
-  chest('p1-ch2',-14.5,0,36.2,0,6);box(-10,0,35,1.6,.8,1.1,0x8a5a32);vis(G.box,0xc94f3a,-9.5,.85,35.5,.6,.2,.6);box(-10,0,36.4,2.2,.6,1.2,0x6a8ad6);
+  building({x:-12,z:34,w:8,d:7,h:3.4,col:0xf4e6c8,trim:0x9a6a4a,door:'n',dw:2,dh:2.6,doorCol:0x7a4a2a,roof:'gable',roofCol:0xc9572f,rh:2.4,floor:0x9a7a5a,tex:TX.brick});
+  sign(-9.4,0,30,0,['СОКОДАВИЛЬНЯ'],{fs:52,w:2,h:.6,bg:'#c9572f'});
+  /* juice press: a big wooden screw press */
+  cyl(-12,0,35,1.1,1.1,0x8a5a32,{tex:TX.planks});vis(G.cyl,0x6b3a22,-12,1.15,35,1.15,.1,1.15,0,0,0,.02,TX.planks);for(const s2 of[-1,1])vis(G.box,0x6b4628,-12+s2*1.2,1.4,35,.2,2.8,.2,0,0,0,.02,TX.bark);vis(G.box,0x6b4628,-12,2.75,35,2.6,.25,.3,0,0,0,.02,TX.bark);
+  const screw=new THREE.Group();screw.position.set(-12,2,35);L.group.add(screw);mesh(G.cyl,mat(0x9aa6ad,{metal:.8}),0,0,0,.12,1.6,.12,screw);mesh(G.cyl,mat(0x8a5a32),0,-.8,0,.8,.12,.8,screw);mesh(G.box,mat(0x6b4628),0,.75,0,1.6,.1,.1,screw);
+  for(let i=0;i<6;i++)vis(G.cyl,0xff8a2e,-14.6+i*.32,.3,37.3,.12,.6,.12,0,0,0,.02);vis(G.box,0x8a5a32,-13.8,.4,37.3,2.4,.8,.6,0,0,0,.02,TX.planks);
+  workshop(-12,0,33.6,{title:'Сокодавильня',help:'Крутите пресс: жмите, когда метка в зелёной зоне. Три точных нажатия - банка сока.',from:'mandarin',need:5,to:'juice',btn:'Давить!',onMade:()=>tween(1,p=>{screw.rotation.y=p*TAU*2})});
   /* tree house with the racer kid */
-  const TX=36,TZ=-4;cyl(TX,0,TZ,.8,7,0x6b4628);vis(G.ico1,0x4a8a3c,TX,8.6,TZ,3.4,2.2,3.4);vis(G.ico1,0x5a9a40,TX+1.4,9.6,TZ-.6,2,1.6,2);
-  box(TX,4.5,TZ,4.4,.3,4.4,0x9a6a3a);railRect(TX-2.2,TZ-2.2,TX+2.2,TZ+2.2,4.8,0x7a4a2a,{side:'n',at:0,w:2.2});
-  [[Math.PI,1.2],[Math.PI*1.25,2.4],[Math.PI*1.5,3.6]].forEach((s,i)=>{const sx=TX+Math.cos(s[0])*3.2,sz=TZ+Math.sin(s[0])*3.2;box(sx,s[1]-.25,sz,1.3,.25,1.3,0x9a6a3a);vis(G.box,0x6b4628,sx,(s[1]-.25)/2,sz,.12,s[1]-.25,.12)});
-  const mork=npc('morkovka',TX+.8,4.8,TZ+.6,{yaw:-Math.PI/2,pose:'wave',talk:morkTalk,mark:()=>S.tr&&!qdone('s1b')?'!':null});
+  const THX=36,TZ=-4;cyl(THX,0,TZ,.8,7,0x6b4628);vis(G.ico1,0x4a8a3c,THX,8.6,TZ,3.4,2.2,3.4);vis(G.ico1,0x5a9a40,THX+1.4,9.6,TZ-.6,2,1.6,2);
+  box(THX,4.5,TZ,4.4,.3,4.4,0x9a6a3a);railRect(THX-2.2,TZ-2.2,THX+2.2,TZ+2.2,4.8,0x7a4a2a,{side:'n',at:0,w:2.2});
+  [[Math.PI,1.2],[Math.PI*1.25,2.4],[Math.PI*1.5,3.6]].forEach((s,i)=>{const sx=THX+Math.cos(s[0])*3.2,sz=TZ+Math.sin(s[0])*3.2;box(sx,s[1]-.25,sz,1.3,.25,1.3,0x9a6a3a);vis(G.box,0x6b4628,sx,(s[1]-.25)/2,sz,.12,s[1]-.25,.12)});
+  const mork=npc('morkovka',THX+.8,4.8,TZ+.6,{yaw:-Math.PI/2,pose:'wave',talk:morkTalk,mark:()=>S.tr&&!qdone('s1b')?'!':null});
   /* race */
   const gates=[[24,-8],[8,-13],[-6,-22],[-26,-22],[-32,2],[-14,13]];const gObj=gates.map((g,i)=>{vis(G.box,0xf4ead8,g[0]-1.8,1.6,g[1],.2,3.2,.2);vis(G.box,0xf4ead8,g[0]+1.8,1.6,g[1],.2,3.2,.2);vis(G.box,0xff6b6b,g[0],3.2,g[1],3.8,.3,.25);
     const ring=mesh(new THREE.TorusGeometry(1.8,.08,6,32),new THREE.MeshBasicMaterial({color:0xffd36b,transparent:true,opacity:0}),g[0],1.7,g[1],1,1,1,L.group);return ring});
@@ -88,7 +96,7 @@ function buildP1(){
     const g=gates[R.i];if(Math.hypot(P.x-g[0],P.z-g[1])<2.4){R.i++;AU.sfx('ring');if(R.i>=gates.length){R.on=false;tm.hidden=true;qcomplete('s1b');mork.pose='cheer'}}
     if(R.on&&R.t<=0){R.on=false;tm.hidden=true;AU.sfx('bad');toast('Время вышло. Морковка ждёт на дереве, попробуй ещё раз')}});
   /* orchard & farm details */
-  const r=rng(21);for(let x=-40;x<=-28;x+=5)for(let z=-40;z<=-24;z+=5)tree(x+(r()-.5),z+(r()-.5),1+r()*.3,pick([0x4c8a35,0x5a9a40]),{fruit:0xff9a2e});
+  const r=rng(21);for(let x=-40;x<=-28;x+=6)for(let z=-40;z<=-24;z+=6)fruitTree(x+(r()-.5),z+(r()-.5),1+r()*.25);sign(-26,0,-24,0,['МАНДАРИНОВЫЙ','САД'],{fs:50,w:1.8,h:.8,bg:'#4f9a3a'});
   for(let i=0;i<6;i++)box(22.5+i*1.5,0,-1+(i%2)*.3,1.2,.9,1,0xe8c870);
   vis(G.cyl,0x6b4628,10,1.2,22,.06,2.4,.06);vis(G.box,0x6b4628,10,1.8,22,1.4,.08,.08);vis(G.sph,0xe8c870,10,2.6,22,.3,.3,.3);vis(G.box,0x4f7ad6,10,1.6,22,.5,.6,.3);HATS.straw({add:o=>{o.position.x+=10;o.position.y+=2.2;o.position.z+=22;L.group.add(o)}},.3);
   for(let i=0;i<4;i++){box(-4+i*1.4,0,24,.9,1,.9,0xffd36b);vis(G.box,0xc99a3a,-4+i*1.4,1.02,24,1,.08,1)}

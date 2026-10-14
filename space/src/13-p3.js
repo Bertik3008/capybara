@@ -16,7 +16,7 @@ function buildP3(){
   newLevel('p3');
   setSky({top:0x170c36,hor:0x6a3a8a,bot:0x2a1846,fog:0x3a2456,near:30,far:135,hs:0xd8b8ff,hg:0x2a1a3a,hi:.85,sc:0xffc8f0,si:.55,sd:[-.4,.4,-.6],sunGlow:0xff9ad8,stars:true});
   skyBody(0x7fe3e8,[150,110,-230],22,0xb28cff);skyBody(0xffab4a,[-200,60,-80],9);
-  L.spawn={x:0,y:0,z:9,yaw:0};L.surface='moss';
+  L.spawn={x:0,y:0,z:9,yaw:0};L.surface='moss';L.pathKind='moss';
   path([[0,9],[0,-30]],1.6,0x5a4a72);path([[0,4],[-10,-4]],1.3,0x5a4a72);path([[0,4],[20,8]],1.3,0x5a4a72);path([[0,9],[-8,18]],1.3,0x5a4a72);
   placeUFO(0,16,{pad:0x6a5a80});
   const q=qd('m3');q.lit=q.lit||{};
@@ -25,18 +25,21 @@ function buildP3(){
   npc('sliz',-12.3,5,-6.3,{yaw:Math.PI*.3,talk:slizTalk,mark:()=>S.tr&&qs('m3')<2?'!':null,r:3,cr:.7});
   /* flower tower 1: staircase of caps */
   [[-22,-22,1.2,1.4],[-24.5,-23.5,2.4,1.4],[-26.5,-25.5,3.6,1.4],[-27.5,-28.2,4.8,1.4],[-25.4,-31,6,1.8]].forEach((c,i)=>shroom(c[0],c[1],c[2],c[3],CAPC[i%5]));
-  const F1=flower('f1',-25.4,6,-31);
+  const F1=flower('f1',-25.4,6,-31);node('shroom',-24.5,2.4,-23.5,{regrow:70});node('shroom',-27.5,4.8,-28.2,{regrow:70});node('shroom',-12.8,5,-5.2,{regrow:70});node('shroom',4,7,-40,{regrow:70});
   /* flower tower 2: bounce chain */
   pad(20,0,-24,.9);shroom(22.5,-26,4.6,1.8,0x9b7dff);pad(23.2,4.6,-26.6,.6,15);shroom(25.6,-29.2,9,2,0xff8fb1,{sr:.5});const F2=flower('f2',25.6,9,-29.2);
-  coin('p3-t0',22.5,4.6,-25.3);coin('p3-t1',25.6,9,-28.2);
+  node('shroom',22.5,4.6,-25.3,{regrow:70});node('shroom',25.6,9,-28.2,{regrow:70});
   /* frog village on stilts */
   const stilt=(x,z,w,d,top)=>{box(x,top-.3,z,w,.3,d,0x7a5a3a,{surf:'wood'});for(const a of[-1,1])for(const b of[-1,1])vis(G.cyl,0x5a4030,x+a*(w/2-.2),(top-.3)/2,z+b*(d/2-.2),.13,top-.3,.13)};
   stilt(22,10,4.4,4.4,3);stilt(30,10.5,4.4,4.4,3);box(26,2.8,10.3,3.8,.2,1.4,0x8a6a4a,{surf:'wood'});
   ladder(19.55,10,0,3,-Math.PI/2,0x5a4030);
   building({x:22.8,z:9.2,y:3,w:2.6,d:2.4,h:2.2,col:0x6fae5a,trim:0x5a4030,door:'s',dw:1.2,dh:1.9,roof:'gable',roofCol:0xb06ad6,rh:1.2,floor:0x7a5a3a});
-  chest('p3-ch1',22.8,3,8.8,0,6);
-  box(30.8,3,9.5,1.6,1,1.2,0x8a5a3a);coinRow('p3-v',[[30.8,4,9.5],[31.5,3,11.8]]);
-  const kvaba=npc('kvaba',21,3,11.5,{yaw:-.6,pose:'sit',talk:kvabaTalk,mark:()=>!S.tr?null:qs('s3a')===0?'!':qs('s3a')===2?'?':null});
+  /* potion cauldron on granny's porch */
+  vis(G.sph,0x2a2a33,20.6,3.45,8.6,.6,.5,.6,0,0,0,.03,TX.metal);gvis(G.disc,0xb9ff7a,20.6,3.82,8.6,.48,.02,.48);for(const a of[0,2.1,4.2])vis(G.cap,0x2a2a33,20.6+Math.cos(a)*.45,3.15,8.6+Math.sin(a)*.45,.06,.35,.06);const cg=glow(0xb9ff7a,2.4,.6);cg.position.set(20.6,4,8.6);L.group.add(cg);
+  tick(t=>{if(Math.random()<.08)FXW.burst(20.6,3.9,8.6,{col:0xb9ff7a,n:1,spd:.3,up:.8,g:-.3,life:1.4,size:.3})});
+  workshop(20.6,3,8.6,{title:'Зельеварня',help:'Помешивайте зелье в ритм: три точных нажатия - светоэликсир.',from:'shroom',need:4,to:'elixir',btn:'Помешать',r:2.2});
+  box(30.8,3,9.5,1.6,1,1.2,0x8a5a3a,{tex:TX.planks});node('shroom',30.8,4,9.5,{regrow:70});
+  const kvaba=npc('kvaba',21,3,11.5,{yaw:-.6,pose:'sit',trader:1,talk:kvabaTalk,mark:()=>!S.tr?null:qs('s3a')===0?'!':qs('s3a')===2?'?':null});
   const kvak=npc('kvak',29.5,3,11.6,{yaw:Math.PI,pose:'wave',talk:kvakTalk,mark:()=>S.tr&&!qdone('s3b')?'!':null});
   box(30,7.7,3,2.6,.3,2.6,0x7a5a3a,{surf:'wood'});for(const a of[-1,1])for(const b of[-1,1])cyl(30+a*1.1,0,3+b*1.1,.12,7.7,0x5a4030);railRect(28.7,1.7,31.3,4.3,8,0x5a4030,{side:'s',at:0,w:1.2});ladder(30,4.55,0,8,0,0x5a4030);
   vis(G.hemi,0xb06ad6,30,9.9,3,1.8,.8,1.8);for(const a of[-1,1])for(const b of[-1,1])vis(G.cyl,0x5a4030,30+a*1.1,9,3+b*1.1,.06,2,.06);
@@ -67,7 +70,7 @@ function buildP3(){
     if(Math.hypot(P.x-x,P.y+1-y,P.z-z)<1.4){f.done=true;f.g.visible=false;S.got['ff'+f.i]=1;const qq=qd('s3a');qq.n=(qq.n||0)+1;save();AU.sfx('item');FXW.burst(x,y,z,{col:0xd8ff7a,n:16,spd:2,life:.7});toast(`Светлячки: ${qq.n} из 8`);if(qq.n>=8)qset('s3a',2)}}});
   /* hollow log */
   const lg=mesh(new THREE.CylinderGeometry(1.4,1.4,7,14,1,true),new THREE.MeshPhongMaterial({color:0x6b4a32,side:THREE.DoubleSide,flatShading:true}),-30,1.3,10,1,1,1,L.group);lg.rotation.z=Math.PI/2;lg.castShadow=true;
-  box(-30,0,11.3,7,2.4,.3,0,{nv:true});box(-30,0,8.7,7,2.4,.3,0,{nv:true});box(-30,2.3,10,7,.4,2.8,0,{nv:true});coinRow('p3-log',[[-32,0,10],[-30.6,0,10],[-29.2,0,10],[-27.8,0,10]]);
+  box(-30,0,11.3,7,2.4,.3,0,{nv:true});box(-30,0,8.7,7,2.4,.3,0,{nv:true});box(-30,2.3,10,7,.4,2.8,0,{nv:true});node('shroom',-31.5,0,10,{regrow:60});node('shroom',-28.5,0,10,{regrow:60});
   for(let i=0;i<6;i++)gvis(G.sph,0xd8ff7a,-33+i*1.2,2.75,10+(i%2?.4:-.3),.12,.1,.12);
   /* glow pond + race finish */
   water(-9,21,4,{safe:true,col:0x5a3a8a});const fin=flag(-8,16,0xffd36b,3.2);
@@ -100,7 +103,7 @@ function slizTalk(n){if(needTr('sliz'))return;const st=qs('m3');
 function kvabaTalk(n){if(needTr('kvaba'))return;const st=qs('s3a');
   if(st===0){talk(n,[['kvaba','Ква-а... Внучек, мои светлячки разлетелись, а без них фонарь не светит.'],['kvaba','Поймай восемь. Просто подойди к ним вплотную, они ленивые. Дам 10 монет.']],()=>qset('s3a',1));return}
   if(st===2){talk(n,[['kvaba','Все восемь! Фонарь снова горит. Держи монетки, внучек.']],()=>qcomplete('s3a'));return}
-  talk(n,[['kvaba',qdone('s3a')?'Ква-а... Как светло стало.':`Светлячков: ${qd('s3a').n||0} из 8. Они любят высокие шляпки и старое бревно.`]])}
+  if(qdone('s3a')){openTrade('kvaba');return}talk(n,[['kvaba',`Светлячков: ${qd('s3a').n||0} из 8. Они любят высокие шляпки и старое бревно. А светогрибы я покупаю.`]],()=>openTrade('kvaba'))}
 function kvakTalk(n){if(needTr('kvak'))return;
   if(qdone('s3b')){talk(n,[['kvak','Ты обогнал меня! Никто никогда не обгонял Квака.']]);return}
   talk(n,[['kvak','Ква! Гонка до золотого флага у пруда! Кто первый, тот и чемпион.'],['kvak','Выиграешь, отдам 12 монет. Я стартую снизу. Раз, два... три!']],()=>{if(!qs('s3b'))qset('s3b',1);kvakTalk.start()})}

@@ -1,11 +1,12 @@
 <div id="view"></div>
 <div id="lookpad" hidden></div>
 <div id="flash"></div>
+<div id="vignette"></div>
 <div id="loading">Загрузка…</div>
 
 <div id="hud" class="layer" hidden>
   <div class="hud-tl">
-    <div class="pill coinpill" id="coinPill"><span class="coin"></span><span id="coins">0</span></div>
+    <div class="pillrow"><div class="pill coinpill" id="coinPill"><span class="coin"></span><span id="coins">0</span></div><button class="pill bagpill" id="bagPill" title="Сумка"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span id="bagN">0/12</span></button></div>
     <div class="pill bros" id="bros"></div>
   </div>
   <div class="hud-top"><div class="obj" id="objBox"><small id="objTag">Задача</small><div id="obj"></div><span id="objDist"></span></div></div>
@@ -39,18 +40,19 @@
 </div>
 
 <div id="dlg" hidden>
-  <div class="portrait"><img id="dlgPic" alt=""></div>
-  <div class="dlgBody"><div class="dlgName" id="dlgName"></div><div class="dlgText" id="dlgText"></div><div class="dlgHint" id="dlgHint"></div></div>
+  <div class="dlgFace"><img id="dlgPic" alt=""></div>
+  <div class="dlgBox"><div class="dlgName" id="dlgName"></div><div class="dlgText" id="dlgText"></div><span class="dlgNext" id="dlgNext"></span></div>
 </div>
 
-<div id="title" class="screen" hidden>
-  <div class="titleCard">
-    <div class="titleArt" id="titleArt"></div>
-    <h1>Капик<span>в космосе</span></h1>
-    <p class="lede">Четыре младших брата. Четыре планеты. Одна старая дедушкина тарелка.</p>
-    <div class="btns"><button id="bNew" class="primary">Новая игра</button><button id="bCont" hidden>Продолжить</button></div>
-    <p class="ctrl" id="ctrlHint"></p>
-  </div>
+<div id="title" hidden>
+  <div class="logo"><h1>Капик<span>в космосе</span></h1></div>
+  <nav class="tmenu">
+    <button id="bPlay" class="big">Играть</button>
+    <button id="bNew">Новая игра</button>
+    <button id="bSet">Настройки</button>
+  </nav>
+  <div class="tconfirm" id="tConfirm" hidden><p>Начать заново? Сохранение удалится.</p><div class="btns"><button id="bNewYes" class="primary">Начать заново</button><button id="bNewNo" class="ghost">Отмена</button></div></div>
+  <p class="tfoot">Версия 3</p>
 </div>
 
 <div id="pro" class="screen" hidden>
@@ -71,6 +73,16 @@
       <button role="tab" data-tab="controls">Управление</button>
     </div>
     <div id="menuBody"></div>
+    <button id="mExit" class="ghost exitbtn">Выйти в главное меню</button>
+  </div>
+</div>
+
+<div id="trade" class="screen menu" hidden>
+  <div class="sheet">
+    <div class="shopHead"><div class="portrait"><img id="tradePic" alt=""></div><p id="tradeSay"></p><div class="wallet"><span class="coin"></span><span id="tradeCoins">0</span></div></div>
+    <p class="sub">Сумка: <b id="tradeBag"></b></p>
+    <div class="cards" id="tradeList"></div>
+    <button class="ghost" data-close>Закончить торговлю</button>
   </div>
 </div>
 
@@ -82,6 +94,7 @@
       <button role="tab" data-tab="ship">Тарелка</button>
       <button role="tab" data-tab="hats">Шапки</button>
       <button role="tab" data-tab="decor">Для базы</button>
+      <button role="tab" data-tab="sell" class="selltab">Продать</button>
     </div>
     <div class="cards" id="shopList"></div>
     <button class="ghost" data-close>Выйти из лавки</button>
@@ -105,11 +118,11 @@
 
 <div id="fish" class="screen menu" hidden>
   <div class="fishCard">
-    <h2>Подлёдная рыбалка</h2>
-    <p id="fishHelp">Жмите E или кнопку, когда поплавок в зелёной зоне.</p>
+    <h2 id="miniTitle">Рыбалка</h2>
+    <p id="miniHelp">Жмите E или кнопку, когда поплавок в зелёной зоне.</p>
     <div class="fbar"><div id="fzone"></div><div id="fneedle"></div></div>
     <div id="fishCount"></div>
-    <div class="btns"><button id="fHook" class="primary">Подсечь</button><button id="fQuit" class="ghost">Уйти</button></div>
+    <div class="btns"><button id="fHook" class="primary">Подсечь</button><button id="fQuit" class="ghost">Хватит</button></div>
   </div>
 </div>
 

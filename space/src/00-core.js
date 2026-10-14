@@ -10,9 +10,9 @@ const coinsWord=n=>n+' '+plural(n,'монета','монеты','монет');
 
 let mode='boot';
 /* ---------- SAVE ---------- */
-const SAVE_KEY='kapik-space-v2';
-function freshSave(){return{v:2,coins:0,tr:false,up:{},paint:'silver',paints:{silver:1},hat:'none',hats:{none:1},decor:{},rescued:{},q:{},qd:{},got:{},seen:{},souv:{},prologue:false,ending:false,at:'base',tut:0,route:null,
-  set:{music:.5,sfx:.8,sens:1,shadows:!isTouch,invert:false,hints:true}}}
+const SAVE_KEY='kapik-space-v3';
+function freshSave(){return{v:3,coins:0,tr:false,inv:{},up:{},paint:'silver',paints:{silver:1},hat:'none',hats:{none:1},decor:{},rescued:{},q:{},qd:{},got:{},seen:{},souv:{},prologue:false,ending:false,at:'base',tut:0,route:null,
+  set:{music:.5,sfx:.8,sens:1,q:null,invert:false,hints:true}}}
 let S=freshSave();
 function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(S))}catch(e){}}
 function loadSave(){try{const r=localStorage.getItem(SAVE_KEY);if(!r)return null;const d=JSON.parse(r);const f=freshSave();

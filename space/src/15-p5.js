@@ -2,8 +2,7 @@
 /* chapter-2 objective shown on every other planet while the chapter runs */
 function chapterObj(){const s3=qs('c3');if(s3&&s3<99&&L){const id=L.id;
     if(s3===1)return id==='base'?{text:'Братьев нет! У тарелки лежит обгоревшая записка',pos:[3.5,1.2,-5.5],tag:'Глава 3'}:{text:'Лети на базу: братья пропали',pos:null,tag:'Глава 3'};
-    if(s3===2)return id==='p1'?{text:'Найди Морковку в домике на дереве на востоке сада',pos:[36.8,6.6,-3.4],tag:'Глава 3'}:{text:'Лети на Мандарину: у Морковки есть игрушечный Мандаринострел',pos:null,tag:'Глава 3'};
-    if(s3===3)return id==='p1'?{text:'Забери Мандаринострел из сундучка в домике на дереве',pos:[34.7,5.8,-5.3],tag:'Глава 3'}:{text:'Лети на Мандарину за Мандаринострелом',pos:null,tag:'Глава 3'};
+    if(s3<4)return id==='p7'?null:{text:'Лети на Бананию: там спрятан Бананомёт. Открой карту клавишей M',pos:null,tag:'Глава 3'};
     if(id!=='p6')return{text:'Лети на Магмару: открой карту клавишей M',pos:null,tag:'Глава 3'};return null}
   const st=qs('c2');if(!st||st===99||!L)return null;const id=L.id;
   if(st===1)return id==='base'?{text:'Радист Крот машет с вышки: он поймал странный сигнал',pos:[-10,9.5,20],tag:'Глава 2'}:{text:'Лети на базу: Радист Крот поймал странный сигнал',pos:null,tag:'Глава 2'};

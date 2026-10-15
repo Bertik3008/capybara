@@ -1,7 +1,7 @@
 /* ---------- MAIN: input, modes, travel, loop ---------- */
 const keys={};let ePressed=false,eJust=false,jumpReq=false,throwReq=false,boostHeld=false;
 let locked=false,noLock=isTouch||!('requestPointerLock' in cv),lockFails=0,drag=null,MX=0,MY=0;
-const BUILD={base:buildBase,p1:buildP1,p2:buildP2,p3:buildP3,p4:buildP4,p5:buildP5,p6:buildP6};
+const BUILD={base:buildBase,p1:buildP1,p2:buildP2,p3:buildP3,p4:buildP4,p5:buildP5,p6:buildP6,p7:buildP7};
 let lockClick=false;
 function lockFailed(){if(lockClick){lockFails++;if(lockFails>=2&&!noLock){noLock=true;toast('Зажмите левую кнопку мыши и тяните, чтобы смотреть')}}lockClick=false}
 function lock(fromClick){if(isTouch||noLock||locked||(mode!=='play'&&mode!=='space'))return;lockClick=!!fromClick;try{const p=cv.requestPointerLock();if(p&&p.catch)p.catch(lockFailed)}catch(e){lockFailed()}}
@@ -18,7 +18,7 @@ function setMode(m){mode=m;const play=m==='play',space=m==='space',act=play||spa
 window.addEventListener('keydown',e=>{
   if(mode==='dialog'){if((e.code==='KeyE'||e.code==='Space'||e.code==='Enter')&&!e.repeat){e.preventDefault();advance()}return}
   if(mode==='scope'){if(e.code==='Escape'||e.code==='KeyE'||e.code==='KeyQ')SPX.scopeEnd();else if(e.code==='KeyA'||e.code==='ArrowLeft')SPX.scopeNext(-1);else if(e.code==='KeyD'||e.code==='ArrowRight'||e.code==='Space')SPX.scopeNext(1);e.preventDefault();return}
-  if(mode==='menu'){if(e.code==='Escape'||(e.code==='KeyM'&&curScreen==='#map')||(e.code==='KeyJ'&&curScreen==='#menu')||(e.code==='KeyF'&&curScreen==='#bag')){closeScreen()}else if(curScreen==='#fish'&&(e.code==='KeyE'||e.code==='Space')&&!e.repeat){e.preventDefault();fishHook()}return}
+  if(mode==='menu'){if(e.code==='Escape'||(e.code==='KeyM'&&curScreen==='#map')||(e.code==='KeyJ'&&curScreen==='#menu')||(e.code==='KeyF'&&curScreen==='#bag')){closeScreen()}else if(curScreen==='#fish'&&(e.code==='KeyE'||e.code==='Space')&&!e.repeat){e.preventDefault();fishHook()}else if(curScreen==='#arcade'&&(e.code==='KeyE'||e.code==='Space'||e.code==='ArrowUp'||e.code==='KeyW')&&!e.repeat){e.preventDefault();arcadeFlap()}return}
   if(mode!=='play'&&mode!=='space')return;
   keys[e.code]=true;if(e.code==='Space'||e.code.indexOf('Arrow')===0)e.preventDefault();
   if(e.repeat)return;
@@ -27,7 +27,7 @@ window.addEventListener('keydown',e=>{
   if(e.code==='KeyQ'&&mode==='play')dropCarry();
   if(e.code==='KeyJ')openMenu('quests');
   if(e.code==='KeyF')openBag();
-  if(e.code==='KeyG'&&mode==='play'&&S.got.blaster){S.gunOff=!S.gunOff;save();AU.sfx('ui');toast(S.gunOff?'Мандаринострел убран':'Мандаринострел в лапах');setMode('play')}
+  if(e.code==='KeyG'&&mode==='play'&&S.got.blaster){S.gunOff=!S.gunOff;save();AU.sfx('ui');toast(S.gunOff?'Бананомёт убран':'Бананомёт в лапах');setMode('play')}
   if(e.code==='KeyM')SPX.openMap();
   if(e.code==='KeyV'&&mode==='space')SPX.setCam();
   if((e.code==='KeyW'||e.code==='KeyS')&&mode==='space')SPX.stopAuto();
@@ -84,7 +84,7 @@ function afterArrive(id){
 function showEnding(ch){ch=ch||1;setMode('ending');const E={
     1:{who:['kapik','yuzik','snezhok','gribok','vintik'],t:'Все дома<span>Конец первой главы</span>',x:'Капик вернул всех четырёх братьев. Пруд снова тёплый, мандарины снова сладкие. Но Радист Крот уже ловит странный сигнал...',ok:'Дальше: глава 2'},
     2:{who:['kapik','pushinka','yuzik','snezhok','gribok','vintik'],t:'Пух здоров<span>Конец второй главы</span>',x:'Великий Пух больше не чихает ураганами, а завод Шестерёнки дымит чистым паром. Белки-летяги научили Капика планировать.',ok:'Дальше: глава 3',rw:'+50 монет и покраска тарелки «Пушистая»'},
-    3:{who:['kapik','rogozhar','yuzik','snezhok','gribok','vintik'],t:'Король уснул<span>Конец третьей главы</span>',x:'Мандариновые дольки остудили Рогожара, и он впервые за триста лет сладко уснул. Братья снова дома, а Мандаринострел остался у Капика.',ok:'Гулять дальше',rw:'+60 монет и корона короля Магмары'}}[ch];
+    3:{who:['kapik','rogozhar','yuzik','snezhok','gribok','vintik'],t:'Король уснул<span>Конец третьей главы</span>',x:'Банановый пломбир остудил Рогожара, и он впервые за триста лет сладко уснул. Братья снова дома, а Бананомёт остался у Капика.',ok:'Гулять дальше',rw:'+60 монет и корона короля Магмары'}}[ch];
   $('#endArt').innerHTML=E.who.map((k,i)=>`<img alt="" class="${i?'':'big'}" src="${portrait(k)}">`).join('');$('#endTitle').innerHTML=E.t;$('#endText').textContent=E.x;
   $('#endReward').hidden=!E.rw;if(E.rw)$('#endReward').innerHTML='<span class="coin"></span>'+E.rw;if(ch===2&&!S.paints.fluffy){S.paints.fluffy=1;save()}if(ch===3&&!S.hats.crown){S.hats.crown=1;save()}
   S.lastEnd=ch;$('#endOk').textContent=E.ok;$('#end').hidden=false;AU.sfx('quest')}
@@ -137,7 +137,7 @@ function step(dt){T+=dt;UNI.time.value=T;
   if(!inSpace&&L){for(const f of L.ticks)f(T,dt);updNPCs(T,dt);FXW.update(dt);if(L.sky)L.sky.position.copy(camera.position);if(L.stars)L.stars.position.copy(camera.position);
     if(L.sunDir){sun.position.set(P.x+L.sunDir.x*70,P.y+L.sunDir.y*70,P.z+L.sunDir.z*70);sun.target.position.set(P.x,P.y,P.z)}}
   else FXS.update(dt);
-  fishTick(dt);
+  fishTick(dt);arcadeTick(dt);
   if(mode==='play'||mode==='space'){updObjective(dt);updTut()}else{$('#marker').hidden=true;if(mode!=='dialog'&&mode!=='menu')$('#tut').hidden=true}
   const ch=$('#clickhint'),show=(mode==='play'||mode==='space')&&!isTouch&&!noLock&&!locked;if(ch.hidden===show)ch.hidden=!show;
 }

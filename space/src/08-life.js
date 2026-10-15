@@ -1,6 +1,6 @@
 /* ---------- BASE LIFE: brothers stroll between activities, play ball, can be treated, petted and chased ---------- */
 const BRO_GIFT={yuzik:{hat:'mandarin',txt:'Юзик подарил свою мандариновую шапку!'},gribok:{hat:'mushroom',txt:'Грибок подарил грибную шляпку!'},vintik:{hat:'goggles',txt:'Винтик подарил лётные очки!'},snezhok:{hat:'beanie',txt:'Снежок связал Капику шапку!'}};
-const FOOD=['mandarin','berry','fish','juice','smoked','pillow'];
+const FOOD=['mandarin','banana','berry','fish','icecream','juice','smoked','pillow'];
 function broData(k){S.bros=S.bros||{};return S.bros[k]||(S.bros[k]={h:0})}
 /* playground in the east yard + bench by the pond */
 function buildYard(){
@@ -34,10 +34,10 @@ function buildYard(){
   return Y}
 function swingRide(seat){setMode('cut');const p0=new THREE.Vector3(P.x,P.camY,P.z);seat.occ='kapik';AU.sfx('ui');let tt=0;
   tween(5,p=>{tt=p*5;const a=.6*Math.sin(tt*2.4)*Math.sin(Math.min(1,p*3)*Math.PI/2);const sx=seat.g.position.x,sy=seat.g.position.y,sz=seat.g.position.z;seat.g.rotation.x=a;
-    camera.position.set(sx,sy-2.1*Math.cos(a)+1.05,sz+2.1*Math.sin(a)-.1);camera.rotation.set(a*.6-.05,Math.PI,0)},()=>{seat.occ=null;P.x=seat.g.position.x;P.z=seat.g.position.z-1.3;P.yaw=Math.PI;setMode('play');lock();toast('Ух! Дух захватывает')})}
+    camera.position.set(sx,sy-2.1*Math.cos(a)+1.05,sz+2.1*Math.sin(a)-.1);camera.rotation.set(a*.6-.05,Math.PI,0)},()=>{seat.occ=null;S.swingT=Date.now();save();P.x=seat.g.position.x;P.z=seat.g.position.z-1.3;P.yaw=Math.PI;setMode('play');lock();toast('Ух! Дух захватывает')})}
 
 /* brothers: each one has a little daily routine */
-function buildBrothers(Y,D){if(qs('c3')>0&&qs('c3')<99)return;
+function buildBrothers(Y,D){if(qs('c3')>0&&qs('c3')<99)return;reqTick();buildReqItems();
   const st=Y.stools,lg=Y.logs,bn=Y.bench;
   const R={
     yuzik:[[st[0][0],st[0][1],'sit',.36,st[0][2],9],[27,-5,null,0,null,0],[0,0,'ball',0,null,14],[st[2][0],st[2][1],'sit',.36,st[2][2],7],[0,0,'ball',0,null,12]],
@@ -46,7 +46,7 @@ function buildBrothers(Y,D){if(qs('c3')>0&&qs('c3')<99)return;
     vintik:[[4.5,-8.5,'hammer',0,-.6,10],[9,-10,null],[22,-10.5,null],[Y.tramp[0],Y.tramp[1],'jump',0,0,8],[st[1][0],st[1][1],'sit',.36,st[1][2],8],[22,-10.5,null],[9,-10,null]]};
   const bros=[];
   for(const k of['yuzik','snezhok','gribok','vintik']){const pid={yuzik:'p1',snezhok:'p2',gribok:'p3',vintik:'p4'}[k];if(!S.rescued[pid])continue;const route=R[k];const p0=route[0];
-    const n=npc(k,p0[0],0,p0[1],{yaw:p0[4]||0,nc:true,r:2.4,talk:nn=>openBro(nn),mark:()=>broData(k).h>=5&&!broData(k).gift?'?':null});
+    const n=npc(k,p0[0],0,p0[1],{yaw:p0[4]||0,nc:true,r:2.4,talk:nn=>openBro(nn),mark:()=>{const q=reqOf(k);if(q&&reqReady(k,q))return'?';if(q)return'!';return broData(k).h>=5&&!broData(k).gift?'?':null}});
     n.route=route;n.ri=0;n.state='stay';n.wait=(p0[5]||6)*Math.random();n.pose=p0[2]||'idle';n.yOff=p0[3]||0;n.c.root.position.y=n.yOff;bros.push(n)}
   L.bros=bros;
   tick((t,dt)=>{for(const n of bros){if(n.game)continue;const c=n.c;
@@ -63,7 +63,7 @@ function turnTo(n,ya,dt){const c=n.c;let df=ya-c.root.rotation.y;df=Math.atan2(M
 /* interaction sheet */
 let broCur=null;
 function openBro(n){broCur=n;const k=n.key,b=broData(k);openScreen('#bro');$('#broPic').src=portrait(k);$('#broName').textContent=CAST[k].name;renderBro()}
-function renderBro(){const n=broCur,k=n.key,b=broData(k);const h=Math.floor(b.h),half=b.h-h>=.5;
+function renderBro(){const n=broCur,k=n.key,b=broData(k);renderReq(k);const h=Math.floor(b.h),half=b.h-h>=.5;
   $('#broHearts').innerHTML=Array.from({length:5},(_,i)=>`<span class="heart ${i<h?'on':i===h&&half?'half':''}"></span>`).join('');
   const food=FOOD.find(f=>S.inv[f]>0);
   $('#broMood').textContent=b.h>=5?(b.gift?'Лучшие друзья навсегда!':'Кажется, у брата есть для тебя подарок'):['Немного скучает.','Рад тебя видеть.','Улыбается.','Весело машет лапой.','Сияет от счастья.'][Math.min(4,h)];
@@ -83,5 +83,25 @@ function startTag(n){const c=n.c;n.game=true;n.pose='walk';n.tl=20;AU.sfx('ok');
     const sp=d<6?5.1:2.6;const m={x:n.x+ax*sp*dt,z:n.z+az*sp*dt};mobCollide(m,.4);const r=Math.hypot(m.x-8,m.z-2);if(r>26){m.x-=(m.x-8)/r*(r-26);m.z-=(m.z-2)/r*(r-26)}n.x=m.x;n.z=m.z;turnTo(n,Math.atan2(ax,az),dt);c.walkPh+=dt*16;c.root.position.set(n.x,Math.abs(Math.sin(t*9))*.12,n.z);if(n.it){n.it.x=n.x;n.it.z=n.z}
     $('#timer').innerHTML=`<small>Догонялки</small>${tl.toFixed(1)}`;
     if(d<1.4){end(true)}else if(tl<=0)end(false)};
-  const end=win=>{n.game=false;$('#timer').hidden=true;const b=broData(n.key);n.state='move';if(win){b.h=Math.min(5,b.h+1);save();hearts(n);AU.sfx('quest');toast(`Поймал! ${CAST[n.key].name} хохочет. +1 сердечко`)}else{AU.sfx('bad');toast(`${CAST[n.key].name}: Не догонишь! Давай ещё раз?`)}};
+  const end=win=>{n.game=false;$('#timer').hidden=true;const b=broData(n.key);n.state='move';if(win){b.h=Math.min(5,b.h+1);save();const rq=reqOf(n.key);if(rq&&rq.t==='tag')setTimeout(()=>reqDone(n.key),600);hearts(n);AU.sfx('quest');toast(`Поймал! ${CAST[n.key].name} хохочет. +1 сердечко`)}else{AU.sfx('bad');toast(`${CAST[n.key].name}: Не догонишь! Давай ещё раз?`)}};
   n.tagEnd=end;if(!n.tagOn){n.tagOn=1;tick((t,dt)=>n.tagFn&&n.tagFn(t,dt))}n.tagFn=fn}
+
+/* ---------- brothers' requests: they ask, Kapik helps ---------- */
+const REQS={
+  yuzik:[{t:'bring',k:'mandarin',n:3,txt:'Капик, я голодный, как чёрная дыра! Принеси 3 мандарина?'},{t:'tag',txt:'Скучно! Сыграем в догонялки? Спорим, не поймаешь!'},{t:'bring',k:'banana',n:2,txt:'Я слышал, на Банании растут бананы. Принесёшь парочку?'},{t:'bring',k:'icecream',n:1,txt:'Хочу банановый пломбир! Его делают в мороженице на Банании.'}],
+  snezhok:[{t:'find',id:'scarf',pos:[-10,8.25,20],txt:'Ветер унёс мой шарф! Кажется, он зацепился за радиовышку Крота.'},{t:'bring',k:'smoked',n:1,txt:'Соскучился по Ледоре... Привезёшь копчёную рыбку из коптильни?'},{t:'scope',id:'whale',txt:'Говорят, вокруг звезды плавает космический кит! Найди его в телескоп.'},{t:'bring',k:'berry',n:4,txt:'Хочу морс из звёздных ягод. Нужно 4 ягоды.'}],
+  gribok:[{t:'find',id:'nightcap',pos:[18.6,3,0],txt:'Я потерял ночной колпак... Кажется, оставил на сеновале в амбаре.'},{t:'bring',k:'pillow',n:1,txt:'Мм... Вот бы пуховую подушку с Одуванчии. Самую мягкую.'},{t:'swing',txt:'Покачайся на качелях, а я посмотрю. Это убаюкивает.'},{t:'bring',k:'shroom',n:2,txt:'Скучаю по светогрибам. Принеси 2, я поставлю их у гамака.'}],
+  vintik:[{t:'bring',k:'scrap',n:3,txt:'Чиню батут. Нужно 3 железки с Шестерёнки.'},{t:'find',id:'wrench',pos:[-14.4,3.45,-8.5],txt:'Мой гаечный ключ! Я оставил его на крыше лавки Тётушки Выдры.'},{t:'bring',k:'cog',n:1,txt:'Для мандаринового двигателя нужна шестерня из плавильни.'},{t:'tag',txt:'Проверим мои новые ботинки! Догони меня!'}]};
+const REQ_ITEM={scarf:{name:'Шарф Снежка',col:0x7fe3e8},nightcap:{name:'Ночной колпак Грибка',col:0xb28cff},wrench:{name:'Ключ Винтика',col:0x9aa6ad}};
+function reqState(k){S.req=S.req||{};return S.req[k]||(S.req[k]={i:-1,on:false,cd:0})}
+function reqOf(k){const r=reqState(k);return r.on?REQS[k][r.i]:null}
+function reqReady(k,q){const r=reqState(k);if(q.t==='bring')return(S.inv[q.k]||0)>=q.n;if(q.t==='find')return!!r.found;if(q.t==='scope')return!!(S.scopeLog&&S.scopeLog[q.id]>r.t0);if(q.t==='swing')return!!(S.swingT&&S.swingT>r.t0);return false}
+function reqTick(){for(const k of Object.keys(REQS)){const pid={yuzik:'p1',snezhok:'p2',gribok:'p3',vintik:'p4'}[k];if(!S.rescued[pid])continue;const r=reqState(k);if(!r.on&&Date.now()>r.cd){let i=(r.i+1)%REQS[k].length;if(REQS[k][i].t==='scope'&&!S.decor.telescope)i=(i+1)%REQS[k].length;r.i=i;r.on=true;r.found=false;r.t0=Date.now();save()}}}
+function reqDone(k){const r=reqState(k),q=REQS[k][r.i];if(!r.on)return;if(q.t==='bring'&&!takeRes(q.k,q.n))return;r.on=false;r.cd=Date.now()+75000;const b=broData(k);b.h=Math.min(5,b.h+1);const rw=q.t==='bring'?6+q.n*2:8;addCoins(rw);save();AU.sfx('quest');
+  banner('Просьба выполнена',CAST[k].name+' счастлив','+1 сердечко и '+coinsWord(rw));const n=(L.bros||[]).find(x=>x.key===k);if(n)hearts(n);if(curScreen==='#bro')renderBro()}
+function renderReq(k){const q=reqOf(k),el=$('#broReq');if(!q){el.hidden=true;return}el.hidden=false;const ready=reqReady(k,q);
+  let st='';if(q.t==='bring')st=`В сумке: ${S.inv[q.k]||0} из ${q.n} · ${RES[q.k].name.toLowerCase()}`;else if(q.t==='find')st=reqState(k).found?'Находка у тебя!':'Найди и принеси';else if(q.t==='tag')st='Нажми «Догонялки» и поймай брата';else if(q.t==='scope')st=ready?'Нашёл! Расскажи брату':'Телескоп стоит у тарелки';else if(q.t==='swing')st=ready?'Покачался! Расскажи брату':'Качели во дворе у костра';
+  $('#broReqTxt').textContent='«'+q.txt+'»';$('#broReqSt').textContent=st;const bt=$('#broReqDo');bt.hidden=!(ready&&q.t!=='tag');bt.textContent=q.t==='bring'?`Отдать: ${q.n} ${RES[q.k].one}`:q.t==='find'?'Отдать находку':'Рассказать'}
+$('#broReqDo').addEventListener('click',()=>{if(broCur)reqDone(broCur.key)});
+function buildReqItems(){for(const k of Object.keys(REQS)){const q=reqOf(k),r=reqState(k);if(!q||q.t!=='find'||r.found)continue;const it=REQ_ITEM[q.id];const g=new THREE.Group();mesh(G.tor,mat(it.col),0,.2,0,.18,.18,.25,g);mesh(G.sph,mat(it.col),0,.2,0,.1,.1,.1,g);g.add(glow(it.col,1.6,.6));
+  const pk=itemPick('req_'+q.id+'_'+r.t0,q.pos[0],q.pos[1],q.pos[2],g,null,()=>{r.found=true;save();toast(`Найдено: ${it.name}. Отнеси брату`);AU.sfx('item')})}}

@@ -256,6 +256,6 @@ function updProj(dt){for(let i=L.proj.length-1;i>=0;i--){const b=L.proj[i];b.vy-
   for(const t of L.targets){if(!t.on)continue;if((b.x-t.x)**2+(b.y-t.y)**2+(b.z-t.z)**2<t.r*t.r){t.hit(t);hit=true;break}}
   if(!hit&&b.kind==='mand'&&splatNPC(b))hit=true;
   if(!hit)for(const c of L.solids){if(c.on&&c.k==='b'&&b.x>c.x0&&b.x<c.x1&&b.y>c.y0&&b.y<c.y1&&b.z>c.z0&&b.z<c.z1){hit=true;break}}
-  if(hit){FXW.burst(b.x,Math.max(b.y,.1),b.z,{col:b.kind==='mand'?0xff9a2e:0xffffff,n:12,spd:2.5,up:1.5,life:.5,size:.25});if(b.kind==='mand')AU.sfx('splat');L.group.remove(b.m);L.proj.splice(i,1)}}}
+  if(hit){FXW.burst(b.x,Math.max(b.y,.1),b.z,{col:b.kind==='mand'?0xfff1b0:0xffffff,n:12,spd:2.5,up:1.5,life:.5,size:.25});if(b.kind==='mand')AU.sfx('splat');L.group.remove(b.m);L.proj.splice(i,1)}}}
 function throwBall(){if(!canShoot())return;if(gunOn()){shootMandarin();return}const dir=new THREE.Vector3(0,0,-1).applyEuler(camera.rotation);const m=mesh(G.sph,mat(0xf4f8fb),0,0,0,.14,.14,.14,L.group);
   L.proj.push({m,x:camera.position.x+dir.x*.6,y:camera.position.y-.15+dir.y*.6,z:camera.position.z+dir.z*.6,vx:dir.x*24,vy:dir.y*24+2.5,vz:dir.z*24,life:3});AU.sfx('throw')}

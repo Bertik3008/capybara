@@ -74,7 +74,7 @@ $('#mResume').addEventListener('click',closeScreen);
 $('#mExit').addEventListener('click',()=>{closeScreen();toTitle()});
 function renderMenu(){$$('#menuTabs [data-tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===menuTab));const B=$('#menuBody');
   $('#menuTitle').textContent={quests:'Журнал заданий',kapik:'Капик и сумка',settings:'Настройки',controls:'Управление'}[menuTab];
-  if(menuTab==='quests'){const order=['base','p1','p2','p3','p4','p5','p6'];let h='';
+  if(menuTab==='quests'){const order=['base','p1','p2','p3','p4','p5','p7','p6'];let h='';
     for(const pl of order){const ids=Object.keys(QUESTS).filter(id=>QUESTS[id].pl===pl&&qs(id)>0);if(!ids.length)continue;h+=`<div class="qsec">${PL[pl].name}</div>`;
       ids.sort((a,b)=>(qdone(a)-qdone(b))||(QUESTS[b].main||0)-(QUESTS[a].main||0)).forEach(id=>{const q=QUESTS[id],st=qs(id),done=st===99;
         h+=`<div class="card ${done?'done':''} ${L&&L.id===pl&&!done?'cur':''}"><div class="thumb"><img alt="" src="${portrait(q.giver)}"></div><div class="cardMain"><b>${q.t}</b><span>${done?'Выполнено':q.steps[Math.min(st,q.steps.length)-1]}</span><div class="tags">${q.main?'<span class="tag gold">Главное</span>':'<span class="tag">Побочное</span>'}${q.rw?`<span class="tag">Награда: ${coinsWord(q.rw)}</span>`:''}${done?'<span class="tag ok">Готово</span>':''}</div></div></div>`})}

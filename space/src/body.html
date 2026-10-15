@@ -55,7 +55,7 @@
     <button id="bSet">Настройки</button>
   </nav>
   <div class="tconfirm" id="tConfirm" hidden><p>Начать заново? Сохранение удалится.</p><div class="btns"><button id="bNewYes" class="primary">Начать заново</button><button id="bNewNo" class="ghost">Отмена</button></div></div>
-  <p class="tfoot">Версия 5 · глава 3</p>
+  <p class="tfoot">Версия 6 · глава 3</p>
 </div>
 
 <div id="pro" class="screen" hidden>
@@ -115,6 +115,7 @@
 <div id="bro" class="screen menu" hidden>
   <div class="sheet">
     <div class="shopHead"><div class="portrait"><img id="broPic" alt=""></div><div style="flex:1;min-width:0"><h2 id="broName"></h2><div class="hearts" id="broHearts"></div><p class="sub" id="broMood" style="margin:4px 0 0"></p></div></div>
+    <div class="card broReq" id="broReq" hidden><div class="cardMain"><b>Просьба</b><span id="broReqTxt"></span><span id="broReqSt" style="font-weight:800;color:#c9671a"></span></div><button id="broReqDo" class="primary" hidden>Отдать</button></div>
     <div class="broBtns">
       <button id="broTalk">Поговорить</button>
       <button id="broFeed">Угостить</button>
@@ -124,6 +125,14 @@
     </div>
     <p class="sub">Сердечки растут от угощений, догонялок и почёсываний. Пять сердечек - и брат что-то подарит.</p>
     <button class="ghost" data-close>Отойти</button>
+  </div>
+</div>
+
+<div id="arcade" class="screen menu" hidden>
+  <div class="sheet arcSheet">
+    <div class="sheetHead"><h2>Капи-Прыг</h2><button data-close class="primary">Выйти</button></div>
+    <canvas id="arc" width="480" height="320"></canvas>
+    <p class="sub" id="arBest"></p>
   </div>
 </div>
 

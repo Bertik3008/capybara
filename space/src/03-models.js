@@ -28,6 +28,8 @@ const HEADS={
       mesh(G.cone,mat(C.fur),s*.29,.33,-.02,.05,.14,.04,h).rotation.z=-s*1.2;const br=mesh(G.box,mat(0x1a0a0a),s*.11,.43,.24,.13,.03,.03,h);br.rotation.z=s*.35;
       mesh(G.sph,bmat(C.eye||0xffd36b),s*.11,.34,.24,.065,.06,.04,h);mesh(G.box,mat(0x1a0a0a),s*.11,.34,.275,.015,.07,.01,h);mesh(G.cone,mat(0xffffff),s*.06,.08,.29,.025,.06,.02,h).rotation.x=Math.PI}
     mesh(G.box,mat(0x2a0a0a),0,.11,.3,.2,.035,.02,h);mesh(G.sph,mat(0x5a1010),0,.23,.31,.04,.03,.03,h);return .3},
+  monkey(h,C){mesh(G.sph,mat(C.fur),0,.27,0,.28,.27,.27,h);mesh(G.sph,mat(C.fur2),0,.26,.12,.21,.2,.17,h);mesh(G.sph,mat(C.fur2),0,.15,.2,.15,.1,.12,h);mesh(G.sph,mat(0x3a2418),0,.19,.315,.035,.02,.02,h);mesh(G.box,mat(0x3a2418),0,.1,.3,.07,.012,.01,h);
+    for(const s of[-1,1]){mesh(G.sph,mat(C.fur),s*.29,.3,-.01,.04,.11,.11,h);mesh(G.sph,mat(0xf0b0a0),s*.31,.3,0,.02,.07,.07,h)}eyes(h,.09,.33,.22,.05);return .28},
   squirrel(h,C){mesh(G.sph,mat(C.fur),0,.26,0,.26,.24,.25,h);mesh(G.sph,mat(C.fur2),0,.19,.17,.15,.11,.13,h);mesh(G.sph,mat(0x2a1a14),0,.23,.29,.04,.032,.028,h);mesh(G.box,mat(0xffffff),0,.12,.26,.05,.05,.02,h);
     for(const s of[-1,1]){const e=mesh(G.cone,mat(C.fur),s*.15,.5,-.02,.07,.16,.05,h);e.rotation.z=-s*.25;mesh(G.cone,mat(C.dark||0x5a3018),s*.17,.6,-.02,.03,.08,.03,h).rotation.z=-s*.3;mesh(G.sph,mat(0xffb3a0),s*.17,.2,.19,.05,.03,.02,h)}
     eyes(h,.11,.31,.19,.048);return .27},
@@ -48,9 +50,10 @@ const HATS={
   mandarin(h,r){mesh(G.sph,mat(0xff9a2e),0,r*1.62,0,.17,.15,.17,h);mesh(G.box,mat(0x4f9a3a),.07,r*1.62+.16,0,.16,.02,.07,h).rotation.z=.4},
   mushroom(h,r){mesh(G.hemi,mat(0xe2453c),0,r*1.35,0,.36,.26,.36,h);[[.14,.08],[-.12,.04],[0,-.15],[.04,.16]].forEach(d=>mesh(G.sph,mat(0xffffff),d[0],r*1.35+.2,d[1],.05,.025,.05,h))},
   goggles(h,r){mesh(G.cyl,mat(0x5a4630),0,r*1.25,0,r*1.02,.06,r*1.02,h);for(const s of[-1,1]){const g=mesh(G.tor,mat(0xc99a3a),s*.1,r*1.33,r*.86,.075,.075,.075,h);mesh(G.disc,bmat(0x9fe9ff),s*.1,r*1.33,r*.86,.065,.01,.065,h).rotation.x=Math.PI/2}},
+  pilot(h,r){mesh(G.hemi,mat(0x7a4a2a),0,r*1.2,0,.31,.26,.31,h);for(const s of[-1,1])mesh(G.sph,mat(0x6a3a1e),s*.27,r*.95,0,.06,.14,.1,h);mesh(G.cyl,mat(0x3a2a20),0,r*1.42,.12,.25,.04,.05,h).rotation.x=.3;for(const s of[-1,1]){mesh(G.tor,mat(0xc99a3a),s*.1,r*1.5,r*.6,.07,.07,.07,h);mesh(G.disc,bmat(0xffd36b),s*.1,r*1.5,r*.6,.06,.01,.06,h).rotation.x=Math.PI/2}},
   headphones(h,r){mesh(G.torThin,mat(0x333344),0,r*1.05,0,r*1.05,r*1.05,r*1.4,h).rotation.y=Math.PI/2;for(const s of[-1,1])mesh(G.cyl,mat(0xff6b6b),s*r*1.02,r*.9,0,.08,.08,.08,h).rotation.z=Math.PI/2}
 };
-const HAT_INFO={none:{name:'Без шапки',price:0},straw:{name:'Соломенная шляпа',price:10},beanie:{name:'Вязаная шапка',price:12},propeller:{name:'Кепка с пропеллером',price:18},beret:{name:'Берет художника',price:15},tophat:{name:'Цилиндр',price:20},cosmo:{name:'Шлем космонавта',price:25},crown:{name:'Корона',price:35},mandarin:{name:'Мандариновая шапка',price:0,secret:1},mushroom:{name:'Грибная шляпка',price:0,secret:1},goggles:{name:'Лётные очки',price:0,secret:1}};
+const HAT_INFO={none:{name:'Без шапки',price:0},straw:{name:'Соломенная шляпа',price:10},beanie:{name:'Вязаная шапка',price:12},propeller:{name:'Кепка с пропеллером',price:18},beret:{name:'Берет художника',price:15},tophat:{name:'Цилиндр',price:20},cosmo:{name:'Шлем космонавта',price:25},crown:{name:'Корона',price:35},mandarin:{name:'Мандариновая шапка',price:0,secret:1},mushroom:{name:'Грибная шляпка',price:0,secret:1},goggles:{name:'Лётные очки',price:0,secret:1},pilot:{name:'Дедушкин шлем пилота',price:0,secret:1}};
 
 function makeChar(sp){
   if(sp.sp==='snail')return makeSnail(sp);
@@ -87,6 +90,7 @@ function makeChar(sp){
   if(sp.tail==='ring'){for(let i=0;i<4;i++)mesh(G.sph,mat(i%2?0x2b2b33:C.fur),0,.05+i*.04,-bd-.08-i*.13,.1,.1,.12,torso)}
   else if(sp.tail==='short')mesh(G.sph,mat(C.fur),0,.05,-bd-.02,.07,.07,.07,torso);
   else if(sp.tail==='bushy'){for(let i=0;i<4;i++){const t=mesh(G.sph,mat(i===3?(C.fur2||C.fur):C.fur),0,.12+i*.17,-bd-.14-Math.sin(i*.9)*.12,.15+i*.02,.17,.13,torso);t.rotation.x=-.3}}
+  else if(sp.tail==='monkey'){for(let i=0;i<7;i++){const a=i*.42;mesh(G.sph,mat(C.fur),0,.08+Math.sin(a)*.35,-bd-.08-(1-Math.cos(a))*.2-i*.03,.045,.045,.045,torso)}}
   else if(sp.tail==='devil'){const tg=new THREE.Group();tg.position.set(0,.05,-bd-.05);tg.rotation.x=-.9;torso.add(tg);mesh(G.cap,mat(C.fur),0,.25,0,.03,.5,.03,tg);mesh(G.cone4,mat(C.fur),0,.52,0,.09,.16,.03,tg)}
   else if(sp.tail==='otter'){const t=mesh(G.cone,mat(C.fur),0,.0,-bd-.2,.09,.5,.06,torso);t.rotation.x=-1.9}
   if(sp.prop)PROPS[sp.prop](arms[1].userData.paw);
@@ -181,6 +185,11 @@ const CAST={
   oreshka:{name:'Белка Орешка',voice:500,spec:()=>({sp:'squirrel',apron:0xfff1d6,tail:'bushy',c:{fur:0xc0703a,fur2:0xfff0dc,dark:0x6a3418,shirt:0xc94f6a,pants:0xc94f6a,arm:0xc0703a,paw:0xc0703a}})},
   belchonok:{name:'Бельчонок',voice:760,spec:()=>({sp:'squirrel',scale:.6,tail:'bushy',c:{fur:0xd8904a,fur2:0xfff0dc,dark:0x7a4420,shirt:pick([0xffd36b,0x7fe3e8,0x8ee08a]),pants:0x6a4a30,arm:0xd8904a,paw:0xd8904a}})},
   bee:{name:'Шмель Жужа',voice:420,spec:()=>({sp:'raccoon',scale:.8,hat:'propeller',c:{fur:0xffc83d,fur2:0x2b2b33,shirt:0x2b2b33,pants:0xffc83d,arm:0x2b2b33,paw:0x2b2b33}})},
+  dedushka:{name:'Дедушка (запись)',voice:200,spec:()=>({sp:'capy',hat:'pilot',scarf:0xffd36b,glasses:true,c:{fur:0x8a6a52,fur2:0x6a5040,dark:0x3a2a1e}})},
+  makakin:{name:'Профессор Макакин',voice:420,spec:()=>({sp:'monkey',glasses:true,hat:'goggles',apron:0xf4f6fa,tail:'monkey',c:{fur:0x7a4a2a,fur2:0xe8c8a0,shirt:0x3a6ad6,pants:0x3a3a4a,arm:0x7a4a2a,paw:0xe8c8a0,shoe:0x3a2418}})},
+  bananych:{name:'Вождь Бананыч',voice:230,spec:()=>({sp:'monkey',scale:1.15,hat:'straw',scarf:0xffe14a,prop:'staff',tail:'monkey',c:{fur:0x5a3a22,fur2:0xd8b890,shirt:0x4f9a3a,pants:0x6a4a2a,arm:0x5a3a22,paw:0xd8b890,shoe:0x3a2418,band:0xffe14a}})},
+  frukta:{name:'Мартышка Фрукта',voice:600,spec:()=>({sp:'monkey',scale:.85,apron:0xffe8c8,tail:'monkey',c:{fur:0x9a6a3a,fur2:0xf0d8b0,shirt:0xff6b9a,pants:0xff6b9a,arm:0x9a6a3a,paw:0xf0d8b0,shoe:0x5a3a22}})},
+  monkey:{name:'Обезьянка',voice:640,spec:()=>({sp:'monkey',scale:.8+Math.random()*.2,tail:'monkey',c:{fur:pick([0x7a4a2a,0x9a6a3a,0x5a3a22]),fur2:0xe8c8a0,shirt:pick([0xffe14a,0x7fe3e8,0x8ee08a,0xff8a3a]),pants:0x4a3a2a,arm:0x7a4a2a,paw:0xe8c8a0,shoe:0x3a2418}})},
   rogozhar:{name:'Король Рогожар',voice:90,spec:()=>({sp:'demon',scale:2.4,hat:'crown',tail:'devil',prop:'trident',bw:.4,bd:.34,c:{fur:0xc8302a,fur2:0xe85a40,horn:0xf4e6c8,eye:0xffd36b,shirt:0x3a1420,pants:0x2a0e14,arm:0xc8302a,paw:0xc8302a,shoe:0x1a0a0a}})},
   ugolek:{name:'Бесёнок-уголёк',voice:700,spec:()=>({sp:'demon',scale:.62,tail:'devil',c:{fur:0x3a2a2a,fur2:0x4a3434,horn:0xff8a3a,eye:0xff6a2a,shirt:0x2a1a1a,pants:0x2a1a1a,arm:0x3a2a2a,paw:0x3a2a2a,shoe:0x1a1010}})},
   iskorka:{name:'Саламандра Искорка',voice:560,spec:()=>({sp:'frog',scarf:0x7fe3e8,tail:'otter',glasses:true,c:{fur:0xff7a3a,fur2:0xffd36b,shirt:0x2a5a7a,pants:0x2a5a7a,arm:0xff7a3a,paw:0xff7a3a,shoe:0xff7a3a}})},
@@ -189,7 +198,7 @@ const CAST={
 function makeCast(key){const c=makeChar(CAST[key].spec());c.key=key;return c}
 
 /* ---------- PROPS ---------- */
-const PAINTS={silver:{name:'Дедушкино серебро',col:0xb8c4d6,price:0},mandarin:{name:'Мандариновая',col:0xffab4a,price:25},mint:{name:'Мятная',col:0x6fe0b0,price:25},violet:{name:'Фиалковая',col:0xa98cff,price:25},gold:{name:'Золотая',col:0xffd36b,price:50},fluffy:{name:'Пушистая',col:0xfff0d8,price:0,secret:1}};
+const PAINTS={silver:{name:'Дедушкино серебро',col:0xb8c4d6,price:0},mandarin:{name:'Мандариновая',col:0xffab4a,price:25},mint:{name:'Мятная',col:0x6fe0b0,price:25},violet:{name:'Фиалковая',col:0xa98cff,price:25},gold:{name:'Золотая',col:0xffd36b,price:50},fluffy:{name:'Пушистая',col:0xfff0d8,price:0,secret:1},retro:{name:'Ретро дедушки',col:0xd84a4a,price:0,secret:1}};
 /* the grandpa saucer: hull, rim, dome, lights; landed=true puts it on its legs */
 function makeUFO(paint,landed){
   const g=new THREE.Group();const col=(PAINTS[paint]||PAINTS.silver).col;
@@ -230,12 +239,14 @@ const ITEMS={
 /* resources: icon colour, name, base price */
 const RES={berry:{name:'Звёздные ягоды',one:'ягода',col:'#7aa8ff',price:1},mandarin:{name:'Мандарины',one:'мандарин',col:'#ffab4a',price:2},fish:{name:'Рыба',one:'рыба',col:'#9fd8f0',price:3},shroom:{name:'Светогрибы',one:'светогриб',col:'#d7a0ff',price:3},scrap:{name:'Металлолом',one:'деталь',col:'#b8c0c8',price:2},
   juice:{name:'Мандариновый сок',one:'банка сока',col:'#ff8a2e',price:16},smoked:{name:'Копчёная рыба',one:'копчёная рыба',col:'#d98a4a',price:15},elixir:{name:'Светоэликсир',one:'эликсир',col:'#c97aff',price:17},cog:{name:'Шестерни',one:'шестерня',col:'#ffd36b',price:15}};
-RES.fluff={name:'Звёздный пух',one:'пушинка',col:'#fff2b8',price:2};RES.pillow={name:'Пуховая подушка',one:'подушка',col:'#f4d0e8',price:19};
+RES.banana={name:'Бананы',one:'банан',col:'#ffe14a',price:2};RES.icecream={name:'Банановый пломбир',one:'пломбир',col:'#fff1b0',price:18};RES.fluff={name:'Звёздный пух',one:'пушинка',col:'#fff2b8',price:2};RES.pillow={name:'Пуховая подушка',one:'подушка',col:'#f4d0e8',price:19};
 function resModel(kind){const g=new THREE.Group();
   if(kind==='berry'){for(let i=0;i<5;i++)mesh(G.sph,bmat(0x7aa8ff),Math.cos(i*1.3)*.09,.12+(i%2)*.08,Math.sin(i*1.3)*.09,.07,.07,.07,g)}
   else if(kind==='mandarin'){mesh(G.sph,mat(0xff9a2e),0,.16,0,.16,.14,.16,g);mesh(G.box,mat(0x4f9a3a),.04,.31,0,.12,.02,.06,g)}
   else if(kind==='fish'){mesh(G.sph,mat(0x9fd8f0,{metal:.3}),0,.12,0,.25,.1,.07,g);mesh(G.cone,mat(0x7ab8d8),-.3,.12,0,.08,.14,.03,g).rotation.z=Math.PI/2}
   else if(kind==='shroom'){mesh(G.cyl,mat(0xe8dcc8),0,.1,0,.04,.2,.04,g);mesh(G.hemi,bmat(0xd7a0ff),0,.18,0,.14,.1,.14,g)}
+  else if(kind==='banana'){for(let i=0;i<3;i++){const b=mesh(G.cap,mat(0xffe14a),(i-1)*.06,.14,0,.035,.2,.035,g);b.rotation.z=(i-1)*.3+.4}}
+  else if(kind==='icecream'){mesh(G.cone,mat(0xd8a060),0,.1,0,.07,.2,.07,g).rotation.x=Math.PI;mesh(G.sph,mat(0xfff1b0),0,.24,0,.09,.08,.09,g)}
   else if(kind==='fluff'){mesh(G.sph,bmat(0xfff8d8),0,.16,0,.12,.12,.12,g);mesh(G.cyl,mat(0x8a9a5a),0,.05,0,.01,.1,.01,g)}
   else if(kind==='pillow'){mesh(G.sph,mat(0xf4d0e8),0,.1,0,.22,.08,.16,g)}
   else if(kind==='scrap'){mesh(G.tor,mat(0x9aa6ad,{metal:.8}),0,.1,0,.12,.12,.2,g);mesh(G.box,mat(0x7a8088,{metal:.8}),.12,.06,.05,.18,.06,.06,g).rotation.y=.6}

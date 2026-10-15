@@ -1,15 +1,31 @@
-/* ---------- CHAPTER 3: toy mandarin blaster, heat, planet «Магмара» and King Rogozhar ---------- */
+/* ---------- CHAPTER 3: toy banana blaster «Бананомёт», heat, planet «Магмара» and King Rogozhar ---------- */
 /* toy blaster held in the right paw (first person) */
 const gunOn=()=>!!S.got.blaster&&!S.gunOff;
 const canShoot=()=>!!(L&&(L.canThrow||gunOn()));
 let gunMesh=null,gunKick=0,gunCD=0;
-function updGun(dt){const show=gunOn()&&mode==='play'&&!P.carry;if(show&&!gunMesh){gunMesh=new THREE.Group();const b=new THREE.Group();gunMesh.add(b);
-    mesh(G.cyl16,stdMat(0xff9a2e,{roughness:.45}),0,0,-.1,.075,.5,.075,b).rotation.x=Math.PI/2;mesh(G.cyl16,stdMat(0x4f9a3a,{roughness:.5}),0,0,-.38,.09,.08,.09,b).rotation.x=Math.PI/2;mesh(G.sph,stdMat(0xff8a1e,{roughness:.5}),0,.13,.02,.13,.12,.13,b);mesh(G.box,stdMat(0x4f9a3a),.04,.27,.02,.1,.02,.05,b);
-    mesh(G.box,stdMat(0xfff1d6),0,-.13,.08,.06,.16,.08,b).rotation.x=.3;mesh(G.sph,stdMat(0xffd36b,{emissive:0x553300}),0,0,-.43,.05,.05,.03,b);gunMesh.scale.setScalar(.55);gunMesh.position.set(.3,-.28,-.7);gunMesh.traverse(o=>{if(o.material)o.renderOrder=6});camera.add(gunMesh)}
-  if(gunMesh){gunMesh.visible=show;gunKick=Math.max(0,gunKick-dt*6);gunMesh.position.z=-.7+gunKick*.08;gunMesh.rotation.x=gunKick*.25+(P.ground?Math.sin(P.bob)*.02:0)}
-  gunCD-=dt;$('#gunHint').hidden=!show||isTouch;if(show)$('#gunHint').innerHTML=`${KC('ЛКМ')} мандариновые дольки · ${KC('G')} убрать`}
-function shootMandarin(){if(gunCD>0)return;gunCD=.22;gunKick=1;const dir=new THREE.Vector3(0,0,-1).applyEuler(camera.rotation);const m=new THREE.Group();mesh(G.hemi,mat(0xff9a2e),0,0,0,.13,.1,.06,m);mesh(G.disc,mat(0xfff1d6),0,0,0,.12,.01,.05,m);L.group.add(m);
-  L.proj.push({m,kind:'mand',x:camera.position.x+dir.x*.7,y:camera.position.y-.2+dir.y*.7,z:camera.position.z+dir.z*.7,vx:dir.x*30,vy:dir.y*30+1.2,vz:dir.z*30,life:2.5,g:6});AU.sfx('pop')}
+function makeBananomet(){const g=new THREE.Group(),b=new THREE.Group();g.add(b);
+  const Y=stdMat(0xf2c43a,{roughness:.38,metalness:.05}),Y2=stdMat(0xe0a92a,{roughness:.45}),DK=stdMat(0x2c3038,{roughness:.35,metalness:.7}),GR=stdMat(0x3a3f48,{roughness:.3,metalness:.8}),BR=stdMat(0x4a2e1e,{roughness:.7}),BL=stdMat(0x7fd0f0,{roughness:.2,metalness:.3});
+  const R=o=>(o.rotation.x=Math.PI/2,o);
+  mesh(G.box,Y,0,0,-.02,.13,.14,.5,b);mesh(G.box,Y2,0,-.035,-.02,.135,.05,.46,b);mesh(G.box,DK,0,.082,-.06,.05,.025,.4,b);
+  for(let i=0;i<5;i++)mesh(G.box,DK,0,.1,-.22+i*.07,.055,.018,.03,b);
+  R(mesh(G.cyl16,Y,0,.0,-.36,.062,.18,.062,b));for(let i=0;i<3;i++)R(mesh(G.cyl16,DK,0,0,-.3-i*.055,.066,.014,.066,b));
+  R(mesh(G.cyl16,GR,0,0,-.52,.034,.22,.034,b));R(mesh(G.cyl16,stdMat(0xff8a2e,{roughness:.4}),0,0,-.635,.05,.03,.05,b));R(mesh(G.cyl16,stdMat(0x111111),0,0,-.652,.03,.01,.03,b));
+  const tank=mesh(G.cyl16,new THREE.MeshStandardMaterial({color:lc(0xdff4ff),transparent:true,opacity:.45,roughness:.05,metalness:.1}),0,.17,.04,.065,.16,.065,b);tank.renderOrder=7;
+  mesh(G.sph,stdMat(0xfff1b0,{roughness:.8}),0,.13,.04,.05,.045,.05,b);mesh(G.sph,stdMat(0xfff6d0,{roughness:.8}),.01,.19,.045,.045,.04,.045,b);
+  mesh(G.cyl16,DK,0,.255,.04,.07,.02,.07,b);mesh(G.cyl16,stdMat(0x6a3a1e),0,.272,.04,.04,.02,.04,b);mesh(G.cyl16,DK,0,.09,.04,.07,.02,.07,b);
+  const pipe=mesh(G.torThin,BL,0,.1,-.15,.09,.09,.09,b);pipe.rotation.y=Math.PI/2;
+  const grip=mesh(G.box,BR,0,-.15,.14,.085,.2,.1,b);grip.rotation.x=.32;for(let i=0;i<3;i++){const r2=mesh(G.box,stdMat(0x3a2418),0,-.1-i*.05,.17+i*.015,.088,.012,.1,b);r2.rotation.x=.32}
+  const tg=mesh(G.torThin,DK,0,-.1,.04,.06,.06,.06,b);tg.rotation.y=Math.PI/2;mesh(G.box,DK,0,-.095,.05,.02,.06,.02,b).rotation.x=-.3;
+  mesh(G.box,Y2,0,.01,.29,.11,.13,.14,b);mesh(G.box,BR,0,.01,.37,.1,.15,.03,b);
+  mesh(G.box,DK,0,.115,-.24,.03,.04,.03,b);const dot=mesh(G.sph,new THREE.MeshBasicMaterial({color:lc(0x7fe3e8),toneMapped:false}),0,.14,-.24,.012,.012,.012,b);
+  for(const sd of[-1,1]){const st=new THREE.Group();st.position.set(sd*.067,.0,.0);st.rotation.y=sd*Math.PI/2;b.add(st);for(let k=0;k<5;k++){const a=-.6+k*.3;mesh(G.sph,stdMat(0xffe14a),Math.sin(a)*.06,Math.cos(a)*.03-.01,0,.018,.014,.004,st)}}
+  mesh(G.sph,stdMat(0x9a6236,{roughness:.8}),0,-.2,.16,.07,.06,.08,b);mesh(G.sph,stdMat(0x9a6236,{roughness:.8}),-.07,-.05,-.3,.06,.05,.07,b);
+  return g}
+function updGun(dt){const show=gunOn()&&mode==='play'&&!P.carry;if(show&&!gunMesh){gunMesh=makeBananomet();gunMesh.scale.setScalar(.6);gunMesh.position.set(.25,-.23,-.62);gunMesh.rotation.y=.05;gunMesh.traverse(o=>{if(o.material)o.renderOrder=o.renderOrder||6});camera.add(gunMesh)}
+  if(gunMesh){gunMesh.visible=show;gunKick=Math.max(0,gunKick-dt*6);gunMesh.position.z=-.62+gunKick*.05;gunMesh.rotation.x=gunKick*.18+(P.ground?Math.sin(P.bob)*.015:0)}
+  gunCD-=dt;$('#gunHint').hidden=!show||isTouch;if(show)$('#gunHint').innerHTML=`${KC('ЛКМ')} банановый пломбир · ${KC('G')} убрать`}
+function shootMandarin(){if(gunCD>0)return;gunCD=.22;gunKick=1;const dir=new THREE.Vector3(0,0,-1).applyEuler(camera.rotation);const m=new THREE.Group();mesh(G.sph,mat(0xfff1b0),0,0,0,.12,.11,.12,m);mesh(G.hemi,mat(0x6a3a1e),0,.03,0,.1,.06,.1,m);for(let k=0;k<4;k++)mesh(G.box,mat(pick([0xff6b9a,0x7fe3e8,0xffd36b])),Math.cos(k*1.6)*.06,.09,Math.sin(k*1.6)*.06,.03,.008,.008,m);L.group.add(m);
+  const o=new THREE.Vector3(.2,-.18,-.9).applyEuler(camera.rotation);L.proj.push({m,kind:'mand',x:camera.position.x+o.x,y:camera.position.y+o.y,z:camera.position.z+o.z,vx:dir.x*30,vy:dir.y*30+1.2,vz:dir.z*30,life:2.5,g:6});AU.sfx('pop');FXW.burst(camera.position.x+o.x,camera.position.y+o.y,camera.position.z+o.z,{col:0xeaf8ff,n:5,spd:1.2,up:.5,g:0,life:.35,size:.12})}
 /* npcs say something funny when splatted */
 function splatNPC(b){for(const n of L.npcs){if(n.noSplat)continue;const dx=b.x-n.x,dz=b.z-n.z,dy=b.y-(n.c.root.position.y+n.c.h*.6);if(dx*dx+dz*dz<.5&&Math.abs(dy)<n.c.h*.6){if(!n.splatT||T-n.splatT>2){n.splatT=T;toast(`${CAST[n.key].name}: ${pick(['Ай! Липко!','Эй, это мандарин?','Хи-хи, щекотно!','Вкусно, но в глаз!','Прямо в нос!'])}`);const c=n.c;tween(.3,p=>{c.root.position.y=n.y+Math.sin(p*Math.PI)*.35})}return true}}return false}
 
@@ -61,7 +77,7 @@ function buildP6(){
   /* caged brothers */
   const CG=[['yuzik',-11,-36],['snezhok',-11,-46],['gribok',11,-36],['vintik',11,-46]];const cages=[];
   CG.forEach(cg=>{const g=new THREE.Group();g.position.set(cg[1],0,cg[2]);L.group.add(g);for(let i=0;i<12;i++){const a=i/12*TAU;mesh(G.cyl,stdMat(0x2a2a33,{metalness:.6}),Math.cos(a)*1,1.1,Math.sin(a)*1,.04,2.2,.04,g)}mesh(G.disc,stdMat(0x2a2a33,{metalness:.6}),0,2.25,0,1.1,.1,1.1,g);mesh(G.disc,stdMat(0x2a2a33),0,.05,0,1.1,.1,1.1,g);
-    const c=addC({k:'c',x:cg[1],z:cg[2],r:1.1,y0:0,y1:2.3,t:'solid'});let b=null;if(qs('c3')<99){b=npc(cg[0],cg[1],.1,cg[2],{yaw:-Math.sign(cg[1])*Math.PI/2,pose:'sit',nc:true,r:2.6,talk:n=>talk(n,[[cg[0],pick(['Капик! Он не злой, он просто не спит триста лет!','Стреляй в него мандаринами, ему станет прохладно!','Я знал, что ты придёшь!'])]])});b.noSplat=true}cages.push({g,c,b,key:cg[0]})});
+    const c=addC({k:'c',x:cg[1],z:cg[2],r:1.1,y0:0,y1:2.3,t:'solid'});let b=null;if(qs('c3')<99){b=npc(cg[0],cg[1],.1,cg[2],{yaw:-Math.sign(cg[1])*Math.PI/2,pose:'sit',nc:true,r:2.6,talk:n=>talk(n,[[cg[0],pick(['Капик! Он не злой, он просто не спит триста лет!','Стреляй в него пломбиром, ему станет прохладно!','Я знал, что ты придёшь!'])]])});b.noSplat=true}cages.push({g,c,b,key:cg[0]})});
   /* imps */
   const imps=[];function imp(x,z,home){const c=makeCast('ugolek');c.root.position.set(x,0,z);L.group.add(c.root);const I={c,x,z,hx:x,hz:z,state:'idle',cd:0,t:Math.random()*5,home:home!==false,alive:true};
     I.tg={x,y:.7,z,r:.75,get on(){return I.alive},hit:()=>{I.alive=false;AU.sfx('sizzle');AU.sfx('pop');FXW.burst(I.x,.7,I.z,{col:0xdddddd,n:24,spd:2.5,up:3,g:-1,life:1.2,size:.6});c.root.visible=false;toast(pick(['Пш-ш! Уголёк остыл','Бесёнок зашипел и убежал','Уголёк стал простым камешком']));if(I.home)setTimeout(()=>{if(!L||!imps.includes(I))return;I.alive=true;I.x=I.hx;I.z=I.hz;c.root.visible=true},35000)}};
@@ -77,7 +93,7 @@ function buildP6(){
   const B=L.boss={hp:15,max:15,state:qs('c3')>=99?'asleep':'throne',x:0,y:1.2,z:-51.8,pi:0,fb:2.5,hop:null,phase:1};const K=makeCast('rogozhar');K.root.position.set(B.x,B.y,B.z);L.group.add(K.root);
   const bossHit={x:0,y:3.2,z:-51.8,r:1.7,get on(){return B.state==='fight'},hit:()=>{B.hp--;AU.sfx('splat');AU.sfx('sizzle');FXW.burst(B.x,B.y+3,B.z,{col:0xff9a2e,n:18,spd:3,up:2,life:.7,size:.4});FXW.burst(B.x,B.y+4,B.z,{col:0xeeeeee,n:8,spd:1.5,up:3,g:-1,life:1,size:.6});
     K.root.scale.set(1.08,.92,1.08);setTimeout(()=>K.root.scale.set(1,1,1),120);$('#bossFill').style.width=(B.hp/B.max*100)+'%';
-    if(Math.random()<.35)toast(`Рогожар: ${pick(['Ай! Холодно!','Хо-хо, щекотно!','Кто кидается мандаринами?!','Брр! Мне... приятно?'])}`);
+    if(Math.random()<.35)toast(`Рогожар: ${pick(['Ай! Холодно!','Хо-хо, щекотно!','Кто кидается мороженым?!','Брр! Мне... приятно?'])}`);
     if(B.hp===10&&B.phase===1){B.phase=2;AU.sfx('roar');toast('Рогожар: Угольки, ко мне!');imp(-6,-40,false);imp(6,-40,false)}
     if(B.hp===5&&B.phase===2){B.phase=3;AU.sfx('roar');toast('Рогожар: Ну всё, я разогреваюсь!');imp(-8,-34,false);imp(8,-34,false);imp(0,-36,false)}
     if(B.hp<=0)bossDown()}};L.targets.push(bossHit);
@@ -85,7 +101,7 @@ function buildP6(){
     const m=new THREE.Group();m.add(glow(0xff6a2a,2.2,.95));mesh(G.sph,new THREE.MeshBasicMaterial({color:lc(0xffd36b),toneMapped:false}),0,0,0,.35,.35,.35,m);m.position.copy(from);L.group.add(m);
     const f={m,v:dir.multiplyScalar(sp),life:d/sp+1.5};f.v.y+=2;f.tg={x:from.x,y:from.y,z:from.z,r:.8,on:true,hit:()=>{f.life=0;AU.sfx('sizzle');FXW.burst(m.position.x,m.position.y,m.position.z,{col:0xeeeeee,n:16,spd:2,life:.8,size:.5})}};L.targets.push(f.tg);fbs.push(f);AU.sfx('fire')}
   function bossDown(){B.state='down';$('#bossBar').hidden=true;AU.music('p6');fbs.forEach(f=>f.life=0);imps.forEach(I=>{if(!I.home&&I.alive)I.tg.hit()});
-    say([['rogozhar','Ох... Ох-хо-хо... Прохла-а-адно...'],['rogozhar','Триста лет на этой сковородке... И впервые мне... не жарко.'],['kapik','Ты украл моих братьев, чтобы остыть?'],['rogozhar','Я слышал, капибары самые спокойные в галактике. Думал, рядом с ними усну...'],['rogozhar','А-а-аууу... Мандарины... лучше... колыбельной... Хр-р-р...'],['kapik','Уснул. Братья, домой!']],()=>{
+    say([['rogozhar','Ох... Ох-хо-хо... Прохла-а-адно...'],['rogozhar','Триста лет на этой сковородке... И впервые мне... не жарко.'],['kapik','Ты украл моих братьев, чтобы остыть?'],['rogozhar','Я слышал, капибары самые спокойные в галактике. Думал, рядом с ними усну...'],['rogozhar','А-а-аууу... Пломбир... лучше... колыбельной... Хр-р-р...'],['kapik','Уснул. Братья, домой!']],()=>{
       B.state='asleep';K.root.position.set(0,1.2,-51.8);cages.forEach((cg,i)=>{setTimeout(()=>{cg.g.visible=false;cg.c.on=false;if(cg.b){const c=cg.b.c,y0=c.root.position.y;AU.sfx('beam');tween(1.3,p=>{c.root.position.y=y0+p*6;c.root.scale.setScalar(1-p*.9)},()=>{c.root.visible=false})}},i*450)});
       setTimeout(()=>{qcomplete('c3');showEnding(3)},2600)})}
   tick((t,dt)=>{const c=K;
@@ -114,12 +130,12 @@ function buildP6(){
   L.arrive=[['kapik','Магмара... Жарко, как в печке. Воздух дрожит.'],['kapik','Где-то там замок Рогожара. Держитесь, малыши!']];
   L.objective=()=>{const st=qs('c3');if(st===99)return{text:'Рогожар сладко спит. На Магмаре наконец тихо',pos:null};
     if(st<=5){const left=fountains.filter(f=>!f.done);if(!left.length)return{text:'Ворота открыты. Иди в замок',pos:[0,2,-28],tag:'Глава 3'};let b=left[0],bd=1e9;for(const f of left){const d=Math.hypot(f.x-P.x,f.z-P.z);if(d<bd){bd=d;b=f}}
-      return{text:`Остуди лавовые фонтаны мандаринами: ${3-left.length} из 3. Мост через лаву - слева и справа`,pos:[b.x,2.6,b.z],tag:'Глава 3'}}
-    if(B.state==='fight')return{text:'Стреляй мандаринами в Рогожара. Сбивай огненные шары!',pos:null,tag:'Глава 3'};
+      return{text:`Остуди лавовые фонтаны пломбиром: ${3-left.length} из 3. Мост через лаву - слева и справа`,pos:[b.x,2.6,b.z],tag:'Глава 3'}}
+    if(B.state==='fight')return{text:'Стреляй пломбиром в Рогожара. Сбивай огненные шары!',pos:null,tag:'Глава 3'};
     return{text:'Войди в замок и найди Рогожара',pos:P.z>-28?[0,2,-28]:[0,3,-50],tag:'Глава 3'}};
   $('#heat').hidden=false;
 }
 function iskorkaTalk(n){if(needTr('iskorka'))return;S.seen.isk=1;save();const st=qs('c3');
-  if(st>=5&&st<99){talk(n,[['iskorka','Тс-с, гость! Я Искорка. Тут правит Король Рогожар. Он утащил в замок четырёх пушистиков.'],['iskorka','Ворота держат три лавовых фонтана. Остуди их, и ворота откроются.'],['iskorka','Мандарины? Отличная идея! Холодные дольки шипят на лаве, как газировка.'],['iskorka','Бесёнки-угольки кусаются жаром. Шкала «Жар» слева: полная - и ты упадёшь без сил у точки возврата.']]);return}
+  if(st>=5&&st<99){talk(n,[['iskorka','Тс-с, гость! Я Искорка. Тут правит Король Рогожар. Он утащил в замок четырёх пушистиков.'],['iskorka','Ворота держат три лавовых фонтана. Остуди их, и ворота откроются.'],['iskorka','Бананомёт с пломбиром? Отличная идея! Холодные шарики шипят на лаве, как газировка.'],['iskorka','Бесёнки-угольки кусаются жаром. Шкала «Жар» слева: полная - и ты упадёшь без сил у точки возврата.']]);return}
   if(st===99){talk(n,[['iskorka','Король спит! Впервые за триста лет на Магмаре слышно, как поёт лава.']],()=>openTrade('iskorka'));return}
   openTrade('iskorka')}

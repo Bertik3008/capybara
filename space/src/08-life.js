@@ -10,8 +10,11 @@ function buildYard(){
   Y.stools=[[tbl[0],tbl[1]-1.3,0],[tbl[0],tbl[1]+1.3,Math.PI],[tbl[0]-1.55,tbl[1],Math.PI/2],[tbl[0]+1.55,tbl[1],-Math.PI/2]];
   Y.stools.forEach((s,i)=>{const c=[0xff6b6b,0x7fe3e8,0xffd36b,0x8ee08a][i];vis(G.cyl16,c,s[0],.44,s[1],.26,.06,.26);vis(G.cyl,0x7a4a2a,s[0],.2,s[1],.05,.4,.05);cyl(s[0],0,s[1],.28,.46,0,{nv:true})});
   /* swing set */
-  const SW=[24,-11];for(const x of[SW[0]-2,SW[0]+2])for(const d of[-1,1])vis(G.cyl,0xc94f3a,x,1.3,SW[1]+d*.55,.07,2.75,.07,d*.22,0,0);vis(G.cyl,0xc94f3a,SW[0],2.62,SW[1],.07,4.1,.07,0,0,Math.PI/2);
-  Y.seats=[];for(const ox of[-.8,.8]){const g=new THREE.Group();g.position.set(SW[0]+ox,2.6,SW[1]);L.group.add(g);for(const d of[-.22,.22])mesh(G.cyl,mat(0xd8c8a0),d,-1.05,0,.012,2.1,.012,g);mesh(G.box,mat(0x7fe3e8),0,-2.1,0,.56,.06,.3,g);mergeModel(g);Y.seats.push({g,ox,occ:null,ph:Math.random()*6,amp:.15})}
+  const SW=[24,-11];{const H=2.7,B=1.15,LL=Math.hypot(H,B),ta=Math.atan2(B,H);
+    for(const x of[SW[0]-2.1,SW[0]+2.1]){for(const d of[-1,1]){vis(G.cyl,0xc94f3a,x,H/2,SW[1]+d*B/2,.08,LL,.08,-d*ta,0,0,.02);vis(G.box,0x7a7684,x,.06,SW[1]+d*B,.32,.12,.32,0,0,0,.03,TX.stone);cyl(x,0,SW[1]+d*B,.18,1.2,0,{nv:true})}
+      vis(G.cyl,0xa83a2a,x,1.05,SW[1],.05,B*1.2,.05,Math.PI/2,0,0,.02);vis(G.sph,0xffd36b,x,H+.02,SW[1],.13,.13,.13)}
+    vis(G.box,0xb8452f,SW[0],H-.02,SW[1],4.5,.16,.16,0,0,0,.02,TX.planks);for(const ox of[-.8,.8])for(const dz of[-.22,.22])vis(G.tor,0x8a8aa0,SW[0]+ox,H-.12,SW[1]+dz,.05,.05,.05,0,Math.PI/2,0)}
+  Y.seats=[];for(const ox of[-.8,.8]){const g=new THREE.Group();g.position.set(SW[0]+ox,2.58,SW[1]);L.group.add(g);for(const d of[-.22,.22])mesh(G.cyl,mat(0xd8c8a0),d,-1.05,0,.012,2.1,.012,g);mesh(G.box,mat(0x7fe3e8),0,-2.1,0,.56,.06,.3,g);mergeModel(g);Y.seats.push({g,ox,occ:null,ph:Math.random()*6,amp:.15})}
   inter({x:SW[0],y:.4,z:SW[1],r:2.2,label:'E - покачаться на качелях',act:()=>swingRide(Y.seats[0])});
   /* trampoline */
   const TR=[31,-13];addC({k:'c',x:TR[0],z:TR[1],r:1.7,y0:0,y1:.6,t:'bounce',pow:13});vis(G.cyl16,0x2c2c44,TR[0],.55,TR[1],1.7,.06,1.7);vis(G.tor,0x7fe3e8,TR[0],.58,TR[1],1.75,1.75,.8,Math.PI/2,0,0);for(let i=0;i<6;i++){const a=i/6*TAU;vis(G.cyl,0x9aa2aa,TR[0]+Math.cos(a)*1.6,.28,TR[1]+Math.sin(a)*1.6,.05,.56,.05)}

@@ -62,17 +62,17 @@ function arcadeDraw(){const c=$('#arc'),g=c.getContext('2d'),W=480,H=320;g.fillS
   if(AR.state==='ready'){g.fillStyle='#fff';g.font='bold 16px monospace';g.fillText(isTouch?'КОСНИСЬ, ЧТОБЫ ЛЕТЕТЬ':'ПРОБЕЛ - ВВЕРХ',W/2,H/2+60)}
   if(AR.state==='over'){g.fillStyle='rgba(0,0,0,.55)';g.fillRect(0,0,W,H);g.fillStyle='#ff8fb1';g.font='bold 26px monospace';g.fillText('БУМ!',W/2,H/2-20);g.fillStyle='#fff';g.font='bold 15px monospace';g.fillText(`Счёт: ${AR.score}`,W/2,H/2+10);g.fillText(isTouch?'Коснись - ещё раз':'Пробел - ещё раз',W/2,H/2+36)}}
 /* ---------- vegetable beds: plant a fruit, it grows in real time ---------- */
-const SEEDS=['berry','mandarin','banana'];
+const SEEDS=['berry','mandarin','banana'];const GD=()=>S.garden||(S.garden={});
 function buildGarden(){const GX=-7,GZ=-23.5;S.garden=S.garden||{};
   for(let i=0;i<4;i++){const x=GX+(i%2)*2.4,z=GZ+Math.floor(i/2)*2;vis(G.box,0x6a4a2a,x,.12,z,1.8,.24,1.3,0,0,0,.02,TX.planks);vis(G.box,0x4a3020,x,.26,z,1.6,.04,1.1);
     const plant=new THREE.Group();plant.position.set(x,.28,z);L.group.add(plant);const sprout=new THREE.Group(),bush=new THREE.Group(),fruit=new THREE.Group();plant.add(sprout,bush,fruit);
     for(let k=0;k<4;k++)mesh(G.sph,mat(0x5aa040),(k%2-.5)*.6,.08,(Math.floor(k/2)-.5)*.5,.08,.12,.05,sprout);for(let k=0;k<4;k++)mesh(G.sph,mat(0x4a8a3c),(k%2-.5)*.6,.25,(Math.floor(k/2)-.5)*.5,.28,.24,.28,bush);
     const setFruit=kind=>{while(fruit.children.length)fruit.remove(fruit.children[0]);for(let k=0;k<6;k++){const m=resModel(kind);m.scale.setScalar(.7);m.position.set((k%3-1)*.45,.3,(Math.floor(k/3)-.5)*.45);fruit.add(m)}};
-    mergeModel(sprout);mergeModel(bush);const bed={i,x,z,plant,sprout,bush,fruit,setFruit};const upd=()=>{const g=S.garden[i];const st=!g?0:Math.min(1,(Date.now()-g.t)/120000);sprout.visible=!!g&&st<.4;bush.visible=!!g&&st>=.4;fruit.visible=!!g&&st>=1;if(g&&st>=1&&bed.k!==g.k){bed.k=g.k;setFruit(g.k)}bed.st=st;return st};
+    mergeModel(sprout);mergeModel(bush);const bed={i,x,z,plant,sprout,bush,fruit,setFruit};const upd=()=>{const g=GD()[i];const st=!g?0:Math.min(1,(Date.now()-g.t)/120000);sprout.visible=!!g&&st<.4;bush.visible=!!g&&st>=.4;fruit.visible=!!g&&st>=1;if(g&&st>=1&&bed.k!==g.k){bed.k=g.k;setFruit(g.k)}bed.st=st;return st};
     upd();tick(()=>{upd();bush.scale.setScalar(.6+Math.min(1,bed.st)*.4)});
-    inter({x,y:.3,z,r:1.6,label:()=>{const g=S.garden[i];if(!g)return'E - посадить на грядку '+(SEEDS.some(k=>S.inv[k]>0)?'('+RES[SEEDS.find(k=>S.inv[k]>0)].one+')':'(нужен ягода, мандарин или банан)');const st=upd();return st>=1?'E - собрать урожай: '+RES[g.k].name.toLowerCase():`Растёт: ${Math.round(st*100)}% · ещё ${Math.ceil((1-st)*120)} с`},
-      act:()=>{const g=S.garden[i];if(!g){const k=SEEDS.find(k=>S.inv[k]>0);if(!k){say([['kapik','Чтобы что-то вырастить, нужна ягода, мандарин или банан в сумке.']]);return}takeRes(k,1);S.garden[i]={k,t:Date.now()};save();AU.sfx('pickup');toast(`Посажено: ${RES[k].one}. Вырастет за 2 минуты, даже пока ты в космосе`);return}
-        if(upd()<1){toast('Ещё не выросло. Загляни попозже');return}const got=addRes(g.k,4);if(got){delete S.garden[i];bed.k=null;save();AU.sfx('quest');FXW.burst(x,.8,z,{col:parseInt(RES[g.k].col.slice(1),16),n:20,spd:2,up:2,life:.8})}}})}
+    inter({x,y:.3,z,r:1.6,label:()=>{const g=GD()[i];if(!g)return'E - посадить на грядку '+(SEEDS.some(k=>S.inv[k]>0)?'('+RES[SEEDS.find(k=>S.inv[k]>0)].one+')':'(нужен ягода, мандарин или банан)');const st=upd();return st>=1?'E - собрать урожай: '+RES[g.k].name.toLowerCase():`Растёт: ${Math.round(st*100)}% · ещё ${Math.ceil((1-st)*120)} с`},
+      act:()=>{const g=GD()[i];if(!g){const k=SEEDS.find(k=>S.inv[k]>0);if(!k){say([['kapik','Чтобы что-то вырастить, нужна ягода, мандарин или банан в сумке.']]);return}takeRes(k,1);GD()[i]={k,t:Date.now()};save();AU.sfx('pickup');toast(`Посажено: ${RES[k].one}. Вырастет за 2 минуты, даже пока ты в космосе`);return}
+        if(upd()<1){toast('Ещё не выросло. Загляни попозже');return}const got=addRes(g.k,4);if(got){delete GD()[i];bed.k=null;save();AU.sfx('quest');FXW.burst(x,.8,z,{col:parseInt(RES[g.k].col.slice(1),16),n:20,spd:2,up:2,life:.8})}}})}
   fence(GX-1.4,GZ-1.2,GX+3.8,GZ-1.2,0xa0683c,{nc:true,h:.6});vis(G.cyl,0x7aa8ff,GX+4.4,.25,GZ+.6,.25,.5,.25);vis(G.cyl,0x7aa8ff,GX+4.4,.55,GZ+.85,.04,.3,.04,.8,0,0)}
 
 $('#arc').addEventListener('pointerdown',e=>{e.preventDefault();arcadeFlap()});

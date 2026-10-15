@@ -1,8 +1,15 @@
 /* ---------- CHARACTER MODELS ---------- */
+/* v10: big friendly capybara eyes - white, warm brown iris, black pupil, two sparkles; they blink with the eyes group */
+let _eyeG=null;
+function cuteEyes(h,x,y,z,r,iris){const SG=_eyeG||(_eyeG=(()=>{const g=new THREE.SphereGeometry(1,20,14);g.userData.shared=true;return g})());const eg=new THREE.Group();eg.position.set(0,y,z);h.add(eg);h.userData.eyes=eg;
+  for(const s of[-1,1]){const e=new THREE.Group();e.position.set(s*x,0,0);e.rotation.y=s*.42;eg.add(e);
+    mesh(SG,mat(0x3a2414),0,0,-.004,r*1.12,r*1.08,r*.7,e);mesh(SG,mat(0xfffbf4),0,0,0,r,r*.98,r*.72,e);
+    mesh(SG,mat(iris||0x5a3418),0,-r*.06,r*.34,r*.72,r*.74,r*.42,e);mesh(SG,mat(0x0e0806),0,-r*.06,r*.5,r*.42,r*.44,r*.28,e);
+    mesh(SG,bmat(0xffffff),r*.26,r*.26,r*.66,r*.2,r*.2,r*.1,e);mesh(SG,bmat(0xffffff),-r*.22,-r*.3,r*.62,r*.1,r*.1,r*.06,e)}}
 function eyes(h,x,y,z,r,o){o=o||{};const eg=new THREE.Group();eg.position.set(0,y,z);h.add(eg);h.userData.eyes=eg;for(const s of[-1,1]){mesh(G.sph,mat(o.white||0xffffff),s*x,0,0,r,r,r*.8,eg);mesh(G.sph,mat(o.pupil||0x15100c),s*x,(o.py||0),r*.62,r*.58,r*.62,r*.4,eg);mesh(G.sph,bmat(0xffffff),s*x+r*.2,r*.25,r*.85,r*.18,r*.18,r*.12,eg)}}
 const HEADS={
   capy(h,C){const sn=new THREE.Color(C.fur).lerp(new THREE.Color(C.fur2),.3).getHex();mesh(G.sph,mat(C.fur),0,.27,0,.3,.27,.33,h);mesh(G.sph,mat(sn),0,.2,.23,.2,.155,.18,h);mesh(G.sph,mat(C.dark),0,.285,.36,.13,.05,.045,h);
-    for(const s of[-1,1]){mesh(G.sph,mat(0x1b1010),s*.06,.27,.395,.026,.02,.018,h);mesh(G.sph,mat(C.dark),s*.19,.5,-.06,.075,.06,.05,h)}eyes(h,.16,.36,.16,.045,{white:0x1b1010});
+    for(const s of[-1,1]){mesh(G.sph,mat(0x1b1010),s*.06,.27,.395,.026,.02,.018,h);mesh(G.sph,mat(C.dark),s*.19,.5,-.06,.075,.06,.05,h)}cuteEyes(h,.135,.375,.235,.064,C.eye);
     mesh(G.box,mat(0x2a1810),0,.14,.385,.07,.012,.01,h);for(const sd of[-1,1])mesh(G.sph,mat(0xd98a6a),sd*.2,.25,.2,.06,.035,.03,h);return .31},
   goat(h,C){mesh(G.sph,mat(C.fur),0,.28,0,.25,.28,.27,h);mesh(G.sph,mat(C.fur2),0,.18,.19,.15,.14,.2,h);mesh(G.sph,mat(0x3a2a24),0,.22,.37,.05,.035,.03,h);
     for(const s of[-1,1]){mesh(G.cone,mat(0xd8c8a8),s*.1,.6,-.04,.05,.24,.05,h).rotation.set(-.55,0,s*.25);mesh(G.sph,mat(C.fur),s*.27,.38,0,.12,.04,.06,h).rotation.z=s*.45}

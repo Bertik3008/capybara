@@ -4,7 +4,7 @@ const AU=(()=>{
   const mtof=m=>440*Math.pow(2,(m-69)/12);
   function impulse(sec){const r=ctx.sampleRate,n=r*sec,b=ctx.createBuffer(2,n,r);for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,2.6)}return b}
   function init(){
-    if(ctx){if(ctx.state==='suspended')ctx.resume();return ctx}
+    if(ctx){if(ctx.state==='suspended'&&!(YA.pause.size))ctx.resume();return ctx}
     try{ctx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){return null}
     master=ctx.createGain();master.gain.value=.9;
     const comp=ctx.createDynamicsCompressor();comp.threshold.value=-14;comp.ratio.value=3;master.connect(comp);comp.connect(ctx.destination);
@@ -151,5 +151,5 @@ const AU=(()=>{
     if(!on&&eng){const e=eng;eng=null;e.g.gain.setTargetAtTime(0,ctx.currentTime,.1);e.ng.gain.setTargetAtTime(0,ctx.currentTime,.1);setTimeout(()=>{try{e.o.stop();e.o2.stop();e.n.stop()}catch(x){}},500);return}
     if(eng){const t=ctx.currentTime;eng.o.frequency.setTargetAtTime(44+thr*40+(boost?30:0),t,.15);eng.o2.frequency.setTargetAtTime(44.7+thr*41+(boost?31:0),t,.15);eng.f.frequency.setTargetAtTime(180+thr*500+(boost?600:0),t,.15);eng.g.gain.setTargetAtTime(.035+thr*.05,t,.15);eng.ng.gain.setTargetAtTime(boost?.05:thr*.012,t,.1);eng.nf.frequency.setTargetAtTime(boost?1600:700,t,.2)}
   }
-  return{init,vol,music,sfx,engine,ambient,voice,get ready(){return!!ctx}};
+  return{init,vol,music,sfx,engine,ambient,voice,pause(on){if(!ctx)return;try{on?ctx.suspend():ctx.resume()}catch(e){}},get ready(){return!!ctx}};
 })();

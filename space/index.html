@@ -436,7 +436,7 @@ body:not(.touch) .swCard .btns{display:none}body.touch .swKeys{display:none}
     <button id="bSet">Настройки</button>
   </nav>
   <div class="tconfirm" id="tConfirm" hidden><p>Начать заново? Сохранение удалится.</p><div class="btns"><button id="bNewYes" class="primary">Начать заново</button><button id="bNewNo" class="ghost">Отмена</button></div></div>
-  <p class="tfoot">Версия 9 · живой мир</p>
+  <p class="tfoot">Версия 10 · Яндекс Игры</p>
 </div>
 
 <div id="pro" class="screen" hidden>
@@ -618,7 +618,7 @@ const AU=(()=>{
   const mtof=m=>440*Math.pow(2,(m-69)/12);
   function impulse(sec){const r=ctx.sampleRate,n=r*sec,b=ctx.createBuffer(2,n,r);for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,2.6)}return b}
   function init(){
-    if(ctx){if(ctx.state==='suspended')ctx.resume();return ctx}
+    if(ctx){if(ctx.state==='suspended'&&!(YA.pause.size))ctx.resume();return ctx}
     try{ctx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){return null}
     master=ctx.createGain();master.gain.value=.9;
     const comp=ctx.createDynamicsCompressor();comp.threshold.value=-14;comp.ratio.value=3;master.connect(comp);comp.connect(ctx.destination);
@@ -765,7 +765,7 @@ const AU=(()=>{
     if(!on&&eng){const e=eng;eng=null;e.g.gain.setTargetAtTime(0,ctx.currentTime,.1);e.ng.gain.setTargetAtTime(0,ctx.currentTime,.1);setTimeout(()=>{try{e.o.stop();e.o2.stop();e.n.stop()}catch(x){}},500);return}
     if(eng){const t=ctx.currentTime;eng.o.frequency.setTargetAtTime(44+thr*40+(boost?30:0),t,.15);eng.o2.frequency.setTargetAtTime(44.7+thr*41+(boost?31:0),t,.15);eng.f.frequency.setTargetAtTime(180+thr*500+(boost?600:0),t,.15);eng.g.gain.setTargetAtTime(.035+thr*.05,t,.15);eng.ng.gain.setTargetAtTime(boost?.05:thr*.012,t,.1);eng.nf.frequency.setTargetAtTime(boost?1600:700,t,.2)}
   }
-  return{init,vol,music,sfx,engine,ambient,voice,get ready(){return!!ctx}};
+  return{init,vol,music,sfx,engine,ambient,voice,pause(on){if(!ctx)return;try{on?ctx.suspend():ctx.resume()}catch(e){}},get ready(){return!!ctx}};
 })();
 
 /* ---------- RENDER ---------- */
@@ -986,10 +986,17 @@ function portraitOf(k,make){
 }
 
 /* ---------- CHARACTER MODELS ---------- */
+/* v10: big friendly capybara eyes - white, warm brown iris, black pupil, two sparkles; they blink with the eyes group */
+let _eyeG=null;
+function cuteEyes(h,x,y,z,r,iris){const SG=_eyeG||(_eyeG=(()=>{const g=new THREE.SphereGeometry(1,20,14);g.userData.shared=true;return g})());const eg=new THREE.Group();eg.position.set(0,y,z);h.add(eg);h.userData.eyes=eg;
+  for(const s of[-1,1]){const e=new THREE.Group();e.position.set(s*x,0,0);e.rotation.y=s*.42;eg.add(e);
+    mesh(SG,mat(0x3a2414),0,0,-.004,r*1.12,r*1.08,r*.7,e);mesh(SG,mat(0xfffbf4),0,0,0,r,r*.98,r*.72,e);
+    mesh(SG,mat(iris||0x5a3418),0,-r*.06,r*.34,r*.72,r*.74,r*.42,e);mesh(SG,mat(0x0e0806),0,-r*.06,r*.5,r*.42,r*.44,r*.28,e);
+    mesh(SG,bmat(0xffffff),r*.26,r*.26,r*.66,r*.2,r*.2,r*.1,e);mesh(SG,bmat(0xffffff),-r*.22,-r*.3,r*.62,r*.1,r*.1,r*.06,e)}}
 function eyes(h,x,y,z,r,o){o=o||{};const eg=new THREE.Group();eg.position.set(0,y,z);h.add(eg);h.userData.eyes=eg;for(const s of[-1,1]){mesh(G.sph,mat(o.white||0xffffff),s*x,0,0,r,r,r*.8,eg);mesh(G.sph,mat(o.pupil||0x15100c),s*x,(o.py||0),r*.62,r*.58,r*.62,r*.4,eg);mesh(G.sph,bmat(0xffffff),s*x+r*.2,r*.25,r*.85,r*.18,r*.18,r*.12,eg)}}
 const HEADS={
   capy(h,C){const sn=new THREE.Color(C.fur).lerp(new THREE.Color(C.fur2),.3).getHex();mesh(G.sph,mat(C.fur),0,.27,0,.3,.27,.33,h);mesh(G.sph,mat(sn),0,.2,.23,.2,.155,.18,h);mesh(G.sph,mat(C.dark),0,.285,.36,.13,.05,.045,h);
-    for(const s of[-1,1]){mesh(G.sph,mat(0x1b1010),s*.06,.27,.395,.026,.02,.018,h);mesh(G.sph,mat(C.dark),s*.19,.5,-.06,.075,.06,.05,h)}eyes(h,.16,.36,.16,.045,{white:0x1b1010});
+    for(const s of[-1,1]){mesh(G.sph,mat(0x1b1010),s*.06,.27,.395,.026,.02,.018,h);mesh(G.sph,mat(C.dark),s*.19,.5,-.06,.075,.06,.05,h)}cuteEyes(h,.135,.375,.235,.064,C.eye);
     mesh(G.box,mat(0x2a1810),0,.14,.385,.07,.012,.01,h);for(const sd of[-1,1])mesh(G.sph,mat(0xd98a6a),sd*.2,.25,.2,.06,.035,.03,h);return .31},
   goat(h,C){mesh(G.sph,mat(C.fur),0,.28,0,.25,.28,.27,h);mesh(G.sph,mat(C.fur2),0,.18,.19,.15,.14,.2,h);mesh(G.sph,mat(0x3a2a24),0,.22,.37,.05,.035,.03,h);
     for(const s of[-1,1]){mesh(G.cone,mat(0xd8c8a8),s*.1,.6,-.04,.05,.24,.05,h).rotation.set(-.55,0,s*.25);mesh(G.sph,mat(C.fur),s*.27,.38,0,.12,.04,.06,h).rotation.z=s*.45}
@@ -3274,7 +3281,7 @@ const SPX=(()=>{
     sh.pos.copy(pp).addScaledVector(dir,p.r+40);sh.pos.y+=6;sh.vel.set(0,0,0);sh.yaw=Math.atan2(-dir.x,-dir.z);sh.pitch=Math.asin(clamp(dir.y,-1,1))*.5;sh.q.setFromEuler(new THREE.Euler(sh.pitch,sh.yaw,0,'YXZ'));sh.loop=0;sh.boost=1}
   function enter(from){build();repaint();placeAt(from);auto=false;camSnap=true;camera.near=.05;camera.fov=70;camera.updateProjectionMatrix();
     IDS.forEach(id=>labels[id].hidden=false);AU.music('space');AU.ambient(null);AU.engine(true,0,false)}
-  function exit(){camera.up.set(0,1,0);camera.fov=70;camera.near=.1;camera.updateProjectionMatrix();IDS.forEach(id=>labels[id].hidden=true);labels.ring.hidden=true;AU.engine(false);rings.forEach(c=>{c.on=false;c.next=0});$('#timer').hidden=true}
+  function exit(){camera.up.set(0,1,0);camera.fov=70;camera.near=.15;camera.updateProjectionMatrix();IDS.forEach(id=>labels[id].hidden=true);labels.ring.hidden=true;AU.engine(false);rings.forEach(c=>{c.on=false;c.next=0});$('#timer').hidden=true}
   function routeTarget(){if(S.route&&PLN[S.route])return S.route;const nx=PIDS.find(p=>!S.rescued[p]);if(!S.tr)return'base';const c4=qs('c4');if(!nx&&c4&&c4<99)return c4===1?'base':'p8';const c3=qs('c3');if(!nx&&c3&&c3<99){if(c3===1)return'base';if(c3<4)return'p7';return'p6'}if(!nx&&qs('c2')>=2&&!qdone('c2'))return qs('c2')===5?'p4':'p5';return nx||'base'}
   let camSnap=true,holdT=0,scrT=0;const fwd=new THREE.Vector3(),rgt=new THREE.Vector3(),upv=new THREE.Vector3(),camT=new THREE.Vector3();
   function spin(dt,t){IDS.forEach(id=>{const p=PLN[id];if(p.vortex)p.vortex.children.forEach(c=>{if(c.userData.sp)c.rotation.z+=dt*c.userData.sp});if((id==='p5'||id==='p6'||id==='p7'||id==='p8')&&p.mesh)p.mesh.visible=OPEN().includes(id);if(p.puff)p.puff.rotation.y+=dt*.05;if(p.body)p.body.rotation.y+=dt*.015;if(p.clouds)p.clouds.rotation.y+=dt*.025;if(p.gears)p.gears.rotation.y+=dt*.2});
@@ -3408,10 +3415,10 @@ function renderDaily(){const D=dailyState();const sb=Math.min(35,D.streak*5);
   $('#dailyList').innerHTML=D.tasks.map((tk,i)=>{const p=DAILY_POOL.find(x=>x.id===tk.id),done=tk.n>=p.need;return`<div class="card daily ${tk.paid?'paid':''}"><div class="cardMain"><b>${p.t(p.need)}</b><span>${tk.paid?'Награда получена':done?'Готово!':`Прогресс: ${tk.n} из ${p.need}`}</span><div class="dbar"><i style="width:${tk.n/p.need*100}%"></i></div></div>
     ${tk.paid?'<span class="dok">✓</span>':`<button data-dpay="${i}" class="${done?'primary':''}" ${done?'':'disabled'}>+${p.rw} монет</button>`}</div>`}).join('');
   const all=D.tasks.every(t=>t.paid);
-  $('#dailyBonus').innerHTML=`<div class="cardMain"><b>Все три задания</b><span>${D.bonus?'Бонус дня получен. Новые задания завтра':`+25 монет${sb?` и +${sb} за серию дней`:''}`}${D.full<5?` · дней до звёздной покраски тарелки: ${5-D.full}`:''}</span></div>${D.bonus?'<span class="dok">✓</span>':`<button id="dBonus" class="${all?'primary':''}" ${all?'':'disabled'}>Бонус</button>`}`;
+  $('#dailyBonus').innerHTML=`<div class="cardMain"><b>Все три задания</b><span>${D.bonus?'Бонус дня получен. Новые задания завтра':`+25 монет${sb?` и +${sb} за серию дней`:''}`}${D.full<5?` · дней до звёздной покраски тарелки: ${5-D.full}`:''}</span></div>${D.bonus?(YA.sdk&&!D.rv?'<button id="dVideo" class="primary">+25 монет за видео</button>':'<span class="dok">✓</span>'):`<button id="dBonus" class="${all?'primary':''}" ${all?'':'disabled'}>Бонус</button>`}`;
   $('#dailyStreak').textContent=D.streak?`Серия: ${D.streak} ${D.streak===1?'день':D.streak<5?'дня':'дней'} подряд`:'Выполни все три задания, чтобы начать серию дней'}
 $('#dailyList').addEventListener('click',e=>{const b=e.target.closest('[data-dpay]');if(!b)return;const D=dailyState(),tk=D.tasks[+b.dataset.dpay],p=DAILY_POOL.find(x=>x.id===tk.id);if(tk.paid||tk.n<p.need)return;tk.paid=true;addCoins.skip=true;addCoins(p.rw);addCoins.skip=false;AU.sfx('chest');save();renderDaily()});
-$('#dailyBonus').addEventListener('click',e=>{if(!e.target.closest('#dBonus'))return;const D=dailyState();if(D.bonus||!D.tasks.every(t=>t.paid))return;D.bonus=true;D.streak++;D.full++;addCoins.skip=true;addCoins(25+Math.min(35,(D.streak-1)*5));addCoins.skip=false;AU.sfx('quest');
+$('#dailyBonus').addEventListener('click',e=>{if(e.target.closest('#dVideo')){const D=dailyState();if(D.rv)return;yaRewarded(()=>{D.rv=true;addCoins.skip=true;addCoins(25);addCoins.skip=false;AU.sfx('chest');save();renderDaily()});return}if(!e.target.closest('#dBonus'))return;const D=dailyState();if(D.bonus||!D.tasks.every(t=>t.paid))return;D.bonus=true;D.streak++;D.full++;addCoins.skip=true;addCoins(25+Math.min(35,(D.streak-1)*5));addCoins.skip=false;AU.sfx('quest');
   if(D.full>=5&&!S.paints.starry){S.paints.starry=1;setTimeout(()=>banner('Награда за 5 дней','Звёздная покраска тарелки','Надень её в меню «Тарелка»'),300)}save();renderDaily()});
 /* the board itself, next to the spawn on the base */
 function buildDailyBoard(x,z){const ry=Math.atan2(0-x,6-z);
@@ -3423,6 +3430,30 @@ function buildDailyBoard(x,z){const ry=Math.atan2(0-x,6-z);
   tick(()=>{if(Math.hypot(P.x-x,P.z-z)>30)return;const D=dailyState();D.tasks.forEach((tk,i)=>{const p=DAILY_POOL.find(q=>q.id===tk.id);nm[i].material.color.set(tk.paid?0xb8e8a8:p&&tk.n>=p.need?0xffd36b:0xfff6e0)});pin.visible=dailyReady()});
   inter({x,y:.5,z,r:2.4,label:'E - доска заданий дня',act:openDaily})}
 
+/* ---------- v10: Yandex Games platform glue (SDK is optional: everything is a no-op off-platform) ---------- */
+const YA={sdk:null,ready:false,wantReady:false,gp:null,want:null,adOn:false,lastAd:Date.now(),pause:new Set()};
+function yaInit(){if(typeof YaGames==='undefined')return;
+  YaGames.init().then(s=>{YA.sdk=s;if(YA.wantReady)yaReady();if(YA.want!=null)yaGameplay(YA.want,true);
+    try{s.on('game_api_pause',()=>{yaPause('platform',true);if(mode==='play'||mode==='space')openMenu()});s.on('game_api_resume',()=>yaPause('platform',false))}catch(e){}}).catch(()=>{})}
+/* the player can start playing (title screen is up and all meshes are built) */
+function yaReady(){YA.wantReady=true;if(!YA.sdk||YA.ready)return;YA.ready=true;try{YA.sdk.features.LoadingAPI&&YA.sdk.features.LoadingAPI.ready()}catch(e){}}
+/* gameplay markup: start while the player is actually playing, stop in menus, title, endings and ads */
+function yaGameplay(on,force){YA.want=on;if(YA.adOn)on=false;if(YA.gp===on&&!force)return;YA.gp=on;if(!YA.sdk)return;try{const g=YA.sdk.features.GameplayAPI;if(g)on?g.start():g.stop()}catch(e){}}
+function yaModeChanged(m){yaGameplay(['play','space','dialog','cut','fade','swing','scope'].includes(m))}
+/* sound stops whenever the tab is hidden, the platform pauses us or an ad is on screen */
+function yaPause(reason,on){if(on)YA.pause.add(reason);else YA.pause.delete(reason);AU.pause(YA.pause.size>0)}
+document.addEventListener('visibilitychange',()=>{yaPause('hidden',document.hidden);if(document.hidden)yaGameplay(false);else yaModeChanged(mode)});
+/* fullscreen ad only at a natural pause (take-off), never more often than every 3 minutes, never in the first minutes */
+function yaAd(after){if(!YA.sdk||YA.adOn||Date.now()-YA.lastAd<180000){after();return}
+  YA.adOn=true;yaGameplay(false);yaPause('ad',true);let done=false;const fin=()=>{if(done)return;done=true;YA.adOn=false;yaPause('ad',false);yaModeChanged(mode);after()};
+  try{YA.sdk.adv.showFullscreenAdv({callbacks:{onClose:w=>{if(w)YA.lastAd=Date.now();fin()},onError:()=>fin()}})}catch(e){fin()}}
+/* rewarded video: optional bonus on the daily board */
+function yaRewarded(onReward){if(!YA.sdk||YA.adOn){toast('Видео сейчас недоступно');return}YA.adOn=true;yaGameplay(false);yaPause('ad',true);let got=false;
+  const fin=()=>{YA.adOn=false;yaPause('ad',false);yaModeChanged(mode);if(got)onReward()};
+  try{YA.sdk.adv.showRewardedVideo({callbacks:{onRewarded:()=>{got=true},onClose:()=>fin(),onError:()=>{toast('Видео сейчас недоступно');fin()}}})}catch(e){fin()}}
+document.addEventListener('contextmenu',e=>e.preventDefault());
+yaInit();
+
 /* ---------- MAIN: input, modes, travel, loop ---------- */
 const keys={};let ePressed=false,eJust=false,jumpReq=false,throwReq=false,boostHeld=false;
 let locked=false,noLock=isTouch||!('requestPointerLock' in cv),lockFails=0,drag=null,MX=0,MY=0;
@@ -3432,7 +3463,7 @@ function lockFailed(){if(lockClick){lockFails++;if(lockFails>=2&&!noLock){noLock
 function lock(fromClick){if(isTouch||noLock||locked||(mode!=='play'&&mode!=='space'))return;lockClick=!!fromClick;try{const p=cv.requestPointerLock();if(p&&p.catch)p.catch(lockFailed)}catch(e){lockFailed()}}
 document.addEventListener('pointerlockchange',()=>{locked=document.pointerLockElement===cv;if(locked){lockFails=0;lockClick=false}else if((mode==='play'||mode==='space')&&!noLock)openMenu()});
 document.addEventListener('pointerlockerror',lockFailed);
-function setMode(m){mode=m;const play=m==='play',space=m==='space',act=play||space;
+function setMode(m){mode=m;yaModeChanged(m);const play=m==='play',space=m==='space',act=play||space;
   $('#touch').hidden=!(isTouch&&act);$('#lookpad').hidden=!(isTouch&&act);
   $('#hud').hidden=!(act||m==='dialog'||(m==='menu'&&screenRet!=='title')||m==='fade');$('#title').hidden=m!=='title';$('#cross').hidden=!play;$('#shud').hidden=!(space||(m==='menu'&&screenRet==='space'));$('#labels').hidden=!space;
   $('#tJump').hidden=!play;$('#tMap').hidden=!act;$('#tAlt').hidden=!(space||(play&&L&&canShoot()));$('#tAlt').textContent=space?'Форсаж':gunOn()?'Пиу!':'Бросок';
@@ -3501,7 +3532,8 @@ function build(id){$('#heat').hidden=true;$('#bossBar').hidden=true;BUILD[id]();
 /* compile every shader of the new level up front, so nothing stutters the first time it comes into view */
 function precompile(){try{camera.updateMatrixWorld();renderer.compile(wscene,camera)}catch(e){}}
 function rebuildHere(){const s={x:P.x,y:P.y,z:P.z,yaw:P.yaw,pitch:P.pitch};$('#heat').hidden=true;$('#bossBar').hidden=true;BUILD[L.id]();Object.assign(P,s);P.vx=P.vy=P.vz=0;P.camY=P.y+EYE;UI.refresh();target=null;precompile()}
-function takeoff(){if(P.carry)dropCarry();const from=L.id;fadeTo('Взлёт',()=>{S.at=from;save();camera.far=3200;camera.updateProjectionMatrix();SPX.enter(from);setMode('space')},()=>{lock();if(!S.seen.space){S.seen.space=1;save();say([['kapik','Открытый космос! Дедушкина кабина, все кнопки на месте. Работают из них, правда, только руль и газ.'],['kapik',isTouch?'Кнопка «Карта» покажет все планеты. У планеты удерживаю E для посадки.':'Клавиша M покажет звёздную карту. У планеты удерживаю E для посадки.']])}})}
+function takeoff(){if(P.carry)dropCarry();yaAd(takeoffGo)}
+function takeoffGo(){const from=L.id;fadeTo('Взлёт',()=>{S.at=from;save();camera.far=3200;camera.updateProjectionMatrix();SPX.enter(from);setMode('space')},()=>{lock();if(!S.seen.space){S.seen.space=1;save();say([['kapik','Открытый космос! Дедушкина кабина, все кнопки на месте. Работают из них, правда, только руль и газ.'],['kapik',isTouch?'Кнопка «Карта» покажет все планеты. У планеты удерживаю E для посадки.':'Клавиша M покажет звёздную карту. У планеты удерживаю E для посадки.']])}})}
 function landOn(id){fadeTo('Посадка: '+PL[id].name,()=>{SPX.exit();camera.far=1200;camera.updateProjectionMatrix();build(id);S.at=id;save();setMode('play');if(id!=='base')ev('land',id)},()=>{lock();afterArrive(id)})}
 function toTitle(){save();if(screenRet==='space'||mode==='space')SPX.exit();camera.far=3200;camera.updateProjectionMatrix();$('#dlg').hidden=true;$('#timer').hidden=true;AU.engine(false);showTitle()}
 function afterArrive(id){
@@ -3530,7 +3562,7 @@ const SLIDES=[
   {art:()=>`<div class="art"><img class="big" alt="" src="${portrait('otter')}"></div>`,text:'Инопланетяне не говорят по-капибарьи. Тётушка Выдра продаёт универсальный переводчик за 10 монет. А монеты в галактике зарабатывают честно: собирают, ловят, мастерят и продают.'}
 ];
 let slide=0;
-function showTitle(){setMode('title');$('#title').hidden=false;$('#tConfirm').hidden=true;const sv=loadSave(),has=!!(sv&&sv.prologue);$('#bPlay').textContent=has?'Продолжить':'Играть';$('#bNew').hidden=!has;AU.music('title')}
+function showTitle(){setMode('title');yaReady();$('#title').hidden=false;$('#tConfirm').hidden=true;const sv=loadSave(),has=!!(sv&&sv.prologue);$('#bPlay').textContent=has?'Продолжить':'Играть';$('#bNew').hidden=!has;AU.music('title')}
 function showSlide(){const s=SLIDES[slide];$('#proArt').innerHTML=s.art();$('#proText').textContent=s.text;$('#proStep').textContent=`${slide+1} / ${SLIDES.length}`;$('#proNext').textContent=slide===SLIDES.length-1?'Начать':'Дальше'}
 function endPrologue(){S.prologue=true;save();$('#pro').hidden=true;fadeTo('Пастбище',()=>{camera.far=1200;camera.updateProjectionMatrix();build('base');S.at='base';setMode('play')},()=>{lock();say([['kapik','Так. Денег у меня нет совсем. Зато есть Тётушка Выдра, у неё всегда найдётся работа.'],['kapik','Её лавка слева от тарелки.']])})}
 function startNew(){AU.init();wipeSave();S=freshSave();save();$('#title').hidden=true;setMode('prologue');$('#pro').hidden=false;slide=0;showSlide()}
@@ -3584,7 +3616,7 @@ function step(dt){T+=dt;UNI.time.value=T;
 
 /* ---------- BOOT ---------- */
 wscene.add(camera);
-if(location.hash==="#dev")window.__K={ev:(n,v)=>ev(n,v),dailyState:()=>dailyState(),cam:camera,R:renderer,ws:wscene,info:()=>{const i=renderer.info.render;return{calls:i.calls,tris:i.triangles,geo:renderer.info.memory.geometries,tex:renderer.info.memory.textures,prog:renderer.info.programs.length}},stepT:(n)=>{const t0=performance.now();for(let i=0;i<n;i++)step(1/60);return ((performance.now()-t0)/n).toFixed(2)},get MINI(){return MINI},fire:()=>throwBall(),boss:()=>L.boss,freshSave,addRes,openTrade,openShop2:()=>openShop(),get inv(){return S.inv},get S(){return S},set S(v){S=v},P,get L(){return L},get mode(){return mode},build,setMode,takeoff,landOn,SPX,openShop,openMenu,closeScreen,say,advance,keys,qset,qs,rescueBro,save,AU,get target(){return target},jump:()=>{jumpReq=true},pressE:()=>{ePressed=true;eJust=true},releaseE:()=>{ePressed=false},sim:(sec,inp)=>{const n=Math.round(sec*60);for(let i=0;i<n;i++){if(inp)Object.assign(keys,inp);step(1/60)}if(inp)for(const k in inp)keys[k]=false}};
+if(location.hash==="#dev")window.__K={frameNow:()=>{camera.updateMatrixWorld();renderer.render(isSpaceView()?sscene:wscene,camera)},kit:{makeCast,makeUFO,charPose,mesh,stdMat,mat,bmat,glow,lc,G},YA,ev:(n,v)=>ev(n,v),dailyState:()=>dailyState(),cam:camera,R:renderer,ws:wscene,info:()=>{const i=renderer.info.render;return{calls:i.calls,tris:i.triangles,geo:renderer.info.memory.geometries,tex:renderer.info.memory.textures,prog:renderer.info.programs.length}},stepT:(n)=>{const t0=performance.now();for(let i=0;i<n;i++)step(1/60);return ((performance.now()-t0)/n).toFixed(2)},get MINI(){return MINI},fire:()=>throwBall(),boss:()=>L.boss,freshSave,addRes,openTrade,openShop2:()=>openShop(),get inv(){return S.inv},get S(){return S},set S(v){S=v},P,get L(){return L},get mode(){return mode},build,setMode,takeoff,landOn,SPX,openShop,openMenu,closeScreen,say,advance,keys,qset,qs,rescueBro,save,AU,get target(){return target},jump:()=>{jumpReq=true},pressE:()=>{ePressed=true;eJust=true},releaseE:()=>{ePressed=false},sim:(sec,inp)=>{const n=Math.round(sec*60);for(let i=0;i<n;i++){if(inp)Object.assign(keys,inp);step(1/60)}if(inp)for(const k in inp)keys[k]=false}};
 function start(data){
   resize();try{if(window.claude&&window.claude.hot&&window.claude.hot.snapshot)window.claude.hot.snapshot(()=>({save:S,lvl:L&&L.id,mode}))}catch(e){}
   const sv=loadSave();if(sv)S=sv;

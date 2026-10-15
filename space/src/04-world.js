@@ -225,7 +225,9 @@ function collideV(dt){
       if(sup&&sup.t==='bounce'){P.vy=sup.pow||15;P.ground=false;P.sup=null;AU.sfx('bounce');FXW.burst(P.x,P.y+.1,P.z,{col:0x7fe3e8,n:16,spd:4,up:2,life:.6});if(sup.onBounce)sup.onBounce()}
       else{if(!wasG&&fv>7){AU.sfx('land');FXW.burst(P.x,P.y+.05,P.z,{col:0xcccccc,n:8,spd:2,up:1,g:4,life:.4,size:.25})}if(sup&&sup.onStand)sup.onStand(dt)}}
     else P.y=ny}
-  else{let y=ny;for(const c of L.solids){if(!c.on)continue;if(c.y0<P.y+PH-.05||c.y0>ny+PH+.02)continue;if(!overXZ(c,P.x,P.z,PR*.85))continue;y=Math.min(y,c.y0-PH);P.vy=0}P.y=y}
+  else{let y=ny;for(const c of L.solids){if(!c.on)continue;if(c.y0<P.y+PH-.05||c.y0>ny+PH+.02)continue;if(!overXZ(c,P.x,P.z,PR*.85))continue;y=Math.min(y,c.y0-PH);P.vy=0}P.y=Math.max(P.y,y)}
+  /* v9.2 safety net: on planets with solid ground Kapik can never sink below it (only water and the void of Iznanka can swallow him) */
+  if(!L.noFloor&&P.y<-.06&&P.y>-14&&!inWater(P.x,P.z)){P.y=0;if(P.vy<0)P.vy=0;P.ground=true;P.sup=null;P.jumps=0}
   if(wasG&&!P.ground&&P.vy<=0)P.coyote=.12;else if(P.ground)P.coyote=0;else P.coyote-=dt;
 }
 function ladderAt(){for(const l of L.ladders)if(P.x>l.x0-PR&&P.x<l.x1+PR&&P.z>l.z0-PR&&P.z<l.z1+PR&&P.y>=l.y0-.1&&P.y<l.y1)return l;return null}

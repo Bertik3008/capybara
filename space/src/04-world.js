@@ -186,9 +186,18 @@ function placeUFO(x,z,o){o=o||{};cyl(x,0,z,4.6,.15,o.pad||0x8a8aa0,{g:G.disc,tex
   for(let i=1;i<7;i++){const k=i/7;vis(G.cyl,0xdfe6ef,x,k*2.55,lerp(lz,tz,k),.03,.72,.03,0,0,Math.PI/2,.02,TX.metal)}
   vis(G.box,0x3a4256,x,2.62,tz-sd*.12,.9,.08,.5,0,0,0,.02,TX.metal);gvis(G.box,0x9ff3ff,x,2.72,tz-sd*.35,.7,.02,.06);
   inter({x,y:0,z,r:5.8,label:'Удерживайте E - подняться по лестнице в НЛО',hold:.8,act:()=>climbIn(x,lz,tz,sd)});L.ufoPos=[x,z]}
-function climbIn(x,lz,tz,sd){if(P.carry)dropCarry();setMode('cut');const a=new THREE.Vector3(P.x,P.camY,P.z),b=new THREE.Vector3(x,EYE,lz+sd*.6),c=new THREE.Vector3(x,2.6+EYE*.6,tz-sd*.2);AU.sfx('step');const ty=sd>0?0:Math.PI;
-  tween(.45,p=>{camera.position.lerpVectors(a,b,p);camera.rotation.set(lerp(P.pitch,.2,p),P.yaw+Math.atan2(Math.sin(ty-P.yaw),Math.cos(ty-P.yaw))*p,0)},()=>{
-    tween(.9,p=>{camera.position.lerpVectors(b,c,p);camera.position.y+=Math.sin(p*Math.PI*6)*.04;if(Math.random()<.08)AU.sfx('step')},()=>takeoff())})}
+function climbIn(x,lz,tz,sd){if(P.carry)dropCarry();setMode('cut');const uz=lz-sd*4.35,b=new THREE.Vector3(x,EYE,lz+sd*.6),c=new THREE.Vector3(x,2.6+EYE*.6,tz-sd*.2);AU.sfx('step');const ty=sd>0?0:Math.PI;
+  /* v9 fix: from the far side the camera used to fly straight through the saucer and under the ground - walk around it first */
+  const a0=Math.atan2(P.z-uz,P.x-x),a1=sd>0?Math.PI/2:-Math.PI/2,da=Math.atan2(Math.sin(a1-a0),Math.cos(a1-a0)),R=Math.max(5.6,Math.hypot(P.x-x,P.z-uz));
+  const go=()=>{const a=camera.position.clone();const yaw0=camera.rotation.y,pit0=camera.rotation.x;
+  tween(.45,p=>{camera.position.lerpVectors(a,b,p);camera.rotation.set(lerp(pit0,.2,p),yaw0+Math.atan2(Math.sin(ty-yaw0),Math.cos(ty-yaw0))*p,0)},()=>{
+    tween(.9,p=>{camera.position.lerpVectors(b,c,p);camera.position.y+=Math.sin(p*Math.PI*6)*.04;if(Math.random()<.08)AU.sfx('step')},()=>takeoff())})};
+  camera.position.set(P.x,P.camY,P.z);camera.rotation.set(P.pitch,P.yaw,0);
+  if(Math.abs(da)<.5){go();return}
+  const r0=Math.hypot(P.x-x,P.z-uz),y0=P.camY,yawS=P.yaw,pS=P.pitch,dir=Math.sign(da);
+  tween(Math.min(1.6,.35+Math.abs(da)*.32),p=>{const k=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2,ang=a0+da*k,rr=lerp(r0,R,Math.min(1,p*3)),px=x+Math.cos(ang)*rr,pz=uz+Math.sin(ang)*rr;
+    camera.position.set(px,y0+Math.abs(Math.sin(p*Math.PI*8))*.04,pz);const tx=-Math.sin(ang)*dir,tz2=Math.cos(ang)*dir,yawT=Math.atan2(-tx,-tz2),m=Math.min(1,p*4);
+    camera.rotation.set(lerp(pS,0,m),yawS+Math.atan2(Math.sin(yawT-yawS),Math.cos(yawT-yawS))*m,0);if(Math.random()<.06)AU.sfx('step')},go)}
 
 function skyBody(col,pos,r,ring){const c=lc(col);const m=mesh(G.sphHi,new THREE.MeshStandardMaterial({color:c,emissive:c.clone().multiplyScalar(.5),roughness:1,fog:false}),pos[0],pos[1],pos[2],r,r,r,L.group);
   if(ring){const t=new THREE.Mesh(new THREE.RingGeometry(r*1.35,r*2.1,96),new THREE.MeshBasicMaterial({color:lc(ring),fog:false,side:THREE.DoubleSide,transparent:true,opacity:.5,depthWrite:false}));t.position.copy(m.position);t.rotation.set(-1.25,.35,0);L.group.add(t)}return m}

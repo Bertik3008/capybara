@@ -28,7 +28,7 @@ const SPX=(()=>{
     fragmentShader:'uniform vec3 c;uniform float p;varying vec3 vn;varying vec3 vv;void main(){float f=pow(1.-max(dot(vn,vv),0.),p);gl_FragColor=vec4(c*f*1.3,f);}'}))}
   function planetMesh(id){const p=PLN[id],r=p.r,g=new THREE.Group();g.position.copy(v3(p.pos));sscene.add(g);const tx=planetTex(id);
     let geo;if(id==='base'){geo=new THREE.IcosahedronGeometry(r,5);const pa=geo.attributes.position;for(let i=0;i<pa.count;i++){const x=pa.getX(i),y=pa.getY(i),z=pa.getZ(i);const k=.82+f3(x*.05+5,y*.05,z*.05)*.35;pa.setXYZ(i,x*k,y*k*.72,z*k)}geo.computeVertexNormals()}
-    else geo=new THREE.SphereGeometry(r,96,64);
+    else geo=isTouch?new THREE.SphereGeometry(r,64,40):new THREE.SphereGeometry(r,96,64);
     const pm=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({map:tx.t,bumpMap:tx.ht,bumpScale:id==='p4'?1.5:2.2,emissiveMap:tx.et,emissive:new THREE.Color(0xffffff),roughness:id==='p2'?.55:.9,metalness:id==='p4'?.35:0}));g.add(pm);p.body=pm;
     if(id==='base'){const dome=mesh(new THREE.SphereGeometry(4,24,12,0,TAU,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0x9fe9ff,transparent:true,opacity:.5,roughness:.1}),0,r*.66,0,1,1,1,g);mesh(G.box,mat(0xb5452f),9,r*.62+2,4,6,4,5,g);mesh(G.cyl,mat(0x8a8aa0),-8,r*.62+4,-6,.4,8,.4,g);const bl=glow(0xffab4a,40,.4);bl.position.y=r*.7;g.add(bl)}
     else{g.add(atmo(r*1.06,p.col,id==='p3'?2.2:3));if(id==='p1'||id==='p3'||id==='p5'||id==='p7'){const cm=mesh(new THREE.SphereGeometry(r*1.015,64,48),new THREE.MeshStandardMaterial({map:cloudLayer(IDS.indexOf(id),0xffffff),transparent:true,depthWrite:false,roughness:1,color:id==='p3'?0xe0c8ff:0xffffff}),0,0,0,1,1,1,g);p.clouds=cm}}
@@ -108,7 +108,7 @@ const SPX=(()=>{
     comet=new THREE.Group();comet.add(glow(0xbfefff,30,.9));for(let i=1;i<14;i++){const t=glow(0x7fe3e8,30-i*1.6,.5-i*.03);t.position.z=i*12;comet.add(t)}sscene.add(comet);
     const lb=$('#labels');IDS.forEach(id=>{const d=document.createElement('div');d.className='plabel';d.innerHTML=`<b>${PL[id].name}</b><span></span><i></i>`;d.style.color='#'+new THREE.Color(PLN[id].col).getHexString();d.hidden=true;lb.appendChild(d);labels[id]=d});
     const rl=document.createElement('div');rl.className='plabel ringlabel';rl.innerHTML='<b></b><span></span>';rl.hidden=true;lb.appendChild(rl);labels.ring=rl;
-    ship=makeUFO(S.paint);sscene.add(ship);cockpit=makeCockpit();ship.add(cockpit)}
+    ship=makeUFO(S.paint);sscene.add(ship);cockpit=makeCockpit();ship.add(cockpit);try{renderer.compile(sscene,camera)}catch(e){}}
   function repaint(){if(!ship)return;const p=ship.position.clone(),r=ship.quaternion.clone();ship.remove(cockpit);sscene.remove(ship);disposeTree(ship);ship=makeUFO(S.paint);ship.position.copy(p);ship.quaternion.copy(r);ship.add(cockpit);sscene.add(ship)}
   const SP={};
   function placeAt(id){const p=PLN[id];const tgt=routeTarget();const tp=v3(PLN[tgt===id?'base':tgt].pos);const pp=v3(p.pos);let dir=tp.clone().sub(pp);if(dir.lengthSq()<1)dir.set(0,0,-1);dir.normalize();
@@ -153,7 +153,7 @@ const SPX=(()=>{
     if(!inC){camT.copy(sh.pos).addScaledVector(fwd,-15).addScaledVector(upv,5);if(camSnap){camera.position.copy(camT);camSnap=false}else camera.position.lerp(camT,1-Math.exp(-dt*7));camera.up.copy(upv);camera.lookAt(_p.copy(sh.pos).addScaledVector(fwd,10).addScaledVector(upv,1.5))}
     else{ship.updateMatrixWorld();camera.position.set(0,1.32,.18).applyMatrix4(ship.matrixWorld);const look=_p.set(0,1.18,-3).applyMatrix4(ship.matrixWorld);camera.up.set(0,1,0).applyQuaternion(ship.quaternion);camera.lookAt(look);camSnap=false;
       const cu=cockpit.userData;cu.yoke.rotation.z=clamp(-inp.lx*14,-.5,.5)*.6+(-sh.str*.25);cu.yoke.rotation.x=clamp(inp.ly*14,-.4,.4)*.5-sh.thr*.12;cu.bob.rotation.z=Math.sin(t*6)*.25*(.3+sh.thr);
-      cu.btns.forEach(b=>{const u=b.userData,on=!u.blink||Math.sin(t*u.sp+u.ph)>0;b.material.color.copy(u.c).multiplyScalar(on?1:.18).convertSRGBToLinear()});scrT-=dt;if(scrT<=0){scrT=.12;drawScreens(t)}}
+      cu.btns.forEach(b=>{const u=b.userData,on=!u.blink||Math.sin(t*u.sp+u.ph)>0;b.material.color.copy(u.c).multiplyScalar(on?1:.18).convertSRGBToLinear()});scrT-=dt;if(scrT<=0){scrT=isTouch?.25:.12;drawScreens(t)}}
     if(sk){camera.position.x+=(Math.random()-.5)*sk;camera.position.y+=(Math.random()-.5)*sk}
     const spd=sh.vel.length();camera.fov+=((inC?74:70)+Math.min(spd/6,16)-camera.fov)*Math.min(1,dt*3);camera.updateProjectionMatrix();
     SP.stars.position.copy(camera.position);spin(dt,t);

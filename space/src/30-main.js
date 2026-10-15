@@ -17,6 +17,7 @@ function setMode(m){mode=m;const play=m==='play',space=m==='space',act=play||spa
   if((m==='menu'||m==='title'||m==='prologue'||m==='ending')&&document.pointerLockElement)document.exitPointerLock()}
 window.addEventListener('keydown',e=>{
   if(mode==='dialog'){if((e.code==='KeyE'||e.code==='Space'||e.code==='Enter')&&!e.repeat){e.preventDefault();advance()}return}
+  if(mode==='swing'){if((e.code==='KeyE'||e.code==='Escape')&&!e.repeat)swingExit();else keys[e.code]=true;e.preventDefault();return}
   if(mode==='scope'){if(e.code==='Escape'||e.code==='KeyE'||e.code==='KeyQ')SPX.scopeEnd();else if(e.code==='KeyA'||e.code==='ArrowLeft')SPX.scopeNext(-1);else if(e.code==='KeyD'||e.code==='ArrowRight'||e.code==='Space')SPX.scopeNext(1);e.preventDefault();return}
   if(mode==='menu'){if(e.code==='Escape'||(e.code==='KeyM'&&curScreen==='#map')||(e.code==='KeyJ'&&curScreen==='#menu')||(e.code==='KeyF'&&curScreen==='#bag')){closeScreen()}else if(curScreen==='#fish'&&(e.code==='KeyE'||e.code==='Space')&&!e.repeat){e.preventDefault();fishHook()}else if(curScreen==='#arcade'&&(e.code==='KeyE'||e.code==='Space'||e.code==='ArrowUp'||e.code==='KeyW')&&!e.repeat){e.preventDefault();arcadeFlap()}return}
   if(mode!=='play'&&mode!=='space')return;
@@ -71,8 +72,10 @@ function updInteract(dt){let best=null,bd=1e9;
 /* ---------- TRAVEL ---------- */
 function fadeTo(text,mid,after){setMode('fade');AU.sfx('warp');$('#fadeText').textContent=text;$('#fade').classList.add('on');setTimeout(()=>{mid();setTimeout(()=>{$('#fade').classList.remove('on');if(after)after()},380)},650)}
 function placePlayer(){P.x=L.spawn.x;P.y=L.spawn.y||0;P.z=L.spawn.z;P.yaw=L.spawn.yaw;P.pitch=0;P.vx=P.vy=P.vz=0;P.camY=P.y+EYE;P.sup=null;P.ground=true;L.checkpoint=null}
-function build(id){$('#heat').hidden=true;$('#bossBar').hidden=true;BUILD[id]();placePlayer();applyShadows();UI.refresh();target=null}
-function rebuildHere(){const s={x:P.x,y:P.y,z:P.z,yaw:P.yaw,pitch:P.pitch};$('#heat').hidden=true;$('#bossBar').hidden=true;BUILD[L.id]();Object.assign(P,s);P.vx=P.vy=P.vz=0;P.camY=P.y+EYE;applyShadows();UI.refresh();target=null}
+function build(id){$('#heat').hidden=true;$('#bossBar').hidden=true;BUILD[id]();placePlayer();UI.refresh();target=null;precompile()}
+/* compile every shader of the new level up front, so nothing stutters the first time it comes into view */
+function precompile(){try{camera.updateMatrixWorld();renderer.compile(wscene,camera)}catch(e){}}
+function rebuildHere(){const s={x:P.x,y:P.y,z:P.z,yaw:P.yaw,pitch:P.pitch};$('#heat').hidden=true;$('#bossBar').hidden=true;BUILD[L.id]();Object.assign(P,s);P.vx=P.vy=P.vz=0;P.camY=P.y+EYE;UI.refresh();target=null;precompile()}
 function takeoff(){if(P.carry)dropCarry();const from=L.id;fadeTo('Взлёт',()=>{S.at=from;save();camera.far=3200;camera.updateProjectionMatrix();SPX.enter(from);setMode('space')},()=>{lock();if(!S.seen.space){S.seen.space=1;save();say([['kapik','Открытый космос! Дедушкина кабина, все кнопки на месте. Работают из них, правда, только руль и газ.'],['kapik',isTouch?'Кнопка «Карта» покажет все планеты. У планеты удерживаю E для посадки.':'Клавиша M покажет звёздную карту. У планеты удерживаю E для посадки.']])}})}
 function landOn(id){fadeTo('Посадка: '+PL[id].name,()=>{SPX.exit();camera.far=1200;camera.updateProjectionMatrix();build(id);S.at=id;save();setMode('play')},()=>{lock();afterArrive(id)})}
 function toTitle(){save();if(screenRet==='space'||mode==='space')SPX.exit();camera.far=3200;camera.updateProjectionMatrix();$('#dlg').hidden=true;$('#timer').hidden=true;AU.engine(false);showTitle()}
@@ -114,7 +117,11 @@ $('#proSkip').addEventListener('click',endPrologue);
 
 /* ---------- LOOP ---------- */
 let last=performance.now(),T=0;
-function frame(now){requestAnimationFrame(frame);const dt=Math.min(.05,(now-last)/1000);last=now;step(dt);camera.updateMatrixWorld();renderer.render(isSpaceView()?sscene:wscene,camera)}
+let frameN=0;
+function frame(now){requestAnimationFrame(frame);const dt=Math.min(.05,(now-last)/1000);last=now;step(dt);camera.updateMatrixWorld();
+  /* phones: refresh the shadow map every second frame (sun and shadows barely move between frames) */
+  const sm=renderer.shadowMap;if(isTouch&&Q.q<2){sm.autoUpdate=false;sm.needsUpdate=(frameN++&1)===0}else sm.autoUpdate=true;
+  renderer.render(isSpaceView()?sscene:wscene,camera)}
 function isSpaceView(){return mode==='space'||mode==='scope'||mode==='title'||mode==='prologue'||(mode==='menu'&&(screenRet==='space'||screenRet==='title'))||(mode==='dialog'&&dlgRet==='space')}
 function step(dt){T+=dt;UNI.time.value=T;
   const sens=.0022*S.set.sens,inv=S.set.invert?-1:1;
@@ -129,6 +136,7 @@ function step(dt){T+=dt;UNI.time.value=T;
   }else if(mode==='space'){
     const inp={thr:(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0)-joy.y,str:(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0)+joy.x,vert:(keys.Space?1:0)-(keys.KeyC||keys.ControlLeft?1:0),boost:keys.ShiftLeft||keys.ShiftRight||boostHeld,roll:(keys.KeyQ?1:0)-(keys.KeyR?1:0),lx:MX*sens*.75,ly:MY*sens*.75*inv,eHeld:ePressed};
     if(isTouch&&Math.abs(joy.y)>.3)SPX.stopAuto();SPX.update(dt,inp);
+  }else if(mode==='swing'){swingUpdate(dt,MX,MY);
   }else if(mode==='scope'){SPX.scopeUpdate(dt,{lx:MX*sens,ly:MY*sens*inv});
   }else if(mode==='title'||mode==='prologue'||(mode==='menu'&&screenRet==='title'))SPX.titleView(T,dt);
   MX=0;MY=0;eJust=false;jumpReq=false;throwReq=false;
@@ -144,7 +152,7 @@ function step(dt){T+=dt;UNI.time.value=T;
 
 /* ---------- BOOT ---------- */
 wscene.add(camera);
-if(location.hash==="#dev")window.__K={get MINI(){return MINI},fire:()=>throwBall(),boss:()=>L.boss,freshSave,addRes,openTrade,openShop2:()=>openShop(),get inv(){return S.inv},get S(){return S},set S(v){S=v},P,get L(){return L},get mode(){return mode},build,setMode,takeoff,landOn,SPX,openShop,openMenu,closeScreen,say,advance,keys,qset,qs,rescueBro,save,AU,get target(){return target},jump:()=>{jumpReq=true},pressE:()=>{ePressed=true;eJust=true},releaseE:()=>{ePressed=false},sim:(sec,inp)=>{const n=Math.round(sec*60);for(let i=0;i<n;i++){if(inp)Object.assign(keys,inp);step(1/60)}if(inp)for(const k in inp)keys[k]=false}};
+if(location.hash==="#dev")window.__K={info:()=>{const i=renderer.info.render;return{calls:i.calls,tris:i.triangles,geo:renderer.info.memory.geometries,tex:renderer.info.memory.textures,prog:renderer.info.programs.length}},stepT:(n)=>{const t0=performance.now();for(let i=0;i<n;i++)step(1/60);return ((performance.now()-t0)/n).toFixed(2)},get MINI(){return MINI},fire:()=>throwBall(),boss:()=>L.boss,freshSave,addRes,openTrade,openShop2:()=>openShop(),get inv(){return S.inv},get S(){return S},set S(v){S=v},P,get L(){return L},get mode(){return mode},build,setMode,takeoff,landOn,SPX,openShop,openMenu,closeScreen,say,advance,keys,qset,qs,rescueBro,save,AU,get target(){return target},jump:()=>{jumpReq=true},pressE:()=>{ePressed=true;eJust=true},releaseE:()=>{ePressed=false},sim:(sec,inp)=>{const n=Math.round(sec*60);for(let i=0;i<n;i++){if(inp)Object.assign(keys,inp);step(1/60)}if(inp)for(const k in inp)keys[k]=false}};
 function start(data){
   resize();try{if(window.claude&&window.claude.hot&&window.claude.hot.snapshot)window.claude.hot.snapshot(()=>({save:S,lvl:L&&L.id,mode}))}catch(e){}
   const sv=loadSave();if(sv)S=sv;

@@ -345,3 +345,8 @@ body.touch #gunHint{display:none}
 .shopHead h2{margin:0}
 .arcSheet{width:min(560px,100%)}
 #arc{width:100%;height:auto;aspect-ratio:3/2;border-radius:14px;border:3px solid var(--ink2);background:#0a0820;touch-action:none;image-rendering:pixelated}
+#swingUI{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);transform:translateX(-50%);z-index:6;width:min(440px,calc(100% - 32px))}
+.swCard{background:var(--paper);color:var(--ink2);border:3px solid var(--ink2);border-radius:18px;box-shadow:0 6px 0 var(--ink2);padding:10px 14px;display:grid;gap:4px;text-align:center}
+.swCard b{font:400 18px var(--display)}.swCard span{font:700 13px/1.4 var(--body);color:var(--ink-soft)}.swKeys{font-size:12px!important;color:var(--ink-dim)!important}
+.swCard .btns{margin-top:4px}.swCard button{background:#fff;color:var(--ink2);border:2px solid var(--ink2);border-bottom-width:4px;padding:10px 16px}.swCard button.primary{background:var(--mandarin)}
+body:not(.touch) .swCard .btns{display:none}body.touch .swKeys{display:none}

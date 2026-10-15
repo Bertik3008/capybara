@@ -41,7 +41,7 @@ function buildP6(){
   placeUFO(0,16,{pad:0x5a4040});
   if(qs('c3')===4){S.q.c3=5;save()}
   /* lava river with two bridges */
-  for(let x=-50;x<=50;x+=4.2)water(x,-8,3.3,{col:0xffa040,deep:0xc8280a,op:.97});
+  river(-50,50,-8,3.3,{col:0xffa040,deep:0xc8280a,op:.97});
   const glowL=[];for(let x=-44;x<=44;x+=11){const g=glow(0xff6a2a,9,.45);g.position.set(x,.6,-8);L.group.add(g);glowL.push(g)}
   for(const bx of[-12,12]){box(bx,0,-8,2.6,.3,9.4,0x5a3a30,{tex:TX.planks,surf:'wood'});for(const s of[-1,1])vis(G.box,0x3a2420,bx+s*1.25,.7,-8,.12,.8,9.4,0,0,0,.02,TX.planks)}
   tick((t,dt)=>{glowL.forEach((g,i)=>g.material.opacity=.38+Math.sin(t*2+i)*.1);if(Math.random()<dt*10)FXW.burst(-48+Math.random()*96,.3,-8+(Math.random()-.5)*5,{col:pick([0xffd36b,0xff6a2a]),n:2,spd:1,up:3,g:6,life:.8,size:.25});
@@ -76,7 +76,7 @@ function buildP6(){
   vis(G.box,0x5a1a2a,0,1.9,-52.4,2.4,1.4,1.2);vis(G.box,0x5a1a2a,0,3.6,-53,2.4,3.4,.4);for(const s of[-1,1])vis(G.cone,0xf4e6c8,s*1,5.6,-53,.25,1.1,.25,0,0,-s*.35);vis(G.box,0xffd36b,0,4.9,-52.78,.5,.5,.04);
   /* caged brothers */
   const CG=[['yuzik',-11,-36],['snezhok',-11,-46],['gribok',11,-36],['vintik',11,-46]];const cages=[];
-  CG.forEach(cg=>{const g=new THREE.Group();g.position.set(cg[1],0,cg[2]);L.group.add(g);for(let i=0;i<12;i++){const a=i/12*TAU;mesh(G.cyl,stdMat(0x2a2a33,{metalness:.6}),Math.cos(a)*1,1.1,Math.sin(a)*1,.04,2.2,.04,g)}mesh(G.disc,stdMat(0x2a2a33,{metalness:.6}),0,2.25,0,1.1,.1,1.1,g);mesh(G.disc,stdMat(0x2a2a33),0,.05,0,1.1,.1,1.1,g);
+  CG.forEach(cg=>{const g=new THREE.Group();g.position.set(cg[1],0,cg[2]);L.group.add(g);for(let i=0;i<12;i++){const a=i/12*TAU;mesh(G.cyl,stdMat(0x2a2a33,{metalness:.6}),Math.cos(a)*1,1.1,Math.sin(a)*1,.04,2.2,.04,g)}mesh(G.disc,stdMat(0x2a2a33,{metalness:.6}),0,2.25,0,1.1,.1,1.1,g);mesh(G.disc,stdMat(0x2a2a33),0,.05,0,1.1,.1,1.1,g);mergeModel(g);
     const c=addC({k:'c',x:cg[1],z:cg[2],r:1.1,y0:0,y1:2.3,t:'solid'});let b=null;if(qs('c3')<99){b=npc(cg[0],cg[1],.1,cg[2],{yaw:-Math.sign(cg[1])*Math.PI/2,pose:'sit',nc:true,r:2.6,talk:n=>talk(n,[[cg[0],pick(['Капик! Он не злой, он просто не спит триста лет!','Стреляй в него пломбиром, ему станет прохладно!','Я знал, что ты придёшь!'])]])});b.noSplat=true}cages.push({g,c,b,key:cg[0]})});
   /* imps */
   const imps=[];function imp(x,z,home){const c=makeCast('ugolek');c.root.position.set(x,0,z);L.group.add(c.root);const I={c,x,z,hx:x,hz:z,state:'idle',cd:0,t:Math.random()*5,home:home!==false,alive:true};

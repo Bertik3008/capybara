@@ -33,7 +33,7 @@ function buildP5(){
     for(let i=0;i<5;i++){const rg=mesh(G.torThin,new THREE.MeshBasicMaterial({color:0xfff8d8,transparent:true,opacity:.35,depthWrite:false,toneMapped:false}),x,y0,z,r,r,r,L.group);rg.rotation.x=Math.PI/2;d['r'+i]=rg}return d};
   const a1=5.55,U1=draft(SX+Math.cos(a1)*3.7,SZ+Math.sin(a1)*3.7,5.7,17.3,1.25);leafAt(6.35,16.5,3.6,true);checkpoint(SX+Math.cos(6.35)*3.6,16.5,SZ+Math.sin(6.35)*3.6,2.6,2.6,0);
   const seeds=[];for(let i=0;i<3;i++){const y=17.7+i*1.2;const c=addC({k:'b',x0:-1.1,x1:1.1,y0:y-.25,y1:y,z0:-1.1,z1:1.1,t:'solid',surf:'moss',h:.25});const g=new THREE.Group();L.group.add(g);
-    mesh(G.cyl16,mat(0xfff6e0),0,-.12,0,1.15,.12,1.15,g);for(let k=0;k<10;k++){const a=k/10*TAU;const s=mesh(G.cyl,mat(0xfffbe8),Math.cos(a)*.7,.25,Math.sin(a)*.7,.03,.8,.03,g);s.rotation.set(Math.sin(a)*.5,0,-Math.cos(a)*.5)}g.add(glow(0xfff2b0,3.2,.35));c.m=g;c.h=.25;
+    mesh(G.cyl16,mat(0xfff6e0),0,-.12,0,1.15,.12,1.15,g);for(let k=0;k<10;k++){const a=k/10*TAU;const s=mesh(G.cyl,mat(0xfffbe8),Math.cos(a)*.7,.25,Math.sin(a)*.7,.03,.8,.03,g);s.rotation.set(Math.sin(a)*.5,0,-Math.cos(a)*.5)}mergeModel(g);g.add(glow(0xfff2b0,3.2,.35));c.m=g;c.h=.25;
     const ph=i*.55,rr=5.6;seeds.push(c);mover(c,t=>{const a=t*.32+ph;return[SX+Math.cos(a)*rr,y-.25+Math.sin(t*1.4+i)*.12,SZ+Math.sin(a)*rr]})}
   const a7=2.2;leafAt(a7,21.3,3.6,true);checkpoint(SX+Math.cos(a7)*3.6,21.3,SZ+Math.sin(a7)*3.6,2.6,2.6,0);
   const U2=draft(SX+Math.cos(a7)*6.4,SZ+Math.sin(a7)*6.4,21,33,1.3);
@@ -42,7 +42,7 @@ function buildP5(){
   for(let i=0;i<12;i++){const a=i/12*TAU;vis(G.sph,0x6abf4a,SX+Math.cos(a)*5.3,31.7,SZ+Math.sin(a)*5.3,1.4,.14,.5,0,-a,.5)}
   const puff=new THREE.Group();puff.position.set(SX,40,SZ);L.group.add(puff);const pm=mesh(new THREE.IcosahedronGeometry(6,3),stdMat(0xfffbea,{roughness:1}),0,0,0,1,1,1,puff);pm.castShadow=true;
   for(let i=0;i<70;i++){const u=Math.random()*2-1,a=Math.random()*TAU,q=Math.sqrt(1-u*u),dir=new THREE.Vector3(q*Math.cos(a),u,q*Math.sin(a));const s=mesh(G.cyl,mat(0xf4ecd0),dir.x*7,dir.y*7,dir.z*7,.05,2.4,.05,puff);s.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir);const tip=mesh(G.sph,bmat(0xfffbe8),dir.x*8.2,dir.y*8.2,dir.z*8.2,.35,.35,.35,puff)}
-  const pg=glow(0xfff4c0,26,.35);puff.add(pg);addC({k:'c',x:SX,z:SZ,r:4.2,y0:34.6,y1:48,t:'solid'});
+  mergeModel(puff);const pg=glow(0xfff4c0,26,.35);puff.add(pg);addC({k:'c',x:SX,z:SZ,r:4.2,y0:34.6,y1:48,t:'solid'});
   const face=textSprite('◕‿◕',{size:64,h:1.6,bg:'rgba(0,0,0,0)',fg:'#c98a5a'});face.position.set(SX,37.4,SZ+5.4);L.group.add(face);
   checkpoint(SX,32,SZ+3.5,4,3,0);
   tick((t,dt)=>{puff.rotation.y=t*.05;const sick=qs('c2')!==99;puff.scale.setScalar(1+Math.sin(t*(sick?2.4:1))*(sick?.025:.01));face.material.opacity=.9;

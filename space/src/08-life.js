@@ -11,7 +11,7 @@ function buildYard(){
   Y.stools.forEach((s,i)=>{const c=[0xff6b6b,0x7fe3e8,0xffd36b,0x8ee08a][i];vis(G.cyl16,c,s[0],.44,s[1],.26,.06,.26);vis(G.cyl,0x7a4a2a,s[0],.2,s[1],.05,.4,.05);cyl(s[0],0,s[1],.28,.46,0,{nv:true})});
   /* swing set */
   const SW=[24,-11];for(const x of[SW[0]-2,SW[0]+2])for(const d of[-1,1])vis(G.cyl,0xc94f3a,x,1.3,SW[1]+d*.55,.07,2.75,.07,d*.22,0,0);vis(G.cyl,0xc94f3a,SW[0],2.62,SW[1],.07,4.1,.07,0,0,Math.PI/2);
-  Y.seats=[];for(const ox of[-.8,.8]){const g=new THREE.Group();g.position.set(SW[0]+ox,2.6,SW[1]);L.group.add(g);for(const d of[-.22,.22])mesh(G.cyl,mat(0xd8c8a0),d,-1.05,0,.012,2.1,.012,g);mesh(G.box,mat(0x7fe3e8),0,-2.1,0,.56,.06,.3,g);Y.seats.push({g,ox,occ:null,ph:Math.random()*6,amp:.15})}
+  Y.seats=[];for(const ox of[-.8,.8]){const g=new THREE.Group();g.position.set(SW[0]+ox,2.6,SW[1]);L.group.add(g);for(const d of[-.22,.22])mesh(G.cyl,mat(0xd8c8a0),d,-1.05,0,.012,2.1,.012,g);mesh(G.box,mat(0x7fe3e8),0,-2.1,0,.56,.06,.3,g);mergeModel(g);Y.seats.push({g,ox,occ:null,ph:Math.random()*6,amp:.15})}
   inter({x:SW[0],y:.4,z:SW[1],r:2.2,label:'E - покачаться на качелях',act:()=>swingRide(Y.seats[0])});
   /* trampoline */
   const TR=[31,-13];addC({k:'c',x:TR[0],z:TR[1],r:1.7,y0:0,y1:.6,t:'bounce',pow:13});vis(G.cyl16,0x2c2c44,TR[0],.55,TR[1],1.7,.06,1.7);vis(G.tor,0x7fe3e8,TR[0],.58,TR[1],1.75,1.75,.8,Math.PI/2,0,0);for(let i=0;i<6;i++){const a=i/6*TAU;vis(G.cyl,0x9aa2aa,TR[0]+Math.cos(a)*1.6,.28,TR[1]+Math.sin(a)*1.6,.05,.56,.05)}
@@ -30,11 +30,19 @@ function buildYard(){
     const m={x:ball.x,z:ball.z};mobCollide(m,.3);if(m.x!==ball.x)ball.vx*=-.6;if(m.z!==ball.z)ball.vz*=-.6;ball.x=m.x;ball.z=m.z;if(Math.hypot(ball.x-24,ball.z+4)>14){ball.vx-=(ball.x-24)*.3*dt;ball.vz-=(ball.z+4)*.3*dt}
     bm.position.set(ball.x,ball.y,ball.z);bm.rotation.x+=ball.vz*dt/.3;bm.rotation.z-=ball.vx*dt/.3});
   /* swings sway */
-  tick((t,dt)=>{for(const s of Y.seats){const a=(s.occ?.45:.06)*Math.sin(t*2.1+s.ph);s.g.rotation.x=a}});
+  tick((t,dt)=>{for(const s of Y.seats){if(s.occ==='kapik')continue;s.g.rotation.x=.06*Math.sin(t*2.1+s.ph)}});
   return Y}
-function swingRide(seat){setMode('cut');const p0=new THREE.Vector3(P.x,P.camY,P.z);seat.occ='kapik';AU.sfx('ui');let tt=0;
-  tween(5,p=>{tt=p*5;const a=.6*Math.sin(tt*2.4)*Math.sin(Math.min(1,p*3)*Math.PI/2);const sx=seat.g.position.x,sy=seat.g.position.y,sz=seat.g.position.z;seat.g.rotation.x=a;
-    camera.position.set(sx,sy-2.1*Math.cos(a)+1.05,sz+2.1*Math.sin(a)-.1);camera.rotation.set(a*.6-.05,Math.PI,0)},()=>{seat.occ=null;S.swingT=Date.now();save();P.x=seat.g.position.x;P.z=seat.g.position.z-1.3;P.yaw=Math.PI;setMode('play');lock();toast('Ух! Дух захватывает')})}
+/* interactive swing: pump to build momentum, enough of it and Kapik goes all the way round */
+const SWG={seat:null,th:0,w:0,loops:0,lx:0,ly:0,pump:false};
+function swingRide(seat){if(P.carry)dropCarry();SWG.seat=seat;SWG.th=.15;SWG.w=0;SWG.loops=0;SWG.lx=SWG.ly=0;seat.occ='kapik';setMode('swing');$('#swingUI').hidden=false;AU.sfx('ui')}
+function swingUpdate(dt,mx,my){const s=SWG.seat;if(!s)return;const pump=keys.Space||keys.KeyW||keys.ArrowUp||SWG.pump;
+  const acc=-(9.8/2.1)*Math.sin(SWG.th)-.22*SWG.w+(pump?2.7*(SWG.w>=0?1:-1):0);SWG.w+=acc*dt;SWG.w=clamp(SWG.w,-9,9);SWG.th+=SWG.w*dt;
+  if(SWG.th>Math.PI||SWG.th<-Math.PI){SWG.th+=SWG.th>0?-TAU:TAU;SWG.loops++;AU.sfx('djump');banner('Сальто!',SWG.loops>1?`Уже ${SWG.loops} раза подряд!`:'Полный оборот на качелях','');if(!S.got.swingFlip){S.got.swingFlip=1;save();setTimeout(()=>{addCoins(10);toast('Первое сальто на качелях: +10 монет')},500)}}
+  const th=SWG.th,g=s.g;g.rotation.x=th;SWG.lx=clamp(SWG.lx-mx*.002,-1.2,1.2);SWG.ly=clamp(SWG.ly-my*.002,-.6,.6);
+  camera.position.set(g.position.x,g.position.y-Math.cos(th)*1.18,g.position.z-Math.sin(th)*1.18);camera.rotation.set(th+SWG.ly,SWG.lx,0);
+  if(Math.abs(SWG.w)>3&&Math.random()<dt*3)AU.sfx('step')}
+function swingExit(){const s=SWG.seat;if(!s)return;s.occ=null;SWG.seat=null;S.swingT=Date.now();save();$('#swingUI').hidden=true;P.x=s.g.position.x;P.z=s.g.position.z+1.5;P.y=0;P.vx=P.vy=P.vz=0;P.yaw=0;P.pitch=0;P.camY=EYE;setMode('play');lock();if(SWG.loops)toast(`Сальто за заезд: ${SWG.loops}`);else toast('Ух! Дух захватывает')}
+
 
 /* brothers: each one has a little daily routine */
 function buildBrothers(Y,D){if(qs('c3')>0&&qs('c3')<99)return;reqTick();buildReqItems();
@@ -105,3 +113,5 @@ function renderReq(k){const q=reqOf(k),el=$('#broReq');if(!q){el.hidden=true;ret
 $('#broReqDo').addEventListener('click',()=>{if(broCur)reqDone(broCur.key)});
 function buildReqItems(){for(const k of Object.keys(REQS)){const q=reqOf(k),r=reqState(k);if(!q||q.t!=='find'||r.found)continue;const it=REQ_ITEM[q.id];const g=new THREE.Group();mesh(G.tor,mat(it.col),0,.2,0,.18,.18,.25,g);mesh(G.sph,mat(it.col),0,.2,0,.1,.1,.1,g);g.add(glow(it.col,1.6,.6));
   const pk=itemPick('req_'+q.id+'_'+r.t0,q.pos[0],q.pos[1],q.pos[2],g,null,()=>{r.found=true;save();toast(`Найдено: ${it.name}. Отнеси брату`);AU.sfx('item')})}}
+
+{const b=$('#swPump');const on=e=>{e.preventDefault();SWG.pump=true},off=()=>{SWG.pump=false};b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointerleave',off);b.addEventListener('pointercancel',off);$('#swOff').addEventListener('click',()=>swingExit())}

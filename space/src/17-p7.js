@@ -9,7 +9,7 @@ function buildP7(){
   placeUFO(0,16,{pad:0xc8b080});
   const Q=qd('c3');Q.gb=Q.gb||{};
   /* river and the raft */
-  for(let x=-52;x<=52;x+=4.2)water(x,-8,3.4,{col:0x4ac0d8,deep:0x1a6a8a});
+  river(-52,52,-8,3.4,{col:0x4ac0d8,deep:0x1a6a8a});
   const raft=addC({k:'b',x0:-1.4,x1:1.4,y0:-.05,y1:.3,z0:-1.4,z1:1.4,t:'solid',surf:'wood',h:.35});const rg=new THREE.Group();L.group.add(rg);
   for(let i=0;i<5;i++){const lg=mesh(G.cyl,mat(0x9a6a3a),-1.1+i*.55,0,0,.26,2.8,.26,rg);lg.rotation.x=Math.PI/2;lg.castShadow=true}for(const z of[-.9,.9])mesh(G.box,mat(0x6b4628),0,.2,z,2.8,.08,.12,rg);mesh(G.cyl,mat(0x6b4628),-.9,.9,-.9,.05,1.6,.05,rg);const flagM=mesh(G.box,mat(0xffe14a),-.6,1.5,-.9,.6,.36,.02,rg);
   raft.m=rg;rg.position.set(0,.15,-3.6);

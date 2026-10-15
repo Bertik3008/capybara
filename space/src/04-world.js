@@ -14,8 +14,10 @@ function newLevel(id,cfg){
   L={id,cfg:cfg||{},group:new THREE.Group(),batch:new Batch(),gbatch:new Batch(),solids:[],ladders:[],triggers:[],inters:[],picks:[],movers:[],ticks:[],npcs:[],water:[],targets:[],proj:[],paths:[],spawn:{x:0,y:0,z:8,yaw:0},radius:62,surface:'grass',pathKind:'dirt',checkpoint:null,objective:null,update:null,canThrow:false,noGrass:[],nodes:[]};
   wscene.add(L.group);P.carry=null;updCarry();
 }
-const vis=(g,col,x,y,z,sx,sy,sz,rx,ry,rz,jit,tex)=>L.batch.add(g,col,x,y,z,sx,sy,sz,rx,ry,rz,jit,tex);
-const gvis=(g,col,x,y,z,sx,sy,sz,rx,ry,rz)=>L.gbatch.add(g,col,x,y,z,sx,sy,sz,rx,ry,rz,0);
+/* level of detail for batched spheres: small ones need far fewer triangles */
+const lod=(g,sx,sy,sz)=>{if(g!==G.sph)return g;const m=Math.max(Math.abs(sx),Math.abs(sy==null?sx:sy),Math.abs(sz==null?sx:sz));return m<.3?G.sphTiny:m<2.5?G.sphLo:g};
+const vis=(g,col,x,y,z,sx,sy,sz,rx,ry,rz,jit,tex)=>L.batch.add(lod(g,sx,sy,sz),col,x,y,z,sx,sy,sz,rx,ry,rz,jit,tex);
+const gvis=(g,col,x,y,z,sx,sy,sz,rx,ry,rz)=>L.gbatch.add(lod(g,sx,sy,sz),col,x,y,z,sx,sy,sz,rx,ry,rz,0);
 function addC(c){c.on=true;L.solids.push(c);return c}
 function box(x,y,z,w,h,d,col,o){o=o||{};if(!o.nv)(o.glow?gvis:vis)(G.box,col,x,y+h/2,z,w,h,d,0,o.ry||0,0,o.jit,o.tex);if(o.nc)return null;let W=w,D=d;if(o.ry&&Math.abs(Math.sin(o.ry))>.7){W=d;D=w}
   return addC({k:'b',x0:x-W/2,x1:x+W/2,y0:y,y1:y+h,z0:z-D/2,z1:z+D/2,t:o.t||'solid',surf:o.surf,pow:o.pow})}
@@ -39,6 +41,10 @@ function waterMat(c1,c2,op){return new THREE.ShaderMaterial({transparent:true,de
     float h(vec2 p){return sin(p.x*1.3+time*1.6)*.5+sin(p.y*1.7-time*1.3)*.4+sin((p.x+p.y)*2.9+time*2.3)*.2+sin((p.x-p.y)*4.7-time*2.9)*.1;}
     void main(){vec2 p=wp.xz;float e=.05;vec3 n=normalize(vec3(-(h(p+vec2(e,0.))-h(p))/e*.08,1.,-(h(p+vec2(0.,e))-h(p))/e*.08));vec3 v=normalize(cameraPosition-wp);float f=pow(1.-max(dot(n,v),0.),3.);
     vec3 col=mix(c2,c1,.35+.35*f);vec3 r=reflect(-normalize(sd),n);float sp=pow(max(dot(r,v),0.),90.);col+=vec3(1.,.97,.9)*sp*1.4+vec3(.85,.95,1.)*f*.25;gl_FragColor=vec4(col,op+f*.1);}`})}
+/* a long river drawn as one mesh (one draw call) with wavy banks; collision still uses circles */
+function river(x0,x1,z,r,o){o=o||{};for(let x=x0;x<=x1;x+=4.2){L.water.push({x,z,r,hazard:!o.safe});L.noGrass.push([x,z,r+.5])}
+  const len=x1-x0+r*2,g=new THREE.PlaneGeometry(len,r*2,Math.round(len/1.5),1),pa=g.attributes.position;for(let i=0;i<pa.count;i++){const px=pa.getX(i),py=pa.getY(i);pa.setY(i,py*(.92+.08*Math.sin(px*.45+(py>0?0:2))))}
+  const m=mesh(g,waterMat(o.col||0x4cb3d6,o.deep||0x0f4a6a,o.op),(x0+x1)/2,o.y||.04,z,1,1,1,L.group);m.rotation.x=-Math.PI/2;m.renderOrder=1;return m}
 function water(x,z,r,o){o=o||{};L.water.push({x,z,r,hazard:!o.safe});const m=mesh(new THREE.CircleGeometry(r,64),waterMat(o.col||0x4cb3d6,o.deep||0x0f4a6a,o.op),x,o.y||.04,z,1,1,1,L.group);m.rotation.x=-Math.PI/2;m.renderOrder=1;L.noGrass.push([x,z,r+.5]);return m}
 function inWater(x,z){for(const w of L.water)if(w.hazard&&(x-w.x)*(x-w.x)+(z-w.z)*(z-w.z)<w.r*w.r)return true;return false}
 
@@ -124,7 +130,7 @@ const bladeGeo=(()=>{const g=new THREE.BufferGeometry(),w=.06;const p=[-w/2,0,0,
   g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));g.setAttribute('color',new THREE.Float32BufferAttribute(c,3));g.setIndex([0,1,2,1,3,2,2,3,4,3,5,4,4,5,6]);g.computeVertexNormals();g.userData.shared=true;return g})();
 const grassMat=(()=>{const m=new THREE.MeshStandardMaterial({vertexColors:true,side:THREE.DoubleSide,roughness:.9});m.onBeforeCompile=sh=>{sh.uniforms.time=UNI.time;sh.vertexShader='uniform float time;\n'+sh.vertexShader.replace('#include <begin_vertex>',
   '#include <begin_vertex>\nfloat hh=position.y;vec4 ip=instanceMatrix*vec4(0.,0.,0.,1.);transformed.x+=sin(time*1.9+ip.x*.33+ip.z*.21)*hh*.28;transformed.z+=cos(time*1.6+ip.x*.17)*hh*.14;');sh.vertexShader=sh.vertexShader.replace('#include <beginnormal_vertex>','vec3 objectNormal=vec3(0.,1.,0.);')};m.userData.shared=true;return m})();
-function grass(n,cols,seed,o){o=o||{};n=Math.round(n*[.35,.9,1.8][Q.q]);const r=rng(seed);const im=new THREE.InstancedMesh(bladeGeo,grassMat,n*5);const m4=new THREE.Matrix4(),c=new THREE.Color();let k=0;
+function grass(n,cols,seed,o){o=o||{};n=Math.round(n*(isTouch?[.3,.6,1.2]:[.35,.9,1.8])[Q.q]);const r=rng(seed);const im=new THREE.InstancedMesh(bladeGeo,grassMat,n*5);const m4=new THREE.Matrix4(),c=new THREE.Color();let k=0;
   for(let i=0;i<n&&k<n*5-5;i++){const a=r()*TAU,d=3+Math.sqrt(r())*60,x=Math.cos(a)*d,z=Math.sin(a)*d;if(blocked(x,z))continue;if(L.paths.some(p=>distPoly(x,z,p.pts)<p.w*.9))continue;
     const base=new THREE.Color(pick(cols));for(let j=0;j<5;j++){const s=(.7+r()*.9)*(o.scale||1);m4.makeRotationFromEuler(_e.set((r()-.5)*.35,r()*TAU,(r()-.5)*.35));m4.scale(_s.set(s,s*(.7+r()*.9),s));m4.setPosition(x+(r()-.5)*.6,0,z+(r()-.5)*.6);im.setMatrixAt(k,m4);im.setColorAt(k,c.copy(base).multiplyScalar(.85+r()*.3).convertSRGBToLinear());k++}}
   im.count=k;im.receiveShadow=true;im.frustumCulled=false;L.group.add(im)}

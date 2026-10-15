@@ -66,7 +66,7 @@ function buildBase(){
     vis(G.sph,0x3a3a4a,TX0,1.45,TZ0,.16,.16,.16);const tube=new THREE.Group();tube.position.set(TX0,1.55,TZ0);tube.rotation.set(-.6,.8,0,'YXZ');L.group.add(tube);
     mesh(G.cyl16,stdMat(0xb28cff,{metalness:.5,roughness:.35}),0,0,-.2,.14,1.5,.14,tube).rotation.x=Math.PI/2;mesh(G.cyl16,stdMat(0xffd36b,{metalness:.7,roughness:.3}),0,0,.58,.18,.12,.18,tube).rotation.x=Math.PI/2;mesh(G.cyl16,stdMat(0xffd36b,{metalness:.7,roughness:.3}),0,0,-.9,.12,.1,.12,tube).rotation.x=Math.PI/2;
     mesh(G.disc,bmat(0x9fe9ff),0,0,.65,.15,.01,.15,tube).rotation.x=Math.PI/2;mesh(G.cyl,stdMat(0x2a2a33),0,-.06,-1.0,.05,.16,.05,tube).rotation.x=Math.PI/2;
-    inter({x:TX0,y:.5,z:TZ0,r:2.2,label:'E - посмотреть в телескоп',act:()=>SPX.scopeStart()})}
+    mergeModel(tube);inter({x:TX0,y:.5,z:TZ0,r:2.2,label:'E - посмотреть в телескоп',act:()=>SPX.scopeStart()})}
   /* brothers live in the yard now */
   const Y=buildYard();buildBrothers(Y,D);
   /* scenery */

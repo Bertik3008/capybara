@@ -1,7 +1,7 @@
 /* ---------- RENDER ---------- */
 const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
 renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
-renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=isTouch?THREE.PCFShadowMap:THREE.PCFSoftShadowMap;
 $('#view').appendChild(renderer.domElement);
 const cv=renderer.domElement;
 const wscene=new THREE.Scene(),sscene=new THREE.Scene();
@@ -13,8 +13,8 @@ const sc_=sun.shadow.camera;sc_.left=-40;sc_.right=40;sc_.top=40;sc_.bottom=-40;
 wscene.add(sun);wscene.add(sun.target);
 /* quality: 0 low, 1 medium, 2 high */
 const Q={get q(){return S.set.q==null?(isTouch?1:2):S.set.q}};
-function applyQuality(){const q=Q.q,dpr=window.devicePixelRatio||1;renderer.setPixelRatio(Math.min(dpr,[1,1.5,2][q]));const sh=q>0;renderer.shadowMap.enabled=sh;sun.castShadow=sh;
-  const ms=q===2?2048:1024;if(sun.shadow.mapSize.x!==ms){sun.shadow.mapSize.set(ms,ms);if(sun.shadow.map){sun.shadow.map.dispose();sun.shadow.map=null}}resize()}
+function applyQuality(){const q=Q.q,dpr=window.devicePixelRatio||1;renderer.setPixelRatio(Math.min(dpr,(isTouch?[1,1.3,1.75]:[1,1.5,2])[q]));const sh=q>0;renderer.shadowMap.enabled=sh;sun.castShadow=sh;
+  const ms=q===2?(isTouch?1536:2048):1024;if(sun.shadow.mapSize.x!==ms){sun.shadow.mapSize.set(ms,ms);if(sun.shadow.map){sun.shadow.map.dispose();sun.shadow.map=null}}resize()}
 function resize(){const w=window.innerWidth,h=window.innerHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();if(window.UI&&UI.resizeMap)UI.resizeMap()}
 window.addEventListener('resize',resize);
 
@@ -28,7 +28,7 @@ function beanGeo(){const pts=[];for(let i=0;i<=16;i++){const t=-Math.PI/2+i/16*M
 function rockGeo(seed){const g=new THREE.IcosahedronGeometry(1,1),p=g.attributes.position,r=rng(seed);const map={};for(let i=0;i<p.count;i++){const k=p.getX(i).toFixed(3)+p.getY(i).toFixed(3)+p.getZ(i).toFixed(3);if(!map[k])map[k]=.78+r()*.38;const s=map[k];p.setXYZ(i,p.getX(i)*s,p.getY(i)*s,p.getZ(i)*s)}g.computeVertexNormals();return NI(g)}
 const G={
   box:NI(new THREE.BoxGeometry(1,1,1)),cyl:NI(new THREE.CylinderGeometry(1,1,1,14)),cyl6:NI(new THREE.CylinderGeometry(1,1,1,6)),cyl16:NI(new THREE.CylinderGeometry(1,1,1,28)),
-  cone:NI(new THREE.ConeGeometry(1,1,14)),cone4:NI(new THREE.ConeGeometry(1,1,4)),sph:NI(new THREE.SphereGeometry(1,18,14)),sphHi:NI(new THREE.SphereGeometry(1,28,20)),
+  cone:NI(new THREE.ConeGeometry(1,1,14)),cone4:NI(new THREE.ConeGeometry(1,1,4)),sph:NI(new THREE.SphereGeometry(1,18,14)),sphLo:NI(new THREE.SphereGeometry(1,12,9)),sphTiny:NI(new THREE.SphereGeometry(1,7,5)),sphHi:NI(new THREE.SphereGeometry(1,28,20)),
   ico:NI(new THREE.IcosahedronGeometry(1,0)),ico1:NI(new THREE.SphereGeometry(1,14,10)),dod:rockGeo(5),rock2:rockGeo(9),
   hemi:NI(new THREE.SphereGeometry(1,24,10,0,TAU,0,Math.PI/2)),tor:NI(new THREE.TorusGeometry(1,.22,10,28)),torThin:NI(new THREE.TorusGeometry(1,.08,8,32)),
   frus:NI(new THREE.CylinderGeometry(.6,1,1,12)),trunk:NI(new THREE.CylinderGeometry(.62,1,1,10)),oct:NI(new THREE.OctahedronGeometry(1,0)),disc:NI(new THREE.CylinderGeometry(1,1,1,32)),

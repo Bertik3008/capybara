@@ -91,6 +91,7 @@ function buildP5(){
   scatter(r,6,14,50,avoid,(x,z,s)=>rock(x,z,s*.7,0x9a9a8a));
   tick((t,dt)=>{if(Math.random()<dt*6){const a=Math.random()*TAU,d=Math.random()*30;FXW.burst(P.x+Math.cos(a)*d,1+Math.random()*6,P.z+Math.sin(a)*d,{col:0xfffbe8,n:1,spd:.6,up:.4,g:-.2,life:4,size:.2})}});
   grass(520,[0x6aa83a,0x5a9a3a,0x8ac850],61);
+  groundDetail(61,'dandelion',60);
   makeGround({edge:'puffs',c1:0x7ab84a,c2:0x6aa840,mount:0x8aa070,snow:0xfffbe8,path:0xc8b080,seed:61,snowY:14,mh:20});
   finishLevel();
   AU.music('p5');AU.ambient('birds');

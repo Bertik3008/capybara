@@ -117,6 +117,11 @@ $('#bSet').addEventListener('click',()=>{AU.init();openMenu('settings');$('#titl
 $('#proNext').addEventListener('click',()=>{AU.sfx('ui');if(slide<SLIDES.length-1){slide++;showSlide()}else endPrologue()});
 $('#proSkip').addEventListener('click',endPrologue);
 
+/* shadow camera follows the player but snaps to whole shadow-map texels, so shadow edges don't crawl/flicker while walking (v8) */
+const _sR=new THREE.Vector3(),_sU=new THREE.Vector3(),_sD=new THREE.Vector3(),_sC=new THREE.Vector3(),_up=new THREE.Vector3(0,1,0);
+function sunFollow(x,y,z){const d=_sD.set(L.sunDir.x,L.sunDir.y,L.sunDir.z).normalize(),tx=(sc_.right-sc_.left)/sun.shadow.mapSize.x;
+  _sR.crossVectors(_up,d).normalize();_sU.crossVectors(d,_sR);_sC.set(x,y,z);const a=Math.round(_sC.dot(_sR)/tx)*tx,b=Math.round(_sC.dot(_sU)/tx)*tx,c=_sC.dot(d);
+  _sC.copy(_sR).multiplyScalar(a).addScaledVector(_sU,b).addScaledVector(d,c);sun.target.position.copy(_sC);sun.position.copy(_sC).addScaledVector(d,70)}
 /* ---------- LOOP ---------- */
 let last=performance.now(),T=0;
 let frameN=0;
@@ -145,7 +150,7 @@ function step(dt){T+=dt;UNI.time.value=T;
   updTweens(dt);
   const inSpace=isSpaceView();
   if(!inSpace&&L){for(const f of L.ticks)f(T,dt);updNPCs(T,dt);FXW.update(dt);if(L.sky)L.sky.position.copy(camera.position);if(L.stars)L.stars.position.copy(camera.position);
-    if(L.sunDir){sun.position.set(P.x+L.sunDir.x*70,P.y+L.sunDir.y*70,P.z+L.sunDir.z*70);sun.target.position.set(P.x,P.y,P.z)}}
+    if(L.sunDir)sunFollow(P.x,P.y,P.z)}
   else FXS.update(dt);
   fishTick(dt);arcadeTick(dt);
   if(mode==='play'||mode==='space'){updObjective(dt);updTut()}else{$('#marker').hidden=true;if(mode!=='dialog'&&mode!=='menu')$('#tut').hidden=true}
@@ -154,7 +159,7 @@ function step(dt){T+=dt;UNI.time.value=T;
 
 /* ---------- BOOT ---------- */
 wscene.add(camera);
-if(location.hash==="#dev")window.__K={info:()=>{const i=renderer.info.render;return{calls:i.calls,tris:i.triangles,geo:renderer.info.memory.geometries,tex:renderer.info.memory.textures,prog:renderer.info.programs.length}},stepT:(n)=>{const t0=performance.now();for(let i=0;i<n;i++)step(1/60);return ((performance.now()-t0)/n).toFixed(2)},get MINI(){return MINI},fire:()=>throwBall(),boss:()=>L.boss,freshSave,addRes,openTrade,openShop2:()=>openShop(),get inv(){return S.inv},get S(){return S},set S(v){S=v},P,get L(){return L},get mode(){return mode},build,setMode,takeoff,landOn,SPX,openShop,openMenu,closeScreen,say,advance,keys,qset,qs,rescueBro,save,AU,get target(){return target},jump:()=>{jumpReq=true},pressE:()=>{ePressed=true;eJust=true},releaseE:()=>{ePressed=false},sim:(sec,inp)=>{const n=Math.round(sec*60);for(let i=0;i<n;i++){if(inp)Object.assign(keys,inp);step(1/60)}if(inp)for(const k in inp)keys[k]=false}};
+if(location.hash==="#dev")window.__K={cam:camera,R:renderer,ws:wscene,info:()=>{const i=renderer.info.render;return{calls:i.calls,tris:i.triangles,geo:renderer.info.memory.geometries,tex:renderer.info.memory.textures,prog:renderer.info.programs.length}},stepT:(n)=>{const t0=performance.now();for(let i=0;i<n;i++)step(1/60);return ((performance.now()-t0)/n).toFixed(2)},get MINI(){return MINI},fire:()=>throwBall(),boss:()=>L.boss,freshSave,addRes,openTrade,openShop2:()=>openShop(),get inv(){return S.inv},get S(){return S},set S(v){S=v},P,get L(){return L},get mode(){return mode},build,setMode,takeoff,landOn,SPX,openShop,openMenu,closeScreen,say,advance,keys,qset,qs,rescueBro,save,AU,get target(){return target},jump:()=>{jumpReq=true},pressE:()=>{ePressed=true;eJust=true},releaseE:()=>{ePressed=false},sim:(sec,inp)=>{const n=Math.round(sec*60);for(let i=0;i<n;i++){if(inp)Object.assign(keys,inp);step(1/60)}if(inp)for(const k in inp)keys[k]=false}};
 function start(data){
   resize();try{if(window.claude&&window.claude.hot&&window.claude.hot.snapshot)window.claude.hot.snapshot(()=>({save:S,lvl:L&&L.id,mode}))}catch(e){}
   const sv=loadSave();if(sv)S=sv;

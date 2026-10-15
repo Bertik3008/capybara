@@ -1,22 +1,39 @@
 /* ---------- BASE EXTRAS: forest ring, grandpa's secret cave with an arcade, vegetable beds ---------- */
-const CAVE={x:-31,z:-36.6};
-function baseForest(r,avoid){avoid.push([CAVE.x,CAVE.z,10]);
+const CAVE={x:-31,z:-36.6};CAVE.da=Math.atan2(CAVE.z,CAVE.x)+1.25;CAVE.dx=CAVE.x+Math.cos(CAVE.da)*8;CAVE.dz=CAVE.z+Math.sin(CAVE.da)*8;
+/* hemisphere shell with an arched doorway cut out toward angle `door` */
+function caveShell(segW,segH,door,hw,dh){const g=new THREE.SphereGeometry(1,segW,segH,0,TAU,0,Math.PI/2),pa=g.attributes.position,ix=g.index.array,keep=[];
+  for(let i=0;i<ix.length;i+=3){let cx=0,cy=0,cz=0;for(let k=0;k<3;k++){const v=ix[i+k];cx+=pa.getX(v);cy+=pa.getY(v);cz+=pa.getZ(v)}cy/=3;const d=Math.abs(Math.atan2(Math.sin(Math.atan2(cz,cx)-door),Math.cos(Math.atan2(cz,cx)-door))),yy=cy/dh;
+    if(yy<1&&d<hw*Math.sqrt(1-yy*yy))continue;keep.push(ix[i],ix[i+1],ix[i+2])}g.setIndex(keep);return g}
+function baseForest(r,avoid){avoid.push([CAVE.x,CAVE.z,10],[CAVE.dx,CAVE.dz,6]);
   scatter(r,Math.round(75*[.55,.8,1][Q.q]),40,61,avoid,(x,z,s)=>{const k=r();if(k<.3)tree(x,z,s*1.25,pick([0x2f6a2f,0x3f7a35,0x4a8a3c,0x356f30]));
     else if(k<.88){const h=(3.5+r()*2.5)*s;vis(G.trunk,0x5a3a26,x,h*.18,z,.22*s,h*.36,.22*s,0,0,0,.03,TX.bark);for(let i=0;i<3;i++)vis(G.cone,pick([0x2a5a3a,0x30603a,0x24503a]),x,h*(.35+i*.2),z,(1.5-i*.35)*s,h*.38,(1.5-i*.35)*s,0,i,0,.05,TX.leaves)}
     else{vis(G.sph,0x3a7a35,x,.5*s,z,1.1*s,.8*s,1.1*s,0,0,0,.05,TX.leaves);vis(G.sph,0x4a8a3c,x+.6*s,.4*s,z+.3*s,.7*s,.55*s,.7*s,0,0,0,.05,TX.leaves)}})}
 /* the cave: a rocky hill at the forest edge, entrance faces the edge of the world */
-function buildCave(){const C=CAVE,ang=Math.atan2(C.z,C.x),dx=Math.cos(ang),dz=Math.sin(ang),R=5.4;
+function buildCave(){const C=CAVE,ang=C.da,dx=Math.cos(ang),dz=Math.sin(ang),px_=-dz,pz_=dx,R=5.4;
   const rockM=stdMat(0x7a7268,{roughness:.95}),inM=new THREE.MeshStandardMaterial({color:lc(0x2a2430),roughness:1,side:THREE.BackSide});
-  const outer=mesh(new THREE.SphereGeometry(1,40,20,0,TAU,0,Math.PI/2),rockM,C.x,0,C.z,R+.6,4.6,R+.6,L.group);outer.castShadow=true;outer.receiveShadow=true;
-  {const pa=outer.geometry.attributes.position;for(let i=0;i<pa.count;i++){const x=pa.getX(i),y=pa.getY(i),z=pa.getZ(i),k=1+(hash2(x*7,z*7)-.5)*.16*y;pa.setXYZ(i,x*k,y,z*k)}outer.geometry.computeVertexNormals()}
-  mesh(new THREE.SphereGeometry(1,32,16,0,TAU,0,Math.PI/2),inM,C.x,0,C.z,R,4.1,R,L.group);
-  for(let i=0;i<14;i++){const a=i/14*TAU+.2;if(Math.abs(Math.atan2(Math.sin(a-ang),Math.cos(a-ang)))<.42)continue;vis(G.dod,pick([0x6a645c,0x7a7268,0x8a8276]),C.x+Math.cos(a)*(R+.9),.7,C.z+Math.sin(a)*(R+.9),1.4,1.1,1.4,i,i,0,.05,TX.stone)}
-  /* walls: ring of colliders with a gap toward the outside */
-  for(let i=0;i<28;i++){const a=i/28*TAU;if(Math.abs(Math.atan2(Math.sin(a-ang),Math.cos(a-ang)))<.3)continue;cyl(C.x+Math.cos(a)*R,0,C.z+Math.sin(a)*R,.75,4.5,0,{nv:true})}
-  /* entrance hidden behind boulders and bushes */
-  const ex=C.x+dx*(R+.4),ez=C.z+dz*(R+.4);for(const s of[-1,1]){const px=ex-dz*s*2.1,pz=ez+dx*s*2.1;vis(G.dod,0x6a645c,px,1,pz,1.3,1.6,1.3,s,s*2,0,.05,TX.stone);cyl(px,0,pz,1.1,2,0,{nv:true})}
-  for(const s of[-1,1])vis(G.sph,0x3a7a35,ex+dx*1.6-dz*s*1.4,.5,ez+dz*1.6+dx*s*1.4,1,.75,1,0,0,0,.05,TX.leaves);
-  vis(G.disc,0x231c22,C.x,.02,C.z,R*.98,.02,R*.98);
+  /* outer hill and inner vault both have a real arched opening (v8: the entrance used to be painted over) */
+  const outer=mesh(caveShell(72,22,ang,1.32/6,2.65/4.6),rockM,C.x,0,C.z,R+.6,4.6,R+.6,L.group);outer.castShadow=true;outer.receiveShadow=true;
+  {const pa=outer.geometry.attributes.position;for(let i=0;i<pa.count;i++){const x=pa.getX(i),y=pa.getY(i),z=pa.getZ(i),k=1+(hash2(x*7,z*7)-.5)*.12*y;pa.setXYZ(i,x*k,y,z*k)}outer.geometry.computeVertexNormals()}
+  mesh(caveShell(48,18,ang,1.32/R,2.65/4.1),inM,C.x,0,C.z,R,4.1,R,L.group);
+  /* short arched tunnel that joins the two shells */
+  const tun=new THREE.Group();tun.position.set(C.x+dx*(R+.3),0,C.z+dz*(R+.3));tun.rotation.y=Math.atan2(dx,dz);L.group.add(tun);
+  const tm=mesh(new THREE.CylinderGeometry(1,1,1,22,1,true,-Math.PI/2,Math.PI),new THREE.MeshStandardMaterial({color:lc(0x4a4248),roughness:1,side:THREE.DoubleSide}),0,0,0,1.34,1.5,2.68,tun);tm.rotation.x=-Math.PI/2;tm.receiveShadow=true;
+  /* stone arch around the mouth */
+  for(let i=0;i<=10;i++){const t=i/10*Math.PI,lx=Math.cos(t)*1.55,ly=Math.sin(t)*2.85,ox=C.x+dx*(R+1)+px_*lx,oz=C.z+dz*(R+1)+pz_*lx;vis(G.dod,i%2?0x8a8276:0x6f6960,ox,ly+.15,oz,.62,.52,.62,i,i*2,0,.05,TX.stone)}
+  for(const s of[-1,1])for(let k=0;k<3;k++)cyl(C.x+dx*(R+.2+k*.5)+px_*s*1.55,0,C.z+dz*(R+.2+k*.5)+pz_*s*1.55,.32,2.6,0,{nv:true});
+  for(let i=0;i<14;i++){const a=i/14*TAU+ang+.25;if(Math.abs(Math.atan2(Math.sin(a-ang),Math.cos(a-ang)))<.5)continue;vis(G.dod,pick([0x6a645c,0x7a7268,0x8a8276]),C.x+Math.cos(a)*(R+.9),.7,C.z+Math.sin(a)*(R+.9),1.4,1.1,1.4,i,i,0,.05,TX.stone)}
+  /* moss on the hill */
+  for(let i=0;i<9;i++){const a=ang+.7+i*.6,h=.9+(i%3)*.8,rr=Math.sqrt(1-Math.pow(h/4.6,2))*(R+.6)+.3;vis(G.sph,pick([0x4a7a3a,0x5a8a42]),C.x+Math.cos(a)*rr,h,C.z+Math.sin(a)*rr,.9,.35,.9,0,i,0,.05,TX.leaves)}
+  /* walls: ring of colliders with a gap at the door */
+  for(let i=0;i<28;i++){const a=ang+i/28*TAU;if(Math.abs(Math.atan2(Math.sin(a-ang),Math.cos(a-ang)))<.3)continue;cyl(C.x+Math.cos(a)*R,0,C.z+Math.sin(a)*R,.75,4.5,0,{nv:true})}
+  /* entrance: lanterns, a few bushes and stepping stones, so it is findable but still tucked away */
+  const ex=C.x+dx*(R+1.2),ez=C.z+dz*(R+1.2);
+  for(const s of[-1,1]){const lx=ex+dx*.6+px_*s*2.2,lz=ez+dz*.6+pz_*s*2.2;vis(G.cyl,0x4a3a2a,lx,.7,lz,.07,1.4,.07,0,0,0,.03,TX.bark);vis(G.box,0x3a3030,lx,1.45,lz,.28,.06,.28);gvis(G.sph,0xffc870,lx,1.3,lz,.13,.17,.13);const g=glow(0xffb050,2.6,.6);g.position.set(lx,1.3,lz);L.group.add(g)}
+  for(const s of[-1,1])vis(G.sph,0x3a7a35,ex+dx*1.4+px_*s*3.3,.5,ez+dz*1.4+pz_*s*3.3,1.1,.8,1.1,0,0,0,.05,TX.leaves);
+  for(let i=0;i<5;i++){const t=1.8+i*1.3,bx=ex+dx*t+px_*Math.sin(i*1.3)*.4,bz=ez+dz*t+pz_*Math.sin(i*1.3)*.4;vis(G.cyl,0x9a9286,bx,.04,bz,.42,.08,.36,0,i,0,.03,TX.stone)}
+  /* crystals peeking out of the mouth glow at night */
+  for(const s of[-1,1]){const x=C.x+dx*(R-.4)+px_*s*.95,z=C.z+dz*(R-.4)+pz_*s*.95;for(let k=0;k<3;k++)gvis(G.oct,s<0?0x7fe3e8:0xb28cff,x+px_*s*k*.18,.3+k*.1,z+pz_*s*k*.18,.1,.35+k*.1,.1);const g=glow(s<0?0x7fe3e8:0xb28cff,2,.5);g.position.set(x,.7,z);L.group.add(g)}
+  vis(G.disc,0x231c22,C.x,.06,C.z,R*.98,.02,R*.98);L.noGrass.push([C.x,C.z,R+.3],[C.x+dx*(R+.6),C.z+dz*(R+.6),1.6]);
   /* inside: crystals, paintings, grandpa's workshop */
   const cr=[0x7fe3e8,0xb28cff,0xff8fb1,0xffd36b];for(let i=0;i<10;i++){const a=i/10*TAU+.5;if(Math.abs(Math.atan2(Math.sin(a-ang),Math.cos(a-ang)))<.6)continue;const c=cr[i%4],x=C.x+Math.cos(a)*(R-.5),z=C.z+Math.sin(a)*(R-.5);for(let k=0;k<3;k++)gvis(G.oct,c,x+(k-1)*.25,.35+k*.12,z,.12,.4+k*.12,.12);const g=glow(c,2.2,.45);g.position.set(x,.8,z);L.group.add(g)}
   const back=ang+Math.PI,bx=C.x+Math.cos(back)*(R-.35),bz=C.z+Math.sin(back)*(R-.35);

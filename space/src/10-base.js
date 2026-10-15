@@ -83,6 +83,7 @@ function buildBase(){
   fence(-26,-20,-26,-30,0xa0683c);fence(-26,-30,-16,-30,0xa0683c);
   flowers(r,90,[0xffd36b,0xff8fb1,0xb28cff,0xffffff],4,48);
   grass(900,[0x6fae52,0x5a9a40,0x7fbf5a],12);
+  groundDetail(3,'meadow',40);
   makeGround({edge:'trees',c1:0x5f9a48,c2:0x4c8a3c,mount:0x6b5a7a,snow:0xd8c8e8,seed:3,snowY:15,mh:20});
   finishLevel();
   AU.music('base');AU.ambient('birds');

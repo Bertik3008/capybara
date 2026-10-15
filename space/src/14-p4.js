@@ -1,6 +1,6 @@
 /* ---------- LEVEL: P4 «Шестерёнка» ---------- */
 function container(x,y,z,len,alongX,col,o){o=o||{};const w=alongX?len:2.4,d=alongX?2.4:len;
-  if(o.open){const t=.15;if(alongX){box(x,y,z-1.2+t/2,len,2.4,t,col);box(x,y,z+1.2-t/2,len,2.4,t,col);box(x,y+2.25,z,len,.15,2.4,col)}else{box(x-1.2+t/2,y,z,t,2.4,len,col);box(x+1.2-t/2,y,z,t,2.4,len,col);box(x,y+2.25,z,2.4,.15,len,col)}vis(G.box,0x2a2a30,x,y+.02,z,w-.3,.04,d-.3)}
+  if(o.open){const t=.15;if(alongX){box(x,y,z-1.2+t/2,len,2.4,t,col);box(x,y,z+1.2-t/2,len,2.4,t,col);box(x,y+2.25,z,len+.04,.18,2.44,col)}else{box(x-1.2+t/2,y,z,t,2.4,len,col);box(x+1.2-t/2,y,z,t,2.4,len,col);box(x,y+2.25,z,2.44,.18,len+.04,col)}vis(G.box,0x2a2a30,x,y+.02,z,w-.3,.04,d-.3)}
   else box(x,y,z,w,2.4,d,col);
   const n=Math.floor(len/.6);for(let i=0;i<=n;i++){const k=-len/2+i*len/n;if(alongX){vis(G.box,new THREE.Color(col).multiplyScalar(.75).getHex(),x+k,y+1.2,z-1.22,.08,2.3,.04);vis(G.box,new THREE.Color(col).multiplyScalar(.75).getHex(),x+k,y+1.2,z+1.22,.08,2.3,.04)}else{vis(G.box,new THREE.Color(col).multiplyScalar(.75).getHex(),x-1.22,y+1.2,z+k,.04,2.3,.08);vis(G.box,new THREE.Color(col).multiplyScalar(.75).getHex(),x+1.22,y+1.2,z+k,.04,2.3,.08)}}}
 function buildP4(){
@@ -11,7 +11,6 @@ function buildP4(){
   path([[0,9],[0,-28]],1.8,0x8a7a50);path([[0,4],[-20,-8]],1.4,0x8a7a50);path([[0,4],[16,-6]],1.4,0x8a7a50);path([[0,6],[-12,22]],1.4,0x8a7a50);path([[0,9],[8,26]],1.4,0x8a7a50);
   placeUFO(0,16,{pad:0x5a6068});
   const q=qd('m4');q.ins=q.ins||{};
-  const grid=new THREE.GridHelper(130,65,0x6a7078,0x4a4e54);grid.position.y=.02;grid.material.transparent=true;grid.material.opacity=.35;L.group.add(grid);
   /* assembly tower */
   const TZ=-34;box(0,0,TZ,6,14,6,0x6a7880);for(let y=1;y<14;y+=2.5){vis(G.box,0xffab4a,0,y,TZ,6.08,.25,6.08)}for(const s of[-1,1])vis(G.box,0x3b4348,s*3.05,7,TZ,.1,14,1.2);
   box(0,14,TZ,8,.3,8,0x4a5258,{surf:'metal'});railRect(-4,TZ-4,4,TZ+4,14.3,0xffab4a,{side:'s',at:0,w:2.8});
@@ -51,7 +50,7 @@ function buildP4(){
   const conv=box(FX+1,0,FZ,12,.3,11.4,0x2a2a30,{surf:'metal'});conv.conv=[3.2,0];const belt=[];for(let i=0;i<14;i++){const m=mesh(G.box,mat(0xffab4a),FX-5+i*.9,.31,FZ,.12,.02,11.2,L.group);belt.push(m)}
   tick((t,dt)=>{belt.forEach((m,i)=>{m.position.x=FX-5+((i*.9+t*3.2)%12.6)})});
   box(FX-6.6,0,FZ,2.6,2.4,6,0x5a6068,{surf:'metal'});box(FX-4.6,0,FZ+2.4,1.4,1.2,1.2,0x9a7a4a);coreAt('c2',FX-6.6,2.4,FZ);
-  const sweep=new THREE.Group();sweep.position.set(FX+.5,.55,FZ);L.group.add(sweep);mesh(G.cyl,mat(0x3b4348),0,-.25,0,.25,.6,.25,sweep);const beam=mesh(G.box,bmat(0xff3a3a),2.8,0,0,5.6,.1,.1,sweep);const bg=glow(0xff3a3a,2,.6);bg.position.x=5.6;sweep.add(bg);
+  const sweep=new THREE.Group();sweep.position.set(FX+.5,.55,FZ);L.group.add(sweep);mesh(G.cyl,mat(0x3b4348),0,-.27,0,.25,.56,.25,sweep);const beam=mesh(G.box,bmat(0xff3a3a),2.8,0,0,5.6,.1,.1,sweep);const bg=glow(0xff3a3a,2,.6);bg.position.x=5.6;sweep.add(bg);
   let swA=0;tick((t,dt)=>{swA+=dt*1.7;sweep.rotation.y=swA;if(mode!=='play')return;const ex=Math.cos(-swA),ez=Math.sin(-swA),px=P.x-(FX+.5),pz=P.z-FZ,k=clamp(px*ex+pz*ez,0,5.6),dx=px-ex*k,dz=pz-ez*k;
     if(Math.hypot(dx,dz)<.45&&P.y<.75){AU.sfx('zap');flash('rgba(255,60,60,.6)');respawn('Лазер! Капик вернулся к входу в цех')}});
   checkpoint(FX+6.6,0,FZ,2,4,-Math.PI/2);
@@ -93,8 +92,21 @@ function buildP4(){
   npc('gaykin',6,0,13.1,{yaw:Math.PI,trader:1,label:'E - скупщик Гайкин',talk:n=>{if(needTr('gaykin'))return;openTrade('gaykin')}});
   npc('robot',-6,0,-8,{walk:[[-6,-8],[6,-10],[8,0],[-6,0]],speed:1.2,talk:n=>{if(needTr('robot'))return;talk(n,[['robot',pick(['БИП. Не наступай на светящиеся плиты. Они под напряжением.','Магнетрон снял ядра с башни и раскидал их. Одно на кране, одно в цехе, одно на контейнерах.','Шуруп сидит на кране. Он знает всё про эту планету.'])]])}});
   /* scenery */
-  const r=rng(51),avoid=[[0,16,7],[0,9,4],[0,-34,8],[CX,CZ,6],[22,-8,9],[FX,FZ,12],[8,28,6],[9,6,7],[-8,22,6],[27,-1,5],[18,4,5]];
-  scatter(r,16,14,58,avoid,(x,z,s)=>{const h=(3+r()*5)*s;cyl(x,0,z,.7*s,h,pick([0x8a5a4a,0x6a7078]),{g:G.cyl16});vis(G.cyl16,0x3b3438,x,h+.05,z,.75*s,.1,.75*s)});
+  /* v8 polish: the gear landmark, lamps, curbs, pipes on trestles, an ore cart and steam vents */
+  gearMonument(15,15,Math.PI/2);
+  [[2.5,3],[-2.5,-5],[2.5,-13],[-2.5,-21]].forEach(l=>lamp(l[0],l[1],{col:0xffc070}));
+  for(const sd of[-1,1])curb(sd*1.8,2,sd*1.8,-26);
+  pipeRun(-8,-43,-34,-34,{valve:true,ends:true});pipeRun(37,-18,37,14,{valve:true,ends:true,col:0xa0705a});pipeRun(3.2,-36,22,-30,{h:6,ends:true});
+  cartTrack(44,-12,46,24,{load:0xb0b8c0});
+  [[-8,-16],[12,-24],[-30,-4],[24,20],[-40,14]].forEach(v=>steamVent(v[0],v[1]));
+  const r=rng(51),avoid=[[0,16,7],[0,9,4],[0,-34,8],[CX,CZ,6],[22,-8,9],[FX,FZ,12],[8,28,6],[9,6,7],[-8,22,6],[27,-1,5],[18,4,5],[15,15,6],[37,-2,4],[37,-14,3],[37,10,3],[-20,-39,4],[-30,-35,3],[-10,-42,3],[45,6,3],[45,-8,3],[45,20,3],[12,-33,4]];
+  for(let x=-24;x<=-4;x+=5)avoid.push([x,-40,3]);for(let z=-18;z<=14;z+=5)avoid.push([37,z,2.5]);for(let z=-12;z<=24;z+=4)avoid.push([45,z,2.5]);
+  let smoke=0;
+  scatter(r,16,14,58,avoid,(x,z,s)=>{const k=r(),h=(3+r()*5)*s;
+    if(k<.35){cyl(x,0,z,.7*s,h,pick([0x8a5a4a,0x6a7078]),{g:G.cyl16,tex:TX.metal});vis(G.cyl16,0x3b3438,x,h+.05,z,.75*s,.1,.75*s);vis(G.cyl16,0xffab4a,x,h*.7,z,.74*s,.3,.74*s,0,0,0,.02,TX.stripes);
+      if(smoke++<3)tick((t,dt)=>{if(Math.random()<dt*2.5&&Math.hypot(P.x-x,P.z-z)<60)FXW.burst(x,h+.3,z,{col:0x8a7a72,n:1,spd:.3,up:1.2,g:-.3,life:3,size:1.1})})}
+    else if(k<.75){const R=1.3*s,H=2.8*s;cyl(x,0,z,R,H,pick([0xd8d0c0,0x9aa8b4,0xc0a080]),{g:G.cyl16,tex:TX.metal});vis(G.hemi,0x8a96a0,x,H,z,R,R*.5,R,0,0,0,.03,TX.metal);vis(G.cyl16,0xc94f3a,x,H*.35,z,R+.02,.25,R+.02,0,0,0,.02);for(let i=0;i<4;i++){const a=i/4*TAU+r();vis(G.box,0x3b4348,x+Math.cos(a)*R*.95,H*.25,z+Math.sin(a)*R*.95,.18,H*.5,.18,0,-a,0,.02,TX.metal)}}
+    else{vis(G.box,0x5a6068,x,.5*s,z,2.2*s,1*s,1.4*s,0,r()*3,0,.03,TX.metal);vis(G.cyl,0x3b4348,x,1.1*s,z,.12,1.2*s,.12);gvis(G.sph,pick([0x7fe3e8,0xffab4a,0x8aff9a]),x,1.75*s,z,.12,.12,.12);box(x,0,z,1.8*s,1*s,1.8*s,0,{nv:true})}});
   scatter(r,14,10,58,avoid,(x,z,s)=>crate(x,0,z,1+r()*.4,pick([0x9a7a4a,0xb07a42])));
   scatter(r,8,16,58,avoid,(x,z,s)=>container(x,0,z,6,r()<.5,pick([0xc94f3a,0x3a6ad6,0x4f9a6a,0xffab4a])));
   for(let i=0;i<6;i++){const a=i/6*TAU+.3;vis(G.cyl,0x3b4348,Math.cos(a)*40,4,Math.sin(a)*40,.15,8,.15);gvis(G.sph,0xffd36b,Math.cos(a)*40,8.1,Math.sin(a)*40,.25,.25,.25)}

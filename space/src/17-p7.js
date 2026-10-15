@@ -67,6 +67,7 @@ function buildP7(){
   scatter(r,8,12,52,avoid,(x,z,s)=>rock(x,z,s*.8,0x9a9a8a));
   tick((t,dt)=>{if(Math.random()<dt*3){const a=Math.random()*TAU,d=8+Math.random()*25;FXW.burst(P.x+Math.cos(a)*d,2+Math.random()*4,P.z+Math.sin(a)*d,{col:pick([0xff6b9a,0x7fe3e8,0xffd36b]),n:2,spd:.8,up:.4,g:0,life:2.2,size:.2})}});
   grass(520,[0x5ab84a,0x4aa040,0x7ac850],81);
+  groundDetail(81,'jungle',70);
   makeGround({edge:'trees',crowns:[0x3a9a3a,0x4aa040,0x2f8a30],c1:0x6ac04a,c2:0x58a840,mount:0x5a9a5a,snow:0xd8f0a0,path:0xe8d098,seed:81,snowY:16,mh:22});
   finishLevel();
   AU.music('p7');AU.ambient('birds');

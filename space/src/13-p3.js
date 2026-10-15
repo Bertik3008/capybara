@@ -87,6 +87,7 @@ function buildP3(){
   scatter(r,8,12,50,avoid,(x,z,s)=>rock(x,z,s*.8,0x4a3a6a));
   tick((t,dt)=>{if(Math.random()<dt*14){const a=Math.random()*TAU,d=Math.random()*30;FXW.burst(P.x+Math.cos(a)*d,.5+Math.random()*4,P.z+Math.sin(a)*d,{col:pick([0xd8ff7a,0xd7a0ff,0x7fe3e8]),n:1,spd:.4,up:.3,g:-.1,life:3,size:.25})}});
   grass(500,[0x5a3a7a,0x4a2a6a,0x6a4a8a],42);
+  groundDetail(41,'shroom',70);
   makeGround({edge:'shrooms',c1:0x3e2c56,c2:0x2e2244,mount:0x4a3a6a,snow:0xb28cff,path:0x5a4a72,seed:41,snowY:14,mh:18});
   finishLevel();
   AU.music('p3');AU.ambient('drips');

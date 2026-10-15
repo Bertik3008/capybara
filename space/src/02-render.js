@@ -5,7 +5,7 @@ renderer.shadowMap.enabled=true;renderer.shadowMap.type=isTouch?THREE.PCFShadowM
 $('#view').appendChild(renderer.domElement);
 const cv=renderer.domElement;
 const wscene=new THREE.Scene(),sscene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(70,1,.1,1200);camera.rotation.order='YXZ';
+const camera=new THREE.PerspectiveCamera(70,1,.15,1200);camera.rotation.order='YXZ';
 const lc=h=>new THREE.Color(h).convertSRGBToLinear();
 const hemi=new THREE.HemisphereLight(0xffffff,0x444444,.9);wscene.add(hemi);
 const sun=new THREE.DirectionalLight(0xffffff,.8);sun.position.set(30,50,20);sun.castShadow=true;
@@ -123,8 +123,10 @@ function disposeTree(g){g.traverse(o=>{if(o.geometry&&!o.geometry.userData.share
 /* ---------- static batching: merged, chunked, textured ---------- */
 const _m=new THREE.Matrix4(),_q=new THREE.Quaternion(),_e=new THREE.Euler(),_p=new THREE.Vector3(),_s=new THREE.Vector3(),_c=new THREE.Color(),_n3=new THREE.Matrix3();
 class Batch{
-  constructor(){this.list=[]}
+  constructor(){this.list=[];this.seen=new Set()}
   add(g,col,x,y,z,sx,sy,sz,rx,ry,rz,jit,tex){_e.set(rx||0,ry||0,rz||0,'YXZ');_q.setFromEuler(_e);_m.compose(_p.set(x,y,z),_q,_s.set(sx,sy==null?sx:sy,sz==null?sx:sz));_n3.getNormalMatrix(_m);
+    /* v8: identical copies (shared fence/rail corner posts) fight in the depth buffer and flicker - keep one */
+    const key=g.id+':'+_m.elements.map(v=>Math.round(v*500)).join(',');if(this.seen.has(key))return;this.seen.add(key);
     this.list.push({g,col,e:_m.elements.slice(),n:_n3.elements.slice(),jit:jit==null?.04:jit,t:tex||0,x,z})}
   build(mat,glow){if(!this.list.length)return[];const chunks={};for(const it of this.list){const k=Math.floor(it.x/26)+','+Math.floor(it.z/26);(chunks[k]=chunks[k]||[]).push(it)}
     const out=[];for(const k in chunks){const L2=chunks[k];let n=0;for(const it of L2)n+=it.g.attributes.position.count;

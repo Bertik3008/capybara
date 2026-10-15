@@ -4,7 +4,10 @@ function makeShadowCapy(scale){const c=makeCast('kapik');c.root.traverse(o=>{if(
   for(const s of[-1,1]){const e=glow(0xb28cff,.5*scale,.95);e.position.set(s*.16*scale,(c.headY/c.s)*scale*.97,.33*scale);c.root.add(e)}return c}
 function island(x,y,z,r,o){o=o||{};const top=o.col||0x4a3a7a;cyl(x,y-.6,z,r,.6,top,{g:G.cyl16,tex:TX.moss});vis(G.cone,o.under||0x2a1a4a,x,y-.6-r*.9,z,r*.95,r*1.8,r*.95,Math.PI,0,0,.05,TX.stone);
   for(let i=0;i<5;i++){const a=i/5*TAU+x;gvis(G.oct,pick([0x7fe3e8,0xb28cff,0xff8fb1]),x+Math.cos(a)*r*.55,y-.6-r*1.1-i*.1,z+Math.sin(a)*r*.55,.12*r,.35*r,.12*r)}
-  if(!o.bare)for(let i=0;i<Math.round(r*1.2);i++){const a=hash2(x+i,z)*TAU,d=r*(.3+hash2(z,x+i)*.6);gvis(G.sph,pick([0x7fe3e8,0xb28cff,0xd7a0ff]),x+Math.cos(a)*d,y+.08,z+Math.sin(a)*d,.08,.08,.08)}}
+  if(!o.bare)for(let i=0;i<Math.round(r*1.2);i++){const a=hash2(x+i,z)*TAU,d=r*(.3+hash2(z,x+i)*.6);gvis(G.sph,pick([0x7fe3e8,0xb28cff,0xd7a0ff]),x+Math.cos(a)*d,y+.08,z+Math.sin(a)*d,.08,.08,.08)}
+  /* v8: a ragged rocky rim and glowing tufts so island tops don't read as flat discs */
+  const nr=Math.min(28,Math.round(r*2.2));for(let i=0;i<nr;i++){const a=i/nr*TAU+hash2(x,i)*.3,s=.25+hash2(i,z)*.35;vis(G.dod,pick([0x3a2a5a,0x4a3a6a,0x2e2248]),x+Math.cos(a)*r*.98,y-.1,z+Math.sin(a)*r*.98,s*1.3,s,s*1.3,i,i,0,.05,TX.stone)}
+  if(!o.bare){const nt=Math.min(10,Math.round(r*.9));for(let i=0;i<nt;i++){const a=hash2(i*3.1,x)*TAU,d=r*(.2+hash2(z,i*1.7)*.65),tx=x+Math.cos(a)*d,tz=z+Math.sin(a)*d;for(let k=0;k<3;k++)gvis(G.cone,k?0x9a7aff:0x7fe3e8,tx+(k-1)*.12,y+.15,tz+(k%2)*.1,.05,.32+k*.08,.05,(k-1)*.25,0,0)}}}
 function buildP8(){
   newLevel('p8');L.noFloor=true;L.radius=80;L.heat=0;L.heatOn=true;L.heatName='Тьма';
   setSky({top:0x05030f,hor:0x2a1050,bot:0x05030f,fog:0x1a0a35,near:45,far:160,hs:0xb8a8ff,hg:0x2a1a4a,hi:.75,sc:0xd8c8ff,si:.7,sd:[.2,.8,-.4],sunGlow:0x8a5aff,stars:true,exp:1.1});

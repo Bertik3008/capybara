@@ -34,7 +34,7 @@ function addHeat(v,msg){if(!L||!L.heatOn)return;L.heat=Math.min(100,(L.heat||0)+
 
 function buildP6(){
   newLevel('p6');L.heat=0;L.heatOn=true;
-  setSky({top:0x1a0608,hor:0xff6a3a,bot:0x2a0808,fog:0x6a2414,near:38,far:150,hs:0xffc0a0,hg:0x3a1010,hi:.62,sc:0xffa070,si:.95,sd:[.3,.5,-.7],sunGlow:0xff7a40,stars:true});
+  setSky({top:0x1a0608,hor:0xff6a3a,bot:0x2a0808,fog:0x7a2c18,near:42,far:160,hs:0xffc8a8,hg:0x5a2018,hi:.85,sc:0xffa070,si:.95,sd:[.3,.5,-.7],sunGlow:0xff7a40,stars:true});
   skyBody(0xff3a1a,[-150,90,-260],42,0xffab4a);skyBody(0xffd36b,[230,120,-120],10);
   L.spawn={x:0,y:0,z:9,yaw:0};L.surface='moss';L.pathKind='cobble';L.waterMsg='Ай-ай, лава! Капик отпрыгнул назад';
   path([[0,9],[0,-3]],1.6,0x6a4a44);path([[0,-3],[-12,-4]],1.3,0x6a4a44);path([[0,-3],[12,-4]],1.3,0x6a4a44);path([[-12,-13],[0,-20],[12,-13]],1.3,0x6a4a44);path([[0,-20],[0,-27]],1.6,0x6a4a44);
@@ -60,7 +60,7 @@ function buildP6(){
       if(F.hp<=0){F.done=true;Q.cool[i]=1;save();setCool();AU.sfx('quest');const n=Object.keys(Q.cool).length;toast(`Фонтан остыл: ${n} из 3`);for(let k=0;k<4;k++)setTimeout(()=>FXW.burst(f[0],1.5,f[1],{col:0xeeeeee,n:20,spd:3,up:4,g:-1,life:1.6,size:.8}),k*200);if(n>=3)openGate(true)}}});
     tick((t,dt)=>{if(F.done)return;col.scale.y=(F.hp/4)*2*(1+Math.sin(t*6+i)*.15);col.position.y=.9+col.scale.y/2;if(Math.random()<dt*4)FXW.burst(f[0],1+col.scale.y,f[1],{col:pick([0xffd36b,0xff6a2a]),n:3,spd:2,up:4,g:8,life:.9,size:.3});if(Math.hypot(P.x-f[0],P.z-f[1])<2.6)addHeat(14*dt)})});
   /* castle of King Rogozhar */
-  const WC=0x2a1c22,TOP=0x3a2a30;const wall=(x,z,w,d)=>{box(x,0,z,w,6,d,WC,{tex:TX.stone});for(let k=-w/2+.5;k<w/2;k+=1.6)if(w>d)vis(G.box,TOP,x+k,6.35,z,.8,.7,d,0,0,0,.03,TX.stone);for(let k=-d/2+.5;k<d/2;k+=1.6)if(d>w)vis(G.box,TOP,x,6.35,z+k,w,.7,.8,0,0,0,.03,TX.stone)};
+  const WC=0x4a3034,TOP=0x5a3a40;const wall=(x,z,w,d)=>{box(x,0,z,w,6,d,WC,{tex:TX.stone});for(let k=-w/2+.5;k<w/2;k+=1.6)if(w>d)vis(G.box,TOP,x+k,6.35,z,.8,.7,d,0,0,0,.03,TX.stone);for(let k=-d/2+.5;k<d/2;k+=1.6)if(d>w)vis(G.box,TOP,x,6.35,z+k,w,.7,.8,0,0,0,.03,TX.stone)};
   wall(-8.5,-28,13,1.2);wall(8.5,-28,13,1.2);wall(-15,-42,1.2,28);wall(15,-42,1.2,28);wall(0,-56,31.2,1.2);vis(G.box,WC,0,5.5,-28,4.2,1,1.2,0,0,0,.03,TX.stone);
   for(const p of[[-15,-28],[15,-28],[-15,-56],[15,-56]]){cyl(p[0],0,p[1],2.1,9,WC,{g:G.cyl16,tex:TX.stone});vis(G.cone,0x5a1a1a,p[0],10.4,p[1],2.6,2.8,2.6);gvis(G.box,0xff8a3a,p[0]+(p[1]>-40?0:0),6.4,p[1]+(p[1]>-40?2.12:-2.12),.5,.9,.06)}
   for(const s of[-1,1]){const fl=glow(0xff8a3a,2.6,.85);fl.position.set(s*3.2,4.2,-27.2);L.group.add(fl);vis(G.cyl,0x2a1a1a,s*3.2,3.4,-27.3,.08,1.2,.08)}
@@ -119,12 +119,22 @@ function buildP6(){
       if(p.y<.1||f.life<=0){if(p.y<.1)FXW.burst(p.x,.2,p.z,{col:0xff8a3a,n:12,spd:3,up:2,life:.6,size:.35});L.group.remove(f.m);f.tg.on=false;L.targets.splice(L.targets.indexOf(f.tg),1);fbs.splice(i,1)}}});
   L.onRespawn=()=>{L.heat=0;if(B.state==='fight'){fbs.forEach(f=>f.life=0)}};
   /* scenery: basalt, obsidian crystals, glowing cracks */
-  const r=rng(71),avoid=[[0,16,7],[0,9,4],[5,4,3],[0,-8,5],[-12,-8,4],[12,-8,4],[0,-42,18],[-16,-19,4],[16,-19,4],[0,-22,4]];
+  const r=rng(71),avoid=[[0,16,7],[0,9,4],[5,4,3],[0,-8,5],[-12,-8,4],[12,-8,4],[0,-42,18],[-16,-19,4],[16,-19,4],[0,-22,4],[-28,4,4],[26,6,4],[-30,-22,4],[30,-30,4],[-36,-40,4],[22,20,4]];
   scatter(r,26,10,56,avoid,(x,z,s)=>{if(Math.abs(z+8)<5)return;for(let k=0;k<3;k++){const h=(1.2+r()*3)*s;vis(G.cyl6,pick([0x2a1a1a,0x3a2424,0x231418]),x+(k%2)*.8,h/2,z+(k>1?.8:0),.45*s,h,.45*s,0,r(),0,.03,TX.stone)}cyl(x+.4,0,z+.3,.9*s,1,0,{nv:true})});
   scatter(r,16,8,56,avoid,(x,z,s)=>{if(Math.abs(z+8)<5)return;for(let k=0;k<3;k++)vis(G.oct,0x4a2a5a,x+(r()-.5),.4*s,z+(r()-.5),.25*s,.7*s,.25*s,r()*.4,r()*3,r()*.4,.04)});
-  scatter(r,24,6,56,avoid,(x,z,s)=>{if(Math.abs(z+8)<5)return;gvis(G.box,0xff6a2a,x,.03,z,.08,.01,1.6*s,0,r()*3,0)});
+  /* v8 polish: branching glowing cracks, little lava pools, fire-lilies, braziers and castle banners */
+  let ck=0;scatter(r,22,6,56,avoid,(x,z,s)=>{if(Math.abs(z+8)<5)return;let a=r()*TAU,px=x,pz=z;const y=.035+(ck++%6)*.007;
+    for(let k=0;k<4;k++){const L2=(1+r()*1.4)*s,nx=px+Math.sin(a)*L2,nz=pz+Math.cos(a)*L2;gvis(G.box,k%2?0xff8a3a:0xff6a2a,(px+nx)/2,y,(pz+nz)/2,.14-k*.02,.012,L2+.1,0,a,0);if(k===1){const b=a+(r()<.5?.9:-.9);gvis(G.box,0xff6a2a,px+Math.sin(b)*.5*s,y+.002,pz+Math.cos(b)*.5*s,.08,.012,1*s,0,b,0)}px=nx;pz=nz;a+=(r()-.5)*1.2}});
+  [[-28,4],[26,6],[-30,-22],[30,-30],[-36,-40],[22,20]].forEach((p2,i)=>{water(p2[0],p2[1],1.4+i%3*.5,{col:0xffa040,deep:0xc8280a,op:.97,y:.05});const rr=1.6+i%3*.5;for(let k=0;k<9;k++){const a=k/9*TAU;vis(G.dod,pick([0x2a1a1a,0x3a2424]),p2[0]+Math.cos(a)*rr,.15,p2[1]+Math.sin(a)*rr,.45,.3,.45,k,k,0,.05,TX.stone)}
+    if(i<Q.q+1){const g=glow(0xff6a2a,5,.4);g.position.set(p2[0],.5,p2[1]);L.group.add(g)}});
+  scatter(r,30,5,50,avoid,(x,z,s)=>{if(Math.abs(z+8)<5)return;for(let k=0;k<3;k++){const ox=x+(r()-.5)*1.2,oz=z+(r()-.5)*1.2,h=(.4+r()*.3)*s;vis(G.cyl,0x3a5a2a,ox,h/2,oz,.03,h,.03);for(let j=0;j<4;j++)gvis(G.cone,j%2?0xffb03a:0xff5a2a,ox,h+.05,oz,.1,.28,.1,.6,j*Math.PI/2,0)}});
+  [[-2.6,6],[2.6,0],[-6,-3.2],[6,-3.2],[-3,-24],[3,-24]].forEach(p2=>{vis(G.cyl,0x2a1a1a,p2[0],.6,p2[1],.1,1.2,.1,0,0,0,.02,TX.metal);vis(G.frus,0x3a2a2a,p2[0],1.3,p2[1],.42,.35,.42,Math.PI,0,0,.02,TX.metal);gvis(G.sph,0xffb03a,p2[0],1.5,p2[1],.3,.25,.3);cyl(p2[0],0,p2[1],.4,1.4,0,{nv:true});
+    if(Q.q){const g=glow(0xff7a2a,2.4,.6);g.position.set(p2[0],1.7,p2[1]);L.group.add(g);tick(t=>{g.material.opacity=.5+Math.sin(t*9+p2[0])*.12})}});
+  for(const s of[-1,1])for(const z of[-31,-38,-45,-52]){const x=s*15.62;vis(G.box,0x8a1a22,x,3.6,z,.04,2.6,1.3);vis(G.box,0xffd36b,x+s*.01,3.9,z,.04,.5,.5,0,0,Math.PI/4);vis(G.box,0x3a1a1a,x,4.95,z,.14,.12,1.5)}
+  for(const s of[-1,1]){vis(G.box,0x8a1a22,s*5.5,3.5,-27.38,1.3,2.6,.04);vis(G.box,0xffd36b,s*5.5,3.8,-27.36,.5,.5,.04,0,0,Math.PI/4)}
+  for(const p2 of[[-15,-28],[15,-28],[-15,-56],[15,-56]])for(const k of[0,1,2])gvis(G.box,0xffb050,p2[0]+Math.cos(k*2.1+1)*2.12,7.6,p2[1]+Math.sin(k*2.1+1)*2.12,.35,.6,.35,0,-(k*2.1+1),0);
   grass(160,[0x3a1a1a,0x5a2a1a,0x2a1414],71);
-  makeGround({edge:'basalt',c1:0x3a2422,c2:0x2a1a1a,mount:0x4a2a26,snow:0xff7a3a,path:0x6a4a44,seed:71,snowY:13,mh:20});
+  makeGround({edge:'basalt',c1:0x4a2a26,c2:0x34201e,mount:0x4a2a26,snow:0xff7a3a,path:0x6a4a44,seed:71,snowY:13,mh:20});
   finishLevel();
   AU.music(B.state==='fight'?'boss':'p6');AU.ambient('hum');
   L.arrive=[['kapik','Магмара... Жарко, как в печке. Воздух дрожит.'],['kapik','Где-то там замок Рогожара. Держитесь, малыши!']];

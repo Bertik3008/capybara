@@ -75,6 +75,7 @@ function buildP2(){
   const sg2=new THREE.BufferGeometry();sg2.setAttribute('position',new THREE.BufferAttribute(pos,3));const snow=new THREE.Points(sg2,new THREE.PointsMaterial({color:0xffffff,size:.22,map:glowTex,transparent:true,opacity:.9,depthWrite:false}));snow.frustumCulled=false;L.group.add(snow);
   tick((t,dt)=>{for(let i=0;i<sn;i++){let y=pos[i*3+1]-dt*(2+(i%5)*.3);if(y<0)y+=30;pos[i*3+1]=y;pos[i*3]+=Math.sin(t+i)*dt*.3}sg2.attributes.position.needsUpdate=true;snow.position.set(P.x,0,P.z)});
   grass(250,[0xdfeef6,0xc8e0ec],32,{scale:.8});
+  groundDetail(31,'snow',70);
   makeGround({edge:'pines',c1:0xd6e6f0,c2:0xc2d8e6,mount:0x7a98b0,snow:0xeef6fb,path:0xa8c4d6,seed:31,snowY:12,mh:26});
   finishLevel();
   AU.music('p2');AU.ambient('wind');

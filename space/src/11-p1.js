@@ -87,7 +87,7 @@ function buildP1(){
   [[Math.PI,1.2],[Math.PI*1.25,2.4],[Math.PI*1.5,3.6]].forEach((s,i)=>{const sx=THX+Math.cos(s[0])*3.2,sz=TZ+Math.sin(s[0])*3.2;box(sx,s[1]-.25,sz,1.3,.25,1.3,0x9a6a3a);vis(G.box,0x6b4628,sx,(s[1]-.25)/2,sz,.12,s[1]-.25,.12)});
   const mork=npc('morkovka',THX+.8,4.8,TZ+.6,{yaw:-Math.PI/2,pose:'wave',talk:morkTalk,mark:()=>S.tr&&!qdone('s1b')?'!':null});
   /* race */
-  const gates=[[24,-8],[8,-13],[-6,-22],[-26,-22],[-32,2],[-14,13]];const gObj=gates.map((g,i)=>{vis(G.box,0xf4ead8,g[0]-1.8,1.6,g[1],.2,3.2,.2);vis(G.box,0xf4ead8,g[0]+1.8,1.6,g[1],.2,3.2,.2);vis(G.box,0xff6b6b,g[0],3.2,g[1],3.8,.3,.25);
+  const gates=[[24,-8],[8,-13],[-6,-22],[-26,-22],[-32,2],[-14,13]];const gObj=gates.map((g,i)=>{vis(G.box,0xf4ead8,g[0]-1.8,1.6,g[1],.2,3.2,.2);vis(G.box,0xf4ead8,g[0]+1.8,1.6,g[1],.2,3.2,.2);vis(G.box,0xff6b6b,g[0],3.2,g[1],3.9,.3,.25);
     const ring=mesh(new THREE.TorusGeometry(1.8,.08,6,32),new THREE.MeshBasicMaterial({color:0xffd36b,transparent:true,opacity:0}),g[0],1.7,g[1],1,1,1,L.group);return ring});
   const R={on:false,t:0,i:0};L.race=R;
   morkTalk.start=()=>{R.on=true;R.t=35;R.i=0;$('#timer').hidden=false;AU.sfx('ok');toast('Беги! Флажки светятся по очереди')};
@@ -106,6 +106,7 @@ function buildP1(){
   npc('farmhand',-6,0,-6,{walk:[[-6,-6],[8,-10],[8,2],[-6,2]],speed:1.3,talk:n=>{if(needTr('farmhand'))return;talk(n,[['farmhand',pick(['Мандаринчики только с виду милые. Убегают быстрее ветра. Заходи с дальней стороны и гони к загону.','Грушка опять рисует на водонапорной башне. Говорит, это искусство.','Лифт ветряка крутит колесо в загоне. Нет мандаринчиков, нет лифта.'])]])}});
   flowers(r,70,[0xffd36b,0xff8fb1,0xffffff,0xff9a2e],4,50);
   grass(650,[0x6f9a3a,0x5f8a34,0x7faa48],22);
+  groundDetail(21,'meadow',60);
   makeGround({edge:'trees',crowns:[0x4c8a35,0x5a9a3a,0x6aa840],c1:0x7da044,c2:0x6a9038,mount:0xb07a50,snow:0xfff0d8,path:0xb07a3a,seed:21,snowY:16,mh:24});
   finishLevel();
   AU.music('p1');AU.ambient('birds');

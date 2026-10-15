@@ -110,7 +110,7 @@ function makeGround(o){
   g.setAttribute('color',new THREE.BufferAttribute(col,3));g.computeVertexNormals();
   const kind={grass:'grass',snow:'snow',moss:'moss',metal:'metal'}[L.surface]||'grass';const tx=groundTex(kind);
   const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({vertexColors:true,map:tx,roughness:kind==='snow'?.75:.95,metalness:kind==='metal'?.2:0}));m.receiveShadow=true;L.group.add(m);
-  L.paths.forEach((p,i)=>ribbon(p.pts,p.w*.85,p.kind||L.pathKind,p.col,.025+i*.004));
+  L.paths.forEach((p,i)=>ribbon(p.pts,p.w*.85,p.kind||L.pathKind,p.col,.03+i*.01));
   edgeRing(o);
 }
 /* smooth rolling hills around the playable area (v5: no jagged rocks) */
@@ -157,7 +157,7 @@ function building(o){const{x,z,w,d,h,col}=o,Y=o.y||0,_ng=L.noGrass.push([o.x,o.z
   const wt=o.tex==null?TX.planks:o.tex,bo={tex:wt};
   const wall=(side,len,cx,cz,horiz)=>{if(side===door){const a=(len-dw)/2+dc,b=(len-dw)/2-dc;
       if(horiz){box(cx-len/2+a/2,Y,cz,a,h,t,col,bo);box(cx+len/2-b/2,Y,cz,b,h,t,col,bo);box(cx+dc,Y+dh,cz,dw,h-dh,t,col,bo)}else{box(cx,Y,cz-len/2+a/2,t,h,a,col,bo);box(cx,Y,cz+len/2-b/2,t,h,b,col,bo);box(cx,Y+dh,cz+dc,t,h-dh,dw,col,bo)}
-      if(o.doorCol){if(horiz)vis(G.box,o.doorCol,cx+dc-dw/2-.12,Y+dh/2,cz,.18,dh,t+.08),vis(G.box,o.doorCol,cx+dc+dw/2+.12,Y+dh/2,cz,.18,dh,t+.08),vis(G.box,o.doorCol,cx+dc,Y+dh+.1,cz,dw+.4,.2,t+.08);else vis(G.box,o.doorCol,cx,Y+dh/2,cz+dc-dw/2-.12,t+.08,dh,.18),vis(G.box,o.doorCol,cx,Y+dh/2,cz+dc+dw/2+.12,t+.08,dh,.18),vis(G.box,o.doorCol,cx,Y+dh+.1,cz+dc,t+.08,.2,dw+.4)}}
+      if(o.doorCol){if(horiz)vis(G.box,o.doorCol,cx+dc-dw/2-.12,Y+dh/2,cz,.18,dh,t+.08),vis(G.box,o.doorCol,cx+dc+dw/2+.12,Y+dh/2,cz,.18,dh,t+.08),vis(G.box,o.doorCol,cx+dc,Y+dh+.08,cz,dw+.4,.2,t+.08);else vis(G.box,o.doorCol,cx,Y+dh/2,cz+dc-dw/2-.12,t+.08,dh,.18),vis(G.box,o.doorCol,cx,Y+dh/2,cz+dc+dw/2+.12,t+.08,dh,.18),vis(G.box,o.doorCol,cx,Y+dh+.08,cz+dc,t+.08,.2,dw+.4)}}
     else if(horiz)box(cx,Y,cz,len,h,t,col,bo);else box(cx,Y,cz,t,h,len,col,bo)};
   wall('s',w,x,z1-t/2,true);wall('n',w,x,z0+t/2,true);wall('w',d-2*t,x0+t/2,z,false);wall('e',d-2*t,x1-t/2,z,false);
   for(const cx of[x0,x1])for(const cz of[z0,z1])vis(G.box,tc,cx,Y+h/2,cz,.4,h+.05,.4,0,0,0,.03,wt===TX.metal||wt===TX.corr?TX.metal:TX.planks);

@@ -37,6 +37,7 @@ const AU=(()=>{
     p3:{bpm:82,root:62,mode:DOR,prog:[0,3,0,6],pad:'triangle',bass:[0,10],arp:2,arpI:'wood',lead:'flute',dens:.3,seed:23,drums:{w:'x..x..x...x..x..'}},
     p4:{bpm:114,root:57,mode:MIN,prog:[0,5,6,4],pad:'sawtooth',bass:[0,2,4,6,8,10,12,14],bassT:'sawtooth',arp:1,arpI:'square',lead:'square',dens:.18,seed:29,drums:{k:'x...x...x...x...',h:'..x...x...x...x.',c:'....x.......x...',hv:.025}},
     p5:{bpm:96,root:65,mode:LYD,prog:[0,4,1,4],pad:'sine',bass:[0,8],arp:2,arpI:'bell',lead:'flute',dens:.36,seed:41,drums:{h:'x...x...x...x...',w:'..x...x...x...x.',hv:.012}},
+    p8:{bpm:64,root:59,mode:LYD,prog:[0,2,5,1],pad:'sine',bass:[0],arp:4,arpI:'bell',lead:'flute',dens:.22,seed:83,drums:null},
     p7:{bpm:112,root:60,mode:MAJ,prog:[0,4,5,3],pad:'triangle',bass:[0,4,8,12],arp:2,arpI:'wood',lead:'pluck',dens:.45,seed:71,drums:{w:'x..x..x...x..x..',h:'..x...x...x...x.',hv:.015}},
     p6:{bpm:100,root:52,mode:[0,1,3,5,7,8,10],prog:[0,1,0,6],pad:'sawtooth',bass:[0,3,8,11],bassT:'sawtooth',arp:2,arpI:'pluck',lead:'square',dens:.26,seed:53,drums:{k:'x.....x...x.....',c:'....x.......x...',h:'..x...x...x...x.',hv:.02}},
     boss:{bpm:136,root:52,mode:[0,1,3,5,7,8,10],prog:[0,1,6,1],pad:'sawtooth',bass:[0,2,4,6,8,10,12,14],bassT:'sawtooth',arp:1,arpI:'square',lead:'square',dens:.32,seed:61,drums:{k:'x...x...x...x...',h:'x.x.x.x.x.x.x.x.',c:'....x.......x...',hv:.03}},

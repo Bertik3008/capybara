@@ -47,7 +47,7 @@ function buildBase(){
   for(let y=1.5;y<8;y+=2.2)for(const s of[-1,1]){vis(G.box,0x8a8aa0,tx,y,tz+s*1.3,2.6,.08,.08,0,0,.6*s,.02,TX.metal);vis(G.box,0x8a8aa0,tx+s*1.3,y,tz,.08,.08,2.6,.6*s,0,0,.02,TX.metal)}
   box(tx,8,tz,3.4,.25,3.4,0x6b6b80,{tex:TX.metal});railRect(tx-1.7,tz-1.7,tx+1.7,tz+1.7,8.25,0xffab4a,{side:'s',at:0,w:1.2});ladder(tx,tz+1.95,0,8.25,0,0x8a8aa0);
   vis(G.cyl,0x8a8aa0,tx+1.2,10,tz-1.2,.06,3.6,.06);vis(G.hemi,0xdfe6ef,tx+1.2,11.4,tz-1.2,.7,.25,.7,1.2,0,0,.02,TX.metal);const bl=glow(0xff4a4a,1.2,.9);bl.position.set(tx+1.2,11.9,tz-1.2);L.group.add(bl);tick(t=>{bl.material.opacity=Math.sin(t*4)>0?.95:.15});
-  npc('mole',tx-.6,8.25,tz-.7,{yaw:0,pose:'sit',talk:moleTalk,mark:()=>qs('c2')===1?'!':qs('s0')===0&&S.tr?'!':qs('s0')===1&&Object.keys(S.souv).length>=4?'?':null});
+  npc('mole',tx-.6,8.25,tz-.7,{yaw:0,pose:'sit',talk:moleTalk,mark:()=>qs('c4')===1||qs('c2')===1?'!':qs('s0')===0&&S.tr?'!':qs('s0')===1&&Object.keys(S.souv).length>=4?'?':null});
   /* decor */
   const D=S.decor;
   if(D.lights){for(let i=0;i<8;i++){const a=i/8*TAU;const x=Math.cos(a)*6.3,z=-14+Math.sin(a)*6.3;vis(G.cyl,0x6b4628,x,1.5,z,.06,3,.06);const a2=(i+1)/8*TAU,x2=Math.cos(a2)*6.3,z2=-14+Math.sin(a2)*6.3;for(let k=1;k<6;k++){const t=k/6;gvis(G.sph,[0xff6b6b,0xffd36b,0x7fe3e8,0x8ee08a,0xb28cff][k%5],lerp(x,x2,t),2.9-Math.sin(t*Math.PI)*.5,lerp(z,z2,t),.1,.1,.1)}}}
@@ -69,6 +69,10 @@ function buildBase(){
     mergeModel(tube);inter({x:TX0,y:.5,z:TZ0,r:2.2,label:'E - посмотреть в телескоп',act:()=>SPX.scopeStart()})}
   /* brothers live in the yard now */
   const Y=buildYard();buildBrothers(Y,D);
+  if(qdone('c4')){const tn=npc('tenek',2,0,8,{nc:true,r:2.2,talk:n=>talk(n,[['tenek',pick(['Здесь так светло... И никто не уходит.','Я научился не чихать! Почти. Апч... нет, показалось.','Можно я посижу в твоей тени? Ой, это же я тень.','Юзик дал мне мандарин. Я не знаю, что с ним делать, но мне приятно.'])]])});
+    tn.c.root.traverse(o=>{if(o.isMesh&&o.material===charMat){o.material=new THREE.MeshStandardMaterial({vertexColors:true,transparent:true,opacity:.82,roughness:.6})}});const eg=glow(0xb28cff,1.2,.6);eg.position.y=.8;tn.c.root.add(eg);
+    tick((t,dt)=>{if(tn===talkingTo)return;const tx=P.x+Math.sin(P.yaw)*1.8+Math.cos(t*.7)*.6,tz=P.z+Math.cos(P.yaw)*1.8,dx=tx-tn.x,dz=tz-tn.z,d=Math.hypot(dx,dz);if(d>.4&&Math.hypot(P.x-tn.x,P.z-tn.z)>1.4){const sp=Math.min(d*1.6,6)*dt;tn.x+=dx/d*sp;tn.z+=dz/d*sp;tn.c.root.rotation.y=Math.atan2(dx,dz);tn.c.walkPh+=dt*10;tn.pose='walk'}else tn.pose='idle';
+      tn.c.root.position.set(tn.x,.15+Math.sin(t*2)*.08,tn.z);if(tn.it){tn.it.x=tn.x;tn.it.z=tn.z}})}
   /* scenery */
   const r=rng(11),avoid=[[-6,-22.5,4.5],[27,-6,10],[3.3,16.4,2],[7,-7,2.5],[0,-14,7],[-14,-6,6],[16,-2,9],[9,16,7],[-10,20,4],[0,6,4],[-6,5,3],[17.5,17,3.5],[-21,11.75,4],[-4,17,3],[24,12,9]];
   scatter(r,38,22,58,avoid,(x,z,s)=>tree(x,z,s*1.15,pick([0x3f7a35,0x4a8a3c,0x5a9a40]),{fruit:r()<.25?0xffd36b:null}));
@@ -97,6 +101,7 @@ function otterTalk(n){const st=qs('m0');
   if(st===2){talk(n,[['otter',`Ягод пока ${S.inv.berry||0} из 8. Кусты за амбаром, у ограды. Удерживай E.`]]);return}
   openShop()}
 function moleTalk(n){const st=qs('s0'),cnt=Object.keys(S.souv).length;
+  if(qs('c4')===1){talk(n,[['mole','Смотри в небо, Капик! Звёзды гаснут... А над нашей звездой открылась дыра. Лиловая, как синяк.'],['mole','Я поймал оттуда звук. Кто-то всхлипывает и... чихает. Тот самый Космический Чих!'],['kapik','Значит, всё началось там. Я лечу к Разлому.'],['mole','Координаты в борткомпьютере. Будь осторожен: говорят, по ту сторону всё наоборот.']],()=>{qset('c4',2);banner('Финальная глава','Тень Космического Чиха','На карте появился Разлом')});return}
   if(qs('c2')===1){talk(n,[['mole','Капик! Слушай! Ш-ш-ш... пи-пи... Чувствуешь? Это сигнал с новой планеты.'],['mole','Её зовут Одуванчия. Там растёт Великий Пух, огромный одуванчик. И он... простужен.'],['mole','Космический Чих, который унёс твоих братьев, прилетел оттуда. И скоро будет новый!'],['kapik','Тогда я лечу туда. Второй раз братьев не отдам.'],['mole','Я записал координаты в твой борткомпьютер. Открой карту, Одуванчия уже там.']],()=>{qset('c2',2);banner('Новая планета','Одуванчия','Открыта на звёздной карте')});return}
   if(st===0){talk(n,[['mole','А? Кто тут? А, Капик. Я Радист Крот, слушаю космос с этой вышки.'],['mole','По радио болтают, что на каждой из четырёх планет спрятан сувенир. Всегда на самом верху, куда без Пружинных лап не допрыгнуть.'],['mole','Принеси мне все четыре, и я отдам тебе свои сбережения. Сорок монет!'],['kapik','Договорились. Только лапы сначала куплю.']],()=>qset('s0',1));return}
   if(st===1&&cnt>=4){talk(n,[['mole','Мандарин, снежинка, спора и шестерёнка! Как по радио.'],['mole','Держи монеты. А сувениры я повешу на антенну, пусть вся галактика видит.']],()=>{qset('s0',2);qcomplete('s0')});return}

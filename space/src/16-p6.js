@@ -30,10 +30,10 @@ function shootMandarin(){if(gunCD>0)return;gunCD=.22;gunKick=1;const dir=new THR
 function splatNPC(b){for(const n of L.npcs){if(n.noSplat)continue;const dx=b.x-n.x,dz=b.z-n.z,dy=b.y-(n.c.root.position.y+n.c.h*.6);if(dx*dx+dz*dz<.5&&Math.abs(dy)<n.c.h*.6){if(!n.splatT||T-n.splatT>2){n.splatT=T;toast(`${CAST[n.key].name}: ${pick(['Ай! Липко!','Эй, это мандарин?','Хи-хи, щекотно!','Вкусно, но в глаз!','Прямо в нос!'])}`);const c=n.c;tween(.3,p=>{c.root.position.y=n.y+Math.sin(p*Math.PI)*.35})}return true}}return false}
 
 /* heat meter (Magmara only) */
-function addHeat(v,msg){if(!L||L.id!=='p6')return;L.heat=Math.min(100,(L.heat||0)+v);if(v>10){flash('rgba(255,120,40,.45)');AU.sfx('fire')}if(L.heat>=100){L.heat=0;AU.sfx('bad');respawn(msg||'Капик перегрелся и отдышался у точки возврата')}}
+function addHeat(v,msg){if(!L||!L.heatOn)return;L.heat=Math.min(100,(L.heat||0)+v);if(v>10){flash('rgba(255,120,40,.45)');AU.sfx('fire')}if(L.heat>=100){L.heat=0;AU.sfx('bad');respawn(msg||'Капик перегрелся и отдышался у точки возврата')}}
 
 function buildP6(){
-  newLevel('p6');L.heat=0;
+  newLevel('p6');L.heat=0;L.heatOn=true;
   setSky({top:0x1a0608,hor:0xff6a3a,bot:0x2a0808,fog:0x6a2414,near:38,far:150,hs:0xffc0a0,hg:0x3a1010,hi:.62,sc:0xffa070,si:.95,sd:[.3,.5,-.7],sunGlow:0xff7a40,stars:true});
   skyBody(0xff3a1a,[-150,90,-260],42,0xffab4a);skyBody(0xffd36b,[230,120,-120],10);
   L.spawn={x:0,y:0,z:9,yaw:0};L.surface='moss';L.pathKind='cobble';L.waterMsg='Ай-ай, лава! Капик отпрыгнул назад';
@@ -133,7 +133,7 @@ function buildP6(){
       return{text:`Остуди лавовые фонтаны пломбиром: ${3-left.length} из 3. Мост через лаву - слева и справа`,pos:[b.x,2.6,b.z],tag:'Глава 3'}}
     if(B.state==='fight')return{text:'Стреляй пломбиром в Рогожара. Сбивай огненные шары!',pos:null,tag:'Глава 3'};
     return{text:'Войди в замок и найди Рогожара',pos:P.z>-28?[0,2,-28]:[0,3,-50],tag:'Глава 3'}};
-  $('#heat').hidden=false;
+  $('#heat').hidden=false;$('#heat small').textContent='Жар';$('#bossBar b').textContent='Король Рогожар';
 }
 function iskorkaTalk(n){if(needTr('iskorka'))return;S.seen.isk=1;save();const st=qs('c3');
   if(st>=5&&st<99){talk(n,[['iskorka','Тс-с, гость! Я Искорка. Тут правит Король Рогожар. Он утащил в замок четырёх пушистиков.'],['iskorka','Ворота держат три лавовых фонтана. Остуди их, и ворота откроются.'],['iskorka','Бананомёт с пломбиром? Отличная идея! Холодные шарики шипят на лаве, как газировка.'],['iskorka','Бесёнки-угольки кусаются жаром. Шкала «Жар» слева: полная - и ты упадёшь без сил у точки возврата.']]);return}

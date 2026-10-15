@@ -1,6 +1,7 @@
 /* ---------- LEVEL: P5 «Одуванчия» (глава 2) ---------- */
 /* chapter-2 objective shown on every other planet while the chapter runs */
-function chapterObj(){const s3=qs('c3');if(s3&&s3<99&&L){const id=L.id;
+function chapterObj(){const s4=qs('c4');if(s4&&s4<99&&L){const id=L.id;if(s4===1)return id==='base'?{text:'Звёзды гаснут! Радист Крот зовёт на вышку',pos:[-10,9.5,20],tag:'Финал'}:{text:'Лети на базу: Радист Крот видит, как гаснут звёзды',pos:null,tag:'Финал'};if(id!=='p8')return{text:'Лети к Разлому над звездой: открой карту клавишей M',pos:null,tag:'Финал'};return null}
+  const s3=qs('c3');if(s3&&s3<99&&L){const id=L.id;
     if(s3===1)return id==='base'?{text:'Братьев нет! У тарелки лежит обгоревшая записка',pos:[3.5,1.2,-5.5],tag:'Глава 3'}:{text:'Лети на базу: братья пропали',pos:null,tag:'Глава 3'};
     if(s3<4)return id==='p7'?null:{text:'Лети на Бананию: там спрятан Бананомёт. Открой карту клавишей M',pos:null,tag:'Глава 3'};
     if(id!=='p6')return{text:'Лети на Магмару: открой карту клавишей M',pos:null,tag:'Глава 3'};return null}

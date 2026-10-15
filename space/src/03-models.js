@@ -185,6 +185,7 @@ const CAST={
   oreshka:{name:'Белка Орешка',voice:500,spec:()=>({sp:'squirrel',apron:0xfff1d6,tail:'bushy',c:{fur:0xc0703a,fur2:0xfff0dc,dark:0x6a3418,shirt:0xc94f6a,pants:0xc94f6a,arm:0xc0703a,paw:0xc0703a}})},
   belchonok:{name:'Бельчонок',voice:760,spec:()=>({sp:'squirrel',scale:.6,tail:'bushy',c:{fur:0xd8904a,fur2:0xfff0dc,dark:0x7a4420,shirt:pick([0xffd36b,0x7fe3e8,0x8ee08a]),pants:0x6a4a30,arm:0xd8904a,paw:0xd8904a}})},
   bee:{name:'Шмель Жужа',voice:420,spec:()=>({sp:'raccoon',scale:.8,hat:'propeller',c:{fur:0xffc83d,fur2:0x2b2b33,shirt:0x2b2b33,pants:0xffc83d,arm:0x2b2b33,paw:0x2b2b33}})},
+  tenek:{name:'Тенёк',voice:150,spec:()=>({sp:'capy',scale:.72,c:{fur:0x3a2a5a,fur2:0x2a1a40,dark:0x120818}})},
   dedushka:{name:'Дедушка (запись)',voice:200,spec:()=>({sp:'capy',hat:'pilot',scarf:0xffd36b,glasses:true,c:{fur:0x8a6a52,fur2:0x6a5040,dark:0x3a2a1e}})},
   makakin:{name:'Профессор Макакин',voice:420,spec:()=>({sp:'monkey',glasses:true,hat:'goggles',apron:0xf4f6fa,tail:'monkey',c:{fur:0x7a4a2a,fur2:0xe8c8a0,shirt:0x3a6ad6,pants:0x3a3a4a,arm:0x7a4a2a,paw:0xe8c8a0,shoe:0x3a2418}})},
   bananych:{name:'Вождь Бананыч',voice:230,spec:()=>({sp:'monkey',scale:1.15,hat:'straw',scarf:0xffe14a,prop:'staff',tail:'monkey',c:{fur:0x5a3a22,fur2:0xd8b890,shirt:0x4f9a3a,pants:0x6a4a2a,arm:0x5a3a22,paw:0xd8b890,shoe:0x3a2418,band:0xffe14a}})},

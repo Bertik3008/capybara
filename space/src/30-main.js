@@ -1,7 +1,7 @@
 /* ---------- MAIN: input, modes, travel, loop ---------- */
 const keys={};let ePressed=false,eJust=false,jumpReq=false,throwReq=false,boostHeld=false;
 let locked=false,noLock=isTouch||!('requestPointerLock' in cv),lockFails=0,drag=null,MX=0,MY=0;
-const BUILD={base:buildBase,p1:buildP1,p2:buildP2,p3:buildP3,p4:buildP4,p5:buildP5,p6:buildP6,p7:buildP7};
+const BUILD={base:buildBase,p1:buildP1,p2:buildP2,p3:buildP3,p4:buildP4,p5:buildP5,p6:buildP6,p7:buildP7,p8:buildP8};
 let lockClick=false;
 function lockFailed(){if(lockClick){lockFails++;if(lockFails>=2&&!noLock){noLock=true;toast('Зажмите левую кнопку мыши и тяните, чтобы смотреть')}}lockClick=false}
 function lock(fromClick){if(isTouch||noLock||locked||(mode!=='play'&&mode!=='space'))return;lockClick=!!fromClick;try{const p=cv.requestPointerLock();if(p&&p.catch)p.catch(lockFailed)}catch(e){lockFailed()}}
@@ -82,17 +82,19 @@ function toTitle(){save();if(screenRet==='space'||mode==='space')SPX.exit();came
 function afterArrive(id){
   if(id==='base'&&nRescued()===4&&!S.ending){say([['yuzik','Мы дома!'],['snezhok','И тут тепло.'],['gribok','Можно я теперь посплю? Долго-долго.'],['vintik','А я разберу тарелку и сделаю её быстрее!'],['kapik','Сначала пруд. Все вместе. Как раньше.']],()=>{S.ending=true;save();showEnding()});return}
   if(S.ending&&!qs('c2'))setTimeout(()=>{if(!qs('c2'))qset('c2',1)},1500);
+  if(qdone('c3')&&!qs('c4'))setTimeout(()=>{if(qs('c4'))return;qset('c4',1);say([['mole','Капик! Срочно! Звёзды над Пастбищем гаснут одна за другой! Поднимись ко мне на вышку!']])},1600);
   if(qdone('c2')&&!qs('c3'))setTimeout(()=>{if(qs('c3'))return;qset('c3',1);say([['mole','Капик! Это Крот, по радио! Срочно лети на базу! Тут всё в саже, а братьев нигде нет!']])},1500);
   if(!S.seen[id]&&L.arrive){S.seen[id]=1;save();say(L.arrive)}else if(!S.seen[id]){S.seen[id]=1;save()}}
 function showEnding(ch){ch=ch||1;setMode('ending');const E={
     1:{who:['kapik','yuzik','snezhok','gribok','vintik'],t:'Все дома<span>Конец первой главы</span>',x:'Капик вернул всех четырёх братьев. Пруд снова тёплый, мандарины снова сладкие. Но Радист Крот уже ловит странный сигнал...',ok:'Дальше: глава 2'},
     2:{who:['kapik','pushinka','yuzik','snezhok','gribok','vintik'],t:'Пух здоров<span>Конец второй главы</span>',x:'Великий Пух больше не чихает ураганами, а завод Шестерёнки дымит чистым паром. Белки-летяги научили Капика планировать.',ok:'Дальше: глава 3',rw:'+50 монет и покраска тарелки «Пушистая»'},
-    3:{who:['kapik','rogozhar','yuzik','snezhok','gribok','vintik'],t:'Король уснул<span>Конец третьей главы</span>',x:'Банановый пломбир остудил Рогожара, и он впервые за триста лет сладко уснул. Братья снова дома, а Бананомёт остался у Капика.',ok:'Гулять дальше',rw:'+60 монет и корона короля Магмары'}}[ch];
+    4:{who:['kapik','tenek','yuzik','snezhok','gribok','vintik','dedushka'],t:'Конец<span>Капик в космосе</span>',x:'Тень Космического Чиха больше не одинока, и галактика больше не чихает. Пятеро братьев и маленький Тенёк сидят у тёплого пруда и смотрят, как снова зажигаются звёзды. Идея и геймдизайн: Сергей. Собрано вместе с Claude.',ok:'Остаться на Пастбище',rw:'+100 монет и Тенёк теперь живёт на базе'},
+    3:{who:['kapik','rogozhar','yuzik','snezhok','gribok','vintik'],t:'Король уснул<span>Конец третьей главы</span>',x:'Банановый пломбир остудил Рогожара, и он впервые за триста лет сладко уснул. Братья снова дома, а Бананомёт остался у Капика.',ok:'Дальше: финальная глава',rw:'+60 монет и корона короля Магмары'}}[ch];
   $('#endArt').innerHTML=E.who.map((k,i)=>`<img alt="" class="${i?'':'big'}" src="${portrait(k)}">`).join('');$('#endTitle').innerHTML=E.t;$('#endText').textContent=E.x;
   $('#endReward').hidden=!E.rw;if(E.rw)$('#endReward').innerHTML='<span class="coin"></span>'+E.rw;if(ch===2&&!S.paints.fluffy){S.paints.fluffy=1;save()}if(ch===3&&!S.hats.crown){S.hats.crown=1;save()}
   S.lastEnd=ch;$('#endOk').textContent=E.ok;$('#end').hidden=false;AU.sfx('quest')}
 $('#scPrev').addEventListener('click',()=>SPX.scopeNext(-1));$('#scNext').addEventListener('click',()=>SPX.scopeNext(1));$('#scExit').addEventListener('click',()=>SPX.scopeEnd());
-$('#endOk').addEventListener('click',()=>{$('#end').hidden=true;setMode('play');lock();if(!qs('c2'))setTimeout(()=>{qset('c2',1);say([['kapik','Ой. Радист Крот машет мне с вышки. Похоже, что-то случилось.']])},700);else if(qdone('c2')&&!qs('c3'))setTimeout(()=>{if(qs('c3'))return;qset('c3',1);say([['mole','Капик! Это Крот, по радио! Срочно лети на базу! Тут всё в саже, а братьев нигде нет!']])},900)});
+$('#endOk').addEventListener('click',()=>{$('#end').hidden=true;if(S.lastEnd===4&&L&&L.id!=='base'){S.lastEnd=0;fadeTo('Пастбище',()=>{build('base');S.at='base';save();setMode('play')},()=>{lock();say([['tenek','Так вот какое оно, Пастбище... Тут тепло. Можно я буду ходить за тобой?'],['kapik','Конечно. Добро пожаловать домой, Тенёк.']])});return}setMode('play');lock();if(!qs('c2'))setTimeout(()=>{qset('c2',1);say([['kapik','Ой. Радист Крот машет мне с вышки. Похоже, что-то случилось.']])},700);else if(qdone('c3')&&!qs('c4'))setTimeout(()=>{if(qs('c4'))return;qset('c4',1);say([['mole','Капик! Срочно! Звёзды над Пастбищем гаснут одна за другой! Поднимись ко мне на вышку!']])},900);else if(qdone('c2')&&!qs('c3'))setTimeout(()=>{if(qs('c3'))return;qset('c3',1);say([['mole','Капик! Это Крот, по радио! Срочно лети на базу! Тут всё в саже, а братьев нигде нет!']])},900)});
 
 /* ---------- TITLE & PROLOGUE ---------- */
 const SLIDES=[

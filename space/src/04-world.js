@@ -211,7 +211,7 @@ function collideV(dt){
   const ny=P.y+P.vy*dt,wasG=P.ground;P.ground=false;P.sup=null;
   if(P.vy<=0){let best=-1e9,sup=null;
     for(const c of L.solids){if(!c.on)continue;if(c.y1>P.y+.08||c.y1<ny-.08)continue;if(!overXZ(c,P.x,P.z,PR*.85))continue;if(c.y1>best){best=c.y1;sup=c}}
-    if(!inWater(P.x,P.z)&&P.y>=-.06&&ny<=.06&&0>best){best=0;sup=null}
+    if(!L.noFloor&&!inWater(P.x,P.z)&&P.y>=-.06&&ny<=.06&&0>best){best=0;sup=null}
     if(best>-1e9){const fv=-P.vy;P.y=best;P.vy=0;P.ground=true;P.sup=sup;P.jumps=0;
       if(sup&&sup.t==='bounce'){P.vy=sup.pow||15;P.ground=false;P.sup=null;AU.sfx('bounce');FXW.burst(P.x,P.y+.1,P.z,{col:0x7fe3e8,n:16,spd:4,up:2,life:.6});if(sup.onBounce)sup.onBounce()}
       else{if(!wasG&&fv>7){AU.sfx('land');FXW.burst(P.x,P.y+.05,P.z,{col:0xcccccc,n:8,spd:2,up:1,g:4,life:.4,size:.25})}if(sup&&sup.onStand)sup.onStand(dt)}}

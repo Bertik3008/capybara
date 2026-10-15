@@ -1,7 +1,7 @@
 /* ---------- ECONOMY: gathering, trading, workshops ---------- */
 const cap=()=>S.up.bag?30:12;
 const invCount=()=>Object.values(S.inv).reduce((a,b)=>a+b,0);
-function addRes(kind,n,quiet){const free=cap()-invCount();if(free<=0){if(!quiet){toast('Сумка полна. Продайте находки торговцу');AU.sfx('bad')}return 0}const k=Math.min(n,free);S.inv[kind]=(S.inv[kind]||0)+k;save();UI.inv(true);if(!quiet)toast(`+${k} · ${RES[kind].name}`);return k}
+function addRes(kind,n,quiet){const free=cap()-invCount();if(free<=0){if(!quiet){toast('Сумка полна. Продайте находки торговцу');AU.sfx('bad')}return 0}const k=Math.min(n,free);S.inv[kind]=(S.inv[kind]||0)+k;save();UI.inv(true);if(!quiet){toast(`+${k} · ${RES[kind].name}`);ev('res',k)}return k}
 function takeRes(kind,n){if((S.inv[kind]||0)<n)return false;S.inv[kind]-=n;if(!S.inv[kind])delete S.inv[kind];save();UI.inv();return true}
 const nodeLabel={banana:'сорвать бананы',fluff:'собрать звёздный пух',berry:'собрать ягоды',shroom:'сорвать светогриб',scrap:'разобрать железо',mandarin:'потрясти дерево'};
 /* gathering node: hold E, gets resources, regrows after a while */
@@ -28,14 +28,14 @@ function openTrade(who){tradeWho=who||'otter';openScreen('#trade');$('#tradePic'
 function renderTrade(){$('#tradeCoins').textContent=S.coins;$('#tradeBag').textContent=`${invCount()} / ${cap()}`;const ks=Object.keys(S.inv).filter(k=>S.inv[k]>0);
   $('#tradeList').innerHTML=ks.length?ks.map(k=>`<div class="card"><div class="thumb" style="background:${RES[k].col}33"><span class="resdot" style="background:${RES[k].col}"></span></div><div class="cardMain"><b>${RES[k].name}</b><span>В сумке: ${S.inv[k]} · цена ${coinsWord(RES[k].price)} за штуку</span></div><button data-sell="${k}" data-n="1">Продать 1</button><button data-sell="${k}" data-n="all" class="primary"><span class="price"><span class="coin"></span>+${S.inv[k]*RES[k].price}</span></button></div>`).join('')
     :'<div class="empty">Сумка пуста. Ягоды, мандарины, рыба, светогрибы и железо продаются здесь. В мастерских из них делают товары подороже.</div>'}
-$('#tradeList').addEventListener('click',e=>{const b=e.target.closest('[data-sell]');if(!b)return;const k=b.dataset.sell,n=b.dataset.n==='all'?S.inv[k]:1;if(!takeRes(k,n))return;addCoins(n*RES[k].price);AU.sfx('buy');renderTrade();if(L&&L.onSell)L.onSell(k,n)});
+$('#tradeList').addEventListener('click',e=>{const b=e.target.closest('[data-sell]');if(!b)return;const k=b.dataset.sell,n=b.dataset.n==='all'?S.inv[k]:1;if(!takeRes(k,n))return;addCoins(n*RES[k].price);AU.sfx('buy');ev('sell',n);renderTrade();if(L&&L.onSell)L.onSell(k,n)});
 /* workshop: turn raw goods into a pricier product with a timing mini-game */
 function workshop(x,y,z,o){inter({x,y,z,r:o.r||2.4,label:()=>`E - ${o.title}: ${o.need} ${RES[o.from].one} → ${RES[o.to].one}`,act:()=>{
   if((S.inv[o.from]||0)<o.need){say([['kapik',`Нужно ${o.need} шт.: ${RES[o.from].name.toLowerCase()}. Сейчас в сумке ${S.inv[o.from]||0}.`]]);AU.sfx('bad');return}
   openMini({title:o.title,help:o.help,need:3,kind:o.kind,btn:o.btn||'Жать!',unit:o.kind==='mash'?'Готовность':'Готово',onWin:()=>{takeRes(o.from,o.need);S.inv[o.to]=(S.inv[o.to]||0)+1;save();UI.inv(true);banner('Сделано',RES[o.to].name,`Стоит ${coinsWord(RES[o.to].price)} у любого торговца`);AU.sfx('quest');if(o.onMade)o.onMade()}})}})}
 /* fishing spot: needs grandpa's rod */
 function fishingSpot(x,y,z,o){o=o||{};inter({x,y,z,r:o.r||2,label:'E - рыбачить',cond:o.cond,act:()=>{if(!S.got['rod']){say([['kapik','Без удочки не порыбачишь. Дедушкина удочка лежала где-то в амбаре на базе.']]);return}
-  openMini({title:'Рыбалка',help:'Жмите E или кнопку, когда поплавок в зелёной зоне.',need:1,btn:'Подсечь',unit:'Поймано',loop:true,onCatch:()=>{const k=addRes('fish',1);if(o.onFish&&k)o.onFish();return k>0}})}})}
+  openMini({title:'Рыбалка',help:'Жмите E или кнопку, когда поплавок в зелёной зоне.',need:1,btn:'Подсечь',unit:'Поймано',loop:true,onCatch:()=>{const k=addRes('fish',1);if(k)ev('mini');if(o.onFish&&k)o.onFish();return k>0}})}})}
 /* bag screen (F): see everything, throw away any amount */
 function openBag(){openScreen('#bag');renderBag()}
 function renderBag(){$('#bagCoins').textContent=S.coins;const ks=Object.keys(S.inv).filter(k=>S.inv[k]>0);

@@ -259,7 +259,7 @@ function updPicks(t,dt){for(let i=L.picks.length-1;i>=0;i--){const p=L.picks[i];
     AU.sfx(p.tmp?'pickup':'item');FXW.burst(p.x,p.y+.3,p.z,{col:0xffffff,n:p.tmp?8:18,spd:3,up:3,life:.6});if(p.onGet)p.onGet();save()}}}
 
 function updProj(dt){for(let i=L.proj.length-1;i>=0;i--){const b=L.proj[i];b.vy-=(b.g||14)*dt;if(b.kind==='mand'){b.m.rotation.x+=dt*14;b.m.rotation.y+=dt*9}b.x+=b.vx*dt;b.y+=b.vy*dt;b.z+=b.vz*dt;b.m.position.set(b.x,b.y,b.z);b.life-=dt;let hit=b.y<0||b.life<0;
-  for(const t of L.targets){if(!t.on)continue;if((b.x-t.x)**2+(b.y-t.y)**2+(b.z-t.z)**2<t.r*t.r){t.hit(t);hit=true;break}}
+  for(const t of L.targets){if(!t.on)continue;if((b.x-t.x)**2+(b.y-t.y)**2+(b.z-t.z)**2<t.r*t.r){t.hit(t);hit=true;if(b.kind==='mand')ev('hit');break}}
   if(!hit&&b.kind==='mand'&&splatNPC(b))hit=true;
   if(!hit)for(const c of L.solids){if(c.on&&c.k==='b'&&b.x>c.x0&&b.x<c.x1&&b.y>c.y0&&b.y<c.y1&&b.z>c.z0&&b.z<c.z1){hit=true;break}}
   if(hit){FXW.burst(b.x,Math.max(b.y,.1),b.z,{col:b.kind==='mand'?0xfff1b0:0xffffff,n:12,spd:2.5,up:1.5,life:.5,size:.25});if(b.kind==='mand')AU.sfx('splat');L.group.remove(b.m);L.proj.splice(i,1)}}}

@@ -69,7 +69,7 @@ function openArcade(){openScreen('#arcade');AR.state='ready';AR.y=160;AR.vy=0;AR
 function arcadeFlap(){if(AR.state==='over'){if(AR.t>.6){AR.state='ready';AR.y=160;AR.vy=0;AR.cols=[];AR.score=0}return}if(AR.state==='ready'){AR.state='play';AR.t=0;AR.next=.4}AR.vy=-230;AU.sfx('jump')}
 function arcadeTick(dt){if(curScreen!=='#arcade')return;AR.t+=dt;if(AR.state==='play'){AR.vy+=620*dt;AR.y+=AR.vy*dt;const sp=120+AR.score*4;AR.next-=dt;if(AR.next<=0){AR.next=1.55;const gap=110-Math.min(30,AR.score*1.2);AR.cols.push({x:500,g:60+Math.random()*(200-gap),h:gap,ok:false})}
   for(const c of AR.cols){c.x-=sp*dt;if(!c.ok&&c.x<70){c.ok=true;AR.score++;AU.sfx('coin')}if(c.x<104&&c.x>36&&(AR.y-10<c.g||AR.y+10>c.g+c.h))arcadeOver()}AR.cols=AR.cols.filter(c=>c.x>-60);if(AR.y>310||AR.y<0)arcadeOver()}arcadeDraw()}
-function arcadeOver(){if(AR.state!=='play')return;AR.state='over';AR.t=0;AU.sfx('bad');const sc=AR.score,best=S.arcade||0;if(sc>best){S.arcade=sc;save()}
+function arcadeOver(){if(AR.state!=='play')return;AR.state='over';AR.t=0;AU.sfx('bad');const sc=AR.score,best=S.arcade||0;ev('arcade',sc);if(sc>best){S.arcade=sc;save()}
   const msg=[];if(sc>=10&&!S.hats.pilot){S.hats.pilot=1;save();msg.push('Награда: дедушкин шлем пилота!')}if(sc>=26&&!S.got.arcadeGold){S.got.arcadeGold=1;S.paints.retro=1;save();addCoins(30);msg.push('Рекорд дедушки побит! +30 монет и ретро-покраска тарелки')}
   if(msg.length)setTimeout(()=>{banner('Капи-Прыг',msg[0],msg[1]||'');AU.sfx('quest')},300);$('#arBest').textContent=`Твой рекорд: ${S.arcade||0} · рекорд дедушки: 25`}
 function arcadeDraw(){const c=$('#arc'),g=c.getContext('2d'),W=480,H=320;g.fillStyle='#0a0820';g.fillRect(0,0,W,H);for(let i=0;i<40;i++){g.fillStyle=i%5?'#5a5a8a':'#fff';g.fillRect((i*97-AR.t*20*(1+i%3))%W+(i*97-AR.t*20*(1+i%3)<0?W:0),(i*53)%H,i%5?1:2,i%5?1:2)}
@@ -89,7 +89,7 @@ function buildGarden(){const GX=-7,GZ=-23.5;S.garden=S.garden||{};
     upd();tick(()=>{upd();bush.scale.setScalar(.6+Math.min(1,bed.st)*.4)});
     inter({x,y:.3,z,r:1.6,label:()=>{const g=GD()[i];if(!g)return'E - посадить на грядку '+(SEEDS.some(k=>S.inv[k]>0)?'('+RES[SEEDS.find(k=>S.inv[k]>0)].one+')':'(нужен ягода, мандарин или банан)');const st=upd();return st>=1?'E - собрать урожай: '+RES[g.k].name.toLowerCase():`Растёт: ${Math.round(st*100)}% · ещё ${Math.ceil((1-st)*120)} с`},
       act:()=>{const g=GD()[i];if(!g){const k=SEEDS.find(k=>S.inv[k]>0);if(!k){say([['kapik','Чтобы что-то вырастить, нужна ягода, мандарин или банан в сумке.']]);return}takeRes(k,1);GD()[i]={k,t:Date.now()};save();AU.sfx('pickup');toast(`Посажено: ${RES[k].one}. Вырастет за 2 минуты, даже пока ты в космосе`);return}
-        if(upd()<1){toast('Ещё не выросло. Загляни попозже');return}const got=addRes(g.k,4);if(got){delete GD()[i];bed.k=null;save();AU.sfx('quest');FXW.burst(x,.8,z,{col:parseInt(RES[g.k].col.slice(1),16),n:20,spd:2,up:2,life:.8})}}})}
+        if(upd()<1){toast('Ещё не выросло. Загляни попозже');return}const got=addRes(g.k,4);if(got){ev('garden');delete GD()[i];bed.k=null;save();AU.sfx('quest');FXW.burst(x,.8,z,{col:parseInt(RES[g.k].col.slice(1),16),n:20,spd:2,up:2,life:.8})}}})}
   fence(GX-1.4,GZ-1.2,GX+3.8,GZ-1.2,0xa0683c,{nc:true,h:.6});vis(G.cyl,0x7aa8ff,GX+4.4,.25,GZ+.6,.25,.5,.25);vis(G.cyl,0x7aa8ff,GX+4.4,.55,GZ+.85,.04,.3,.04,.8,0,0)}
 
 $('#arc').addEventListener('pointerdown',e=>{e.preventDefault();arcadeFlap()});

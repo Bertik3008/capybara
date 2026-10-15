@@ -74,7 +74,8 @@ function buildBase(){
     tick((t,dt)=>{if(tn===talkingTo)return;const tx=P.x+Math.sin(P.yaw)*1.8+Math.cos(t*.7)*.6,tz=P.z+Math.cos(P.yaw)*1.8,dx=tx-tn.x,dz=tz-tn.z,d=Math.hypot(dx,dz);if(d>.4&&Math.hypot(P.x-tn.x,P.z-tn.z)>1.4){const sp=Math.min(d*1.6,6)*dt;tn.x+=dx/d*sp;tn.z+=dz/d*sp;tn.c.root.rotation.y=Math.atan2(dx,dz);tn.c.walkPh+=dt*10;tn.pose='walk'}else tn.pose='idle';
       tn.c.root.position.set(tn.x,.15+Math.sin(t*2)*.08,tn.z);if(tn.it){tn.it.x=tn.x;tn.it.z=tn.z}})}
   /* scenery */
-  const r=rng(11),avoid=[[-6,-22.5,4.5],[27,-6,10],[3.3,16.4,2],[7,-7,2.5],[0,-14,7],[-14,-6,6],[16,-2,9],[9,16,7],[-10,20,4],[0,6,4],[-6,5,3],[17.5,17,3.5],[-21,11.75,4],[-4,17,3],[24,12,9]];
+  buildDailyBoard(4.8,3.4);
+  const r=rng(11),avoid=[[4.8,3.4,2.6],[-6,-22.5,4.5],[27,-6,10],[3.3,16.4,2],[7,-7,2.5],[0,-14,7],[-14,-6,6],[16,-2,9],[9,16,7],[-10,20,4],[0,6,4],[-6,5,3],[17.5,17,3.5],[-21,11.75,4],[-4,17,3],[24,12,9]];
   scatter(r,38,22,58,avoid,(x,z,s)=>tree(x,z,s*1.15,pick([0x3f7a35,0x4a8a3c,0x5a9a40]),{fruit:r()<.25?0xffd36b:null}));
   scatter(r,18,12,58,avoid,(x,z,s)=>rock(x,z,s*.8,0x8d8a9a));
   scatter(r,16,8,40,avoid,(x,z,s)=>{vis(G.sph,0x4a8a3c,x,.4*s,z,.8*s,.6*s,.8*s,0,0,0,.05,TX.leaves);vis(G.sph,0x5a9a44,x+.4*s,.35*s,z+.2*s,.5*s,.4*s,.5*s,0,0,0,.05,TX.leaves)});
@@ -93,7 +94,7 @@ function buildBase(){
       if(st===2){const n=S.inv.berry||0;if(n<8){const b=nearestBush();return{text:`Собери звёздные ягоды: ${n} из 8. Удерживай E у кустов`,pos:b?[b.x,1.4,b.z]:[23,1.4,12]}}return{text:'Отнеси ягоды Тётушке Выдре',pos:[-12,2,-6]}}
       return{text:S.coins>=10?'Купи универсальный переводчик у Тётушки Выдры':'Заработай 10 монет: продай ягоды или рыбу Тётушке Выдре',pos:[-12,2,-6]}}
     if(qs('s0')===1&&Object.keys(S.souv).length>=4)return{text:'Отнеси сувениры Радисту Кроту на вышку',pos:[tx,9.5,tz]};
-    const nx=PIDS.find(p=>!S.rescued[p]);if(!nx){const rb=(L.bros||[]).find(n=>reqOf(n.key));if(rb)return{text:`${CAST[rb.key].name} о чём-то просит. Подойди и поговори`,pos:[rb.x,rb.c.h+.6,rb.z],tag:'Просьба брата'};return{text:'Все братья дома. В галактике остались сувениры, кольца и мастерские',pos:null,tag:'Свободная игра'}}
+    const nx=PIDS.find(p=>!S.rescued[p]);if(!nx&&S.tr&&dailyReady())return{text:'Задание дня выполнено. Забери награду у доски заданий',pos:[4.8,2.6,3.4],tag:'Задания дня'};if(!nx){const rb=(L.bros||[]).find(n=>reqOf(n.key));if(rb)return{text:`${CAST[rb.key].name} о чём-то просит. Подойди и поговори`,pos:[rb.x,rb.c.h+.6,rb.z],tag:'Просьба брата'};return{text:'Все братья дома. В галактике остались сувениры, кольца и мастерские',pos:null,tag:'Свободная игра'}}
     return{text:`Удерживай E у тарелки и лети на планету ${PL[nx].name}`,pos:[0,3.2,-14]}};
 }
 function otterTalk(n){const st=qs('m0');

@@ -42,6 +42,8 @@
   <button id="tE" class="tb">E</button>
 </div>
 
+<div id="coach" class="layer" hidden><div class="ring" id="coachRing"></div><div class="lbl" id="coachLbl"></div><div class="swipe" id="coachSwipe"></div></div>
+
 <div id="dlg" hidden>
   <div class="dlgFace"><img id="dlgPic" alt=""></div>
   <div class="dlgBox"><div class="dlgName" id="dlgName"></div><div class="dlgText" id="dlgText"></div><span class="dlgNext" id="dlgNext"></span></div>
@@ -55,7 +57,7 @@
     <button id="bSet">Настройки</button>
   </nav>
   <div class="tconfirm" id="tConfirm" hidden><p>Начать заново? Сохранение удалится.</p><div class="btns"><button id="bNewYes" class="primary">Начать заново</button><button id="bNewNo" class="ghost">Отмена</button></div></div>
-  <p class="tfoot">Версия 8 · шлифовка</p>
+  <p class="tfoot">Версия 9 · живой мир</p>
 </div>
 
 <div id="pro" class="screen" hidden>
@@ -112,6 +114,15 @@
   </div>
 </div>
 
+<div id="daily" class="screen menu" hidden>
+  <div class="sheet">
+    <div class="shopHead"><div style="flex:1;min-width:0"><h2>Доска заданий</h2><p class="sub" id="dailyStreak" style="margin:4px 0 0"></p></div></div>
+    <div class="cards" id="dailyList"></div>
+    <div class="card daily" id="dailyBonus"></div>
+    <p class="sub">Каждый день три новых задания. Они обновляются в полночь по времени телефона.</p>
+    <button class="ghost" data-close>Отойти</button>
+  </div>
+</div>
 <div id="bro" class="screen menu" hidden>
   <div class="sheet">
     <div class="shopHead"><div class="portrait"><img id="broPic" alt=""></div><div style="flex:1;min-width:0"><h2 id="broName"></h2><div class="hearts" id="broHearts"></div><p class="sub" id="broMood" style="margin:4px 0 0"></p></div></div>

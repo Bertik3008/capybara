@@ -97,6 +97,9 @@ const cloudTex=(()=>{const c=document.createElement('canvas');c.width=256;c.heig
 
 /* ---------- materials ---------- */
 const UNI={time:{value:0}};
+/* v9: soft rim light - characters and foliage read as soft and plush instead of flat plastic */
+const RIM=k=>`{float rim=1.0-max(dot(normalize(normal),normalize(vViewPosition)),0.0);outgoingLight+=diffuseColor.rgb*pow(rim,2.4)*${k.toFixed(2)}+vec3(1.0,0.92,0.8)*pow(rim,5.0)*${(k*.35).toFixed(3)};}
+#include <output_fragment>`;
 function atlasMat(){const m=new THREE.MeshStandardMaterial({vertexColors:true,map:ATLAS,roughness:.86,metalness:0});
   m.onBeforeCompile=sh=>{sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nattribute vec2 uvt;varying vec2 vUvT;').replace('#include <uv_vertex>','#include <uv_vertex>\nvUvT=uvt;');
     sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec2 vUvT;').replace('#include <map_fragment>',`#ifdef USE_MAP
@@ -107,10 +110,10 @@ function atlasMat(){const m=new THREE.MeshStandardMaterial({vertexColors:true,ma
       vec4 texelColor=texture2D(map,tuv);
       #endif
       texelColor=mapTexelToLinear(texelColor);texelColor.rgb=mix(vec3(0.78),texelColor.rgb,0.5);diffuseColor*=texelColor;
-      #endif`)};m.userData.shared=true;return m}
+      #endif`).replace('#include <output_fragment>',RIM(.16))};m.userData.shared=true;return m}
 const batchMat=atlasMat();
 const glowBatchMat=new THREE.MeshBasicMaterial({vertexColors:true,toneMapped:false});glowBatchMat.userData.shared=true;
-const charMat=new THREE.MeshStandardMaterial({vertexColors:true,roughness:.62,metalness:0});charMat.userData.shared=true;
+const charMat=new THREE.MeshStandardMaterial({vertexColors:true,roughness:.62,metalness:0});charMat.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <output_fragment>',RIM(.5))};charMat.userData.shared=true;
 const MC={};
 function mat(c,o){const k=c+(o?JSON.stringify(o):'');if(!MC[k]){const p={color:lc(c),roughness:.65,metalness:0};
     if(o){if(o.shininess>50){p.roughness=.28;p.metalness=.35}if(o.emissive!=null)p.emissive=lc(o.emissive);for(const kk of['transparent','opacity','side','depthWrite'])if(o[kk]!=null)p[kk]=o[kk];if(o.metal){p.metalness=o.metal;p.roughness=o.rough!=null?o.rough:.35}}

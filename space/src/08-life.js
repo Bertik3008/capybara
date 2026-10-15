@@ -40,7 +40,7 @@ const SWG={seat:null,th:0,w:0,loops:0,lx:0,ly:0,pump:false};
 function swingRide(seat){if(P.carry)dropCarry();SWG.seat=seat;SWG.th=.15;SWG.w=0;SWG.loops=0;SWG.lx=SWG.ly=0;seat.occ='kapik';setMode('swing');$('#swingUI').hidden=false;AU.sfx('ui')}
 function swingUpdate(dt,mx,my){const s=SWG.seat;if(!s)return;const pump=keys.Space||keys.KeyW||keys.ArrowUp||SWG.pump;
   const acc=-(9.8/2.1)*Math.sin(SWG.th)-.22*SWG.w+(pump?2.7*(SWG.w>=0?1:-1):0);SWG.w+=acc*dt;SWG.w=clamp(SWG.w,-9,9);SWG.th+=SWG.w*dt;
-  if(SWG.th>Math.PI||SWG.th<-Math.PI){SWG.th+=SWG.th>0?-TAU:TAU;SWG.loops++;AU.sfx('djump');banner('Сальто!',SWG.loops>1?`Уже ${SWG.loops} раза подряд!`:'Полный оборот на качелях','');if(!S.got.swingFlip){S.got.swingFlip=1;save();setTimeout(()=>{addCoins(10);toast('Первое сальто на качелях: +10 монет')},500)}}
+  if(SWG.th>Math.PI||SWG.th<-Math.PI){SWG.th+=SWG.th>0?-TAU:TAU;SWG.loops++;AU.sfx('djump');ev('swingflip');banner('Сальто!',SWG.loops>1?`Уже ${SWG.loops} раза подряд!`:'Полный оборот на качелях','');if(!S.got.swingFlip){S.got.swingFlip=1;save();setTimeout(()=>{addCoins(10);toast('Первое сальто на качелях: +10 монет')},500)}}
   const th=SWG.th,g=s.g;g.rotation.x=th;SWG.lx=clamp(SWG.lx-mx*.002,-1.2,1.2);SWG.ly=clamp(SWG.ly-my*.002,-.6,.6);
   camera.position.set(g.position.x,g.position.y-Math.cos(th)*1.18,g.position.z-Math.sin(th)*1.18);camera.rotation.set(th+SWG.ly,SWG.lx,0);
   if(Math.abs(SWG.w)>3&&Math.random()<dt*3)AU.sfx('step')}
@@ -81,8 +81,8 @@ function renderBro(){const n=broCur,k=n.key,b=broData(k);renderReq(k);const h=Ma
   $('#broFeed').disabled=!food;$('#broFeed').textContent=food?`Угостить: ${RES[food].one}`:'Угостить (нужна еда в сумке)';
   $('#broGift').hidden=!(b.h>=5&&!b.gift)}
 $('#broTalk').addEventListener('click',()=>{const n=broCur;closeScreen();talk(n,[[n.key,pick(BRO_LINES[n.key])]])});
-$('#broFeed').addEventListener('click',()=>{const n=broCur,b=broData(n.key),f=FOOD.find(x=>S.inv[x]>0);if(!f)return;takeRes(f,1);b.h=Math.min(5,b.h+1);save();AU.sfx('pickup');hearts(n);toast(`${CAST[n.key].name}: ${pick(['Ням!','Вкуснотища!','Ещё хочу!','Спасибо, братик!'])}`);renderBro()});
-$('#broPet').addEventListener('click',()=>{const n=broCur,b=broData(n.key);if(!n.petted){n.petted=1;b.h=Math.min(5,b.h+.5);save()}AU.sfx('ok');hearts(n);toast(`${CAST[n.key].name}: ${pick(['Кур-р-р...','Хи-хи, щекотно!','Ещё за ушком!'])}`);renderBro()});
+$('#broFeed').addEventListener('click',()=>{const n=broCur,b=broData(n.key),f=FOOD.find(x=>S.inv[x]>0);if(!f)return;takeRes(f,1);b.h=Math.min(5,b.h+1);save();AU.sfx('pickup');hearts(n);ev('bro');toast(`${CAST[n.key].name}: ${pick(['Ням!','Вкуснотища!','Ещё хочу!','Спасибо, братик!'])}`);renderBro()});
+$('#broPet').addEventListener('click',()=>{const n=broCur,b=broData(n.key);if(!n.petted){n.petted=1;b.h=Math.min(5,b.h+.5);save();ev('bro')}AU.sfx('ok');hearts(n);toast(`${CAST[n.key].name}: ${pick(['Кур-р-р...','Хи-хи, щекотно!','Ещё за ушком!'])}`);renderBro()});
 $('#broPlay').addEventListener('click',()=>{const n=broCur;closeScreen();startTag(n)});
 $('#broGift').addEventListener('click',()=>{const n=broCur,b=broData(n.key),g=BRO_GIFT[n.key];b.gift=1;if(S.hats[g.hat]){addCoins(15);banner('Подарок',CAST[n.key].name,'Копилка брата: +15 монет')}else{S.hats[g.hat]=1;banner('Подарок',g.txt,'Надеть можно в меню, вкладка «Капик»')}save();AU.sfx('quest');renderBro()});
 const BRO_LINES={yuzik:['Сыграем в мяч? Я быстрее!','За столом мандарины. Я не все съел. Почти.','Капик, ты лучший старший брат.'],snezhok:['У пруда так спокойно... и не холодно.','Апчхи! Это от радости, честно.','Костёр почти как горячий источник. Почти.'],
@@ -94,7 +94,7 @@ function startTag(n){const c=n.c;n.game=true;n.pose='walk';n.tl=20;AU.sfx('ok');
     const sp=d<6?5.1:2.6;const m={x:n.x+ax*sp*dt,z:n.z+az*sp*dt};mobCollide(m,.4);const r=Math.hypot(m.x-8,m.z-2);if(r>26){m.x-=(m.x-8)/r*(r-26);m.z-=(m.z-2)/r*(r-26)}n.x=m.x;n.z=m.z;turnTo(n,Math.atan2(ax,az),dt);c.walkPh+=dt*16;c.root.position.set(n.x,Math.abs(Math.sin(t*9))*.12,n.z);if(n.it){n.it.x=n.x;n.it.z=n.z}
     $('#timer').innerHTML=`<small>Догонялки</small>${tl.toFixed(1)}`;
     if(d<1.4){end(true)}else if(tl<=0)end(false)};
-  const end=win=>{n.game=false;$('#timer').hidden=true;const b=broData(n.key);n.state='move';if(win){b.h=Math.min(5,b.h+1);save();const rq=reqOf(n.key);if(rq&&rq.t==='tag')setTimeout(()=>reqDone(n.key),600);hearts(n);AU.sfx('quest');toast(`Поймал! ${CAST[n.key].name} хохочет. +1 сердечко`)}else{AU.sfx('bad');toast(`${CAST[n.key].name}: Не догонишь! Давай ещё раз?`)}};
+  const end=win=>{n.game=false;$('#timer').hidden=true;const b=broData(n.key);n.state='move';if(win){b.h=Math.min(5,b.h+1);save();ev('bro');const rq=reqOf(n.key);if(rq&&rq.t==='tag')setTimeout(()=>reqDone(n.key),600);hearts(n);AU.sfx('quest');toast(`Поймал! ${CAST[n.key].name} хохочет. +1 сердечко`)}else{AU.sfx('bad');toast(`${CAST[n.key].name}: Не догонишь! Давай ещё раз?`)}};
   n.tagEnd=end;if(!n.tagOn){n.tagOn=1;tick((t,dt)=>n.tagFn&&n.tagFn(t,dt))}n.tagFn=fn}
 
 /* ---------- brothers' requests: they ask, Kapik helps ---------- */
@@ -108,7 +108,7 @@ function reqState(k){S.req=S.req||{};return S.req[k]||(S.req[k]={i:-1,on:false,c
 function reqOf(k){const r=reqState(k);return r.on?REQS[k][r.i]:null}
 function reqReady(k,q){const r=reqState(k);if(q.t==='bring')return(S.inv[q.k]||0)>=q.n;if(q.t==='find')return!!r.found;if(q.t==='scope')return!!(S.scopeLog&&S.scopeLog[q.id]>r.t0);if(q.t==='swing')return!!(S.swingT&&S.swingT>r.t0);return false}
 function reqTick(){for(const k of Object.keys(REQS)){const pid={yuzik:'p1',snezhok:'p2',gribok:'p3',vintik:'p4'}[k];if(!S.rescued[pid])continue;const r=reqState(k);if(!r.on&&Date.now()>r.cd){let i=(r.i+1)%REQS[k].length;if(REQS[k][i].t==='scope'&&!S.decor.telescope)i=(i+1)%REQS[k].length;r.i=i;r.on=true;r.found=false;r.t0=Date.now();save()}}}
-function reqDone(k){const r=reqState(k),q=REQS[k][r.i];if(!r.on)return;if(q.t==='bring'&&!takeRes(q.k,q.n))return;r.on=false;r.cd=Date.now()+75000;const b=broData(k);b.h=Math.min(5,b.h+1);const rw=q.t==='bring'?6+q.n*2:8;addCoins(rw);save();AU.sfx('quest');
+function reqDone(k){const r=reqState(k),q=REQS[k][r.i];if(!r.on)return;if(q.t==='bring'&&!takeRes(q.k,q.n))return;r.on=false;ev('req');r.cd=Date.now()+75000;const b=broData(k);b.h=Math.min(5,b.h+1);const rw=q.t==='bring'?6+q.n*2:8;addCoins(rw);save();AU.sfx('quest');
   banner('Просьба выполнена',CAST[k].name+' счастлив','+1 сердечко и '+coinsWord(rw));const n=(L.bros||[]).find(x=>x.key===k);if(n)hearts(n);if(curScreen==='#bro')renderBro()}
 function renderReq(k){const q=reqOf(k),el=$('#broReq');if(!q){el.hidden=true;return}el.hidden=false;const ready=reqReady(k,q);
   let st='';if(q.t==='bring')st=`В сумке: ${S.inv[q.k]||0} из ${q.n} · ${RES[q.k].name.toLowerCase()}`;else if(q.t==='find')st=reqState(k).found?'Находка у тебя!':'Найди и принеси';else if(q.t==='tag')st='Нажми «Догонялки» и поймай брата';else if(q.t==='scope')st=ready?'Нашёл! Расскажи брату':'Телескоп стоит у тарелки';else if(q.t==='swing')st=ready?'Покачался! Расскажи брату':'Качели во дворе у костра';

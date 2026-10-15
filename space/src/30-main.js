@@ -66,7 +66,7 @@ function updInteract(dt){let best=null,bd=1e9;
   if(!target){if(eJust&&P.carry&&isTouch)dropCarry();showPrompt(isTouch&&P.carry?'E - бросить предмет':null);return}
   const hold=typeof target.hold==='function'?target.hold():target.hold,lab=typeof target.label==='function'?target.label():target.label;
   if(!ePressed){holdLatch=false;holdT=0}
-  if(hold>0){if(ePressed&&!holdLatch){holdT+=dt;if(holdT>=hold){holdLatch=true;holdT=0;target.act()}}}else if(eJust){holdLatch=true;target.act()}
+  if(hold>0){if(ePressed&&!holdLatch){holdT+=dt;if(holdT>=hold){holdLatch=true;holdT=0;if(isTouch)S.coachE=(S.coachE||0)+1;target.act()}}}else if(eJust){holdLatch=true;if(isTouch)S.coachE=(S.coachE||0)+1;target.act()}
   if(mode==='play')showPrompt(lab,hold>0?holdT/hold:0)}
 
 /* ---------- TRAVEL ---------- */
@@ -77,7 +77,7 @@ function build(id){$('#heat').hidden=true;$('#bossBar').hidden=true;BUILD[id]();
 function precompile(){try{camera.updateMatrixWorld();renderer.compile(wscene,camera)}catch(e){}}
 function rebuildHere(){const s={x:P.x,y:P.y,z:P.z,yaw:P.yaw,pitch:P.pitch};$('#heat').hidden=true;$('#bossBar').hidden=true;BUILD[L.id]();Object.assign(P,s);P.vx=P.vy=P.vz=0;P.camY=P.y+EYE;UI.refresh();target=null;precompile()}
 function takeoff(){if(P.carry)dropCarry();const from=L.id;fadeTo('Взлёт',()=>{S.at=from;save();camera.far=3200;camera.updateProjectionMatrix();SPX.enter(from);setMode('space')},()=>{lock();if(!S.seen.space){S.seen.space=1;save();say([['kapik','Открытый космос! Дедушкина кабина, все кнопки на месте. Работают из них, правда, только руль и газ.'],['kapik',isTouch?'Кнопка «Карта» покажет все планеты. У планеты удерживаю E для посадки.':'Клавиша M покажет звёздную карту. У планеты удерживаю E для посадки.']])}})}
-function landOn(id){fadeTo('Посадка: '+PL[id].name,()=>{SPX.exit();camera.far=1200;camera.updateProjectionMatrix();build(id);S.at=id;save();setMode('play')},()=>{lock();afterArrive(id)})}
+function landOn(id){fadeTo('Посадка: '+PL[id].name,()=>{SPX.exit();camera.far=1200;camera.updateProjectionMatrix();build(id);S.at=id;save();setMode('play');if(id!=='base')ev('land',id)},()=>{lock();afterArrive(id)})}
 function toTitle(){save();if(screenRet==='space'||mode==='space')SPX.exit();camera.far=3200;camera.updateProjectionMatrix();$('#dlg').hidden=true;$('#timer').hidden=true;AU.engine(false);showTitle()}
 function afterArrive(id){
   if(id==='base'&&nRescued()===4&&!S.ending){say([['yuzik','Мы дома!'],['snezhok','И тут тепло.'],['gribok','Можно я теперь посплю? Долго-долго.'],['vintik','А я разберу тарелку и сделаю её быстрее!'],['kapik','Сначала пруд. Все вместе. Как раньше.']],()=>{S.ending=true;save();showEnding()});return}
@@ -153,13 +153,13 @@ function step(dt){T+=dt;UNI.time.value=T;
     if(L.sunDir)sunFollow(P.x,P.y,P.z)}
   else FXS.update(dt);
   fishTick(dt);arcadeTick(dt);
-  if(mode==='play'||mode==='space'){updObjective(dt);updTut()}else{$('#marker').hidden=true;if(mode!=='dialog'&&mode!=='menu')$('#tut').hidden=true}
+  if(mode==='play'||mode==='space'){updObjective(dt);updTut()}else{$('#marker').hidden=true;$('#coach').hidden=true;if(mode!=='dialog'&&mode!=='menu')$('#tut').hidden=true}
   const ch=$('#clickhint'),show=(mode==='play'||mode==='space')&&!isTouch&&!noLock&&!locked;if(ch.hidden===show)ch.hidden=!show;
 }
 
 /* ---------- BOOT ---------- */
 wscene.add(camera);
-if(location.hash==="#dev")window.__K={cam:camera,R:renderer,ws:wscene,info:()=>{const i=renderer.info.render;return{calls:i.calls,tris:i.triangles,geo:renderer.info.memory.geometries,tex:renderer.info.memory.textures,prog:renderer.info.programs.length}},stepT:(n)=>{const t0=performance.now();for(let i=0;i<n;i++)step(1/60);return ((performance.now()-t0)/n).toFixed(2)},get MINI(){return MINI},fire:()=>throwBall(),boss:()=>L.boss,freshSave,addRes,openTrade,openShop2:()=>openShop(),get inv(){return S.inv},get S(){return S},set S(v){S=v},P,get L(){return L},get mode(){return mode},build,setMode,takeoff,landOn,SPX,openShop,openMenu,closeScreen,say,advance,keys,qset,qs,rescueBro,save,AU,get target(){return target},jump:()=>{jumpReq=true},pressE:()=>{ePressed=true;eJust=true},releaseE:()=>{ePressed=false},sim:(sec,inp)=>{const n=Math.round(sec*60);for(let i=0;i<n;i++){if(inp)Object.assign(keys,inp);step(1/60)}if(inp)for(const k in inp)keys[k]=false}};
+if(location.hash==="#dev")window.__K={ev:(n,v)=>ev(n,v),dailyState:()=>dailyState(),cam:camera,R:renderer,ws:wscene,info:()=>{const i=renderer.info.render;return{calls:i.calls,tris:i.triangles,geo:renderer.info.memory.geometries,tex:renderer.info.memory.textures,prog:renderer.info.programs.length}},stepT:(n)=>{const t0=performance.now();for(let i=0;i<n;i++)step(1/60);return ((performance.now()-t0)/n).toFixed(2)},get MINI(){return MINI},fire:()=>throwBall(),boss:()=>L.boss,freshSave,addRes,openTrade,openShop2:()=>openShop(),get inv(){return S.inv},get S(){return S},set S(v){S=v},P,get L(){return L},get mode(){return mode},build,setMode,takeoff,landOn,SPX,openShop,openMenu,closeScreen,say,advance,keys,qset,qs,rescueBro,save,AU,get target(){return target},jump:()=>{jumpReq=true},pressE:()=>{ePressed=true;eJust=true},releaseE:()=>{ePressed=false},sim:(sec,inp)=>{const n=Math.round(sec*60);for(let i=0;i<n;i++){if(inp)Object.assign(keys,inp);step(1/60)}if(inp)for(const k in inp)keys[k]=false}};
 function start(data){
   resize();try{if(window.claude&&window.claude.hot&&window.claude.hot.snapshot)window.claude.hot.snapshot(()=>({save:S,lvl:L&&L.id,mode}))}catch(e){}
   const sv=loadSave();if(sv)S=sv;

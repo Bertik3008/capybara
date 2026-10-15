@@ -27,6 +27,23 @@ const AU=(()=>{
     const g=ctx.createGain(),v=o.v||.1,a=o.a||.003;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
     s.connect(f);f.connect(g);g.connect(o.dest||sfxG);if(o.wet){const w=ctx.createGain();w.gain.value=o.wet;g.connect(w);w.connect(rev)}s.start(t,Math.random()*.5);s.stop(t+dur+.05)}
 
+  /* ---------- VOICES (v9): little formant babble, one syllable per typed vowel ---------- */
+  const VF={'а':[780,1220],'я':[760,1350],'о':[500,860],'ё':[480,1100],'у':[340,700],'ю':[330,1450],'ы':[370,1550],'и':[290,2250],'е':[470,1850],'э':[540,1700]};
+  const VK={bolt:'robot',posylkin:'robot',magnetron:'robot',cleaner:'robot',robot:'robot',tenek:'ghost',dedushka:'old',rogozhar:'demon',bee:'buzz',ugolek:'crackle'};
+  let vLast=0;
+  function voice(key,base,ch,up){if(!ctx||S.set.voices===false)return;const t=ctx.currentTime;if(t-vLast<.055)return;vLast=t;
+    const kind=VK[key]||'',fm=VF[ch]||[600,1400],d=kind==='robot'?.06:.08+Math.random()*.02;let f0=clamp(base*.45,70,330)*(.93+Math.random()*.14);if(up)f0*=1.22;
+    const g=ctx.createGain(),v=kind==='ghost'?.45:.26;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+d+.05);
+    let src;if(kind==='ghost'){src=ctx.createBufferSource();src.buffer=noiseBuf;src.loop=true}
+    else{src=ctx.createOscillator();src.type=kind==='robot'?'square':'sawtooth';src.frequency.setValueAtTime(f0,t);src.frequency.linearRampToValueAtTime(f0*(up?1.25:kind==='robot'?1:.9),t+d);
+      if(kind==='old'||kind==='buzz'||kind==='demon'){const l=ctx.createOscillator(),lg=ctx.createGain();l.frequency.value=kind==='buzz'?38:kind==='demon'?24:6;lg.gain.value=f0*(kind==='old'?.04:.12);l.connect(lg);lg.connect(src.frequency);l.start(t);l.stop(t+d+.1)}}
+    const sh=kind==='demon'?.8:base>480?1.18:1;
+    for(const [fq,q,gv] of [[fm[0]*sh,5,1],[fm[1]*sh,7,.55],[2600*sh,4,.18]]){const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=fq;bp.Q.value=q;const bg=ctx.createGain();bg.gain.value=gv;src.connect(bp);bp.connect(bg);bg.connect(g)}
+    if(kind==='old'){const hp=ctx.createBiquadFilter();hp.type='highpass';hp.frequency.value=500;g.connect(hp);hp.connect(sfxG)}else g.connect(sfxG);
+    if(kind==='crackle'&&Math.random()<.5)noise(t,.05,{ft:'highpass',f:4000,v:.02});
+    const w=ctx.createGain();w.gain.value=kind==='ghost'||kind==='old'?.35:.08;g.connect(w);w.connect(rev);
+    src.start(t,kind==='ghost'?Math.random()*.5:0);src.stop(t+d+.08)}
+
   /* ---------- MUSIC ---------- */
   const MAJ=[0,2,4,5,7,9,11],MIN=[0,2,3,5,7,8,10],DOR=[0,2,3,5,7,9,10],LYD=[0,2,4,6,7,9,11];
   const TR={
@@ -134,5 +151,5 @@ const AU=(()=>{
     if(!on&&eng){const e=eng;eng=null;e.g.gain.setTargetAtTime(0,ctx.currentTime,.1);e.ng.gain.setTargetAtTime(0,ctx.currentTime,.1);setTimeout(()=>{try{e.o.stop();e.o2.stop();e.n.stop()}catch(x){}},500);return}
     if(eng){const t=ctx.currentTime;eng.o.frequency.setTargetAtTime(44+thr*40+(boost?30:0),t,.15);eng.o2.frequency.setTargetAtTime(44.7+thr*41+(boost?31:0),t,.15);eng.f.frequency.setTargetAtTime(180+thr*500+(boost?600:0),t,.15);eng.g.gain.setTargetAtTime(.035+thr*.05,t,.15);eng.ng.gain.setTargetAtTime(boost?.05:thr*.012,t,.1);eng.nf.frequency.setTargetAtTime(boost?1600:700,t,.2)}
   }
-  return{init,vol,music,sfx,engine,ambient,get ready(){return!!ctx}};
+  return{init,vol,music,sfx,engine,ambient,voice,get ready(){return!!ctx}};
 })();

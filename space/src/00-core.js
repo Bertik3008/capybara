@@ -12,13 +12,13 @@ let mode='boot';
 /* ---------- SAVE ---------- */
 const SAVE_KEY='kapik-space-v3';
 function freshSave(){return{v:3,coins:0,tr:false,inv:{},up:{},paint:'silver',paints:{silver:1},hat:'none',hats:{none:1},decor:{},rescued:{},q:{},qd:{},got:{},seen:{},souv:{},prologue:false,ending:false,at:'base',tut:0,route:null,
-  set:{music:.5,sfx:.8,sens:1,q:null,invert:false,hints:true}}}
+  set:{music:.5,sfx:.8,sens:1,q:null,invert:false,hints:true,voices:true}}}
 let S=freshSave();
 function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(S))}catch(e){}}
 function loadSave(){try{const r=localStorage.getItem(SAVE_KEY);if(!r)return null;const d=JSON.parse(r);const f=freshSave();
   for(const k in d){if(f[k]&&typeof f[k]==='object'&&!Array.isArray(f[k])&&d[k]&&typeof d[k]==='object')f[k]=Object.assign(f[k],d[k]);else f[k]=d[k]}return f}catch(e){return null}}
 function wipeSave(){try{localStorage.removeItem(SAVE_KEY)}catch(e){}}
-function addCoins(n){S.coins+=n;save();if(window.UI)UI.coins(n)}
+function addCoins(n){S.coins+=n;save();if(n>0&&typeof ev==='function'&&!addCoins.skip)ev('coins',n);if(window.UI)UI.coins(n)}
 
 const PIDS=['p1','p2','p3','p4'];
 const PL={

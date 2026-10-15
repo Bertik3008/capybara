@@ -51,7 +51,7 @@ function nextLine(){
   const ln=dlgQ.shift(),c=CAST[ln[0]],alien=ln[2]==='alien';const d=$('#dlg');d.style.setProperty('--sp',alien?'#7a5ab0':(DCOL[ln[0]]||'#ff9a2e'));d.classList.toggle('kapik',ln[0]==='kapik');
   $('#dlgPic').src=portrait(ln[0]);$('#dlgName').textContent=alien?'???':c.name;const el=$('#dlgText');el.classList.toggle('alien',alien);$('#dlgNext').classList.remove('on');
   curText=ln[1];el.textContent='';let i=0;clearInterval(typing);
-  typing=setInterval(()=>{i+=2;el.textContent=curText.slice(0,i);if(i%6===0)AU.sfx('talk',c.voice*(.9+Math.random()*.25));if(i>=curText.length){clearInterval(typing);typing=null;$('#dlgNext').classList.add('on')}},17);
+  typing=setInterval(()=>{const seg=curText.slice(i,i+2).toLowerCase();i+=2;el.textContent=curText.slice(0,i);const vw=seg.match(/[аяоёуюыиеэ]/);if(vw){if(S.set.voices===false){if(i%6===0)AU.sfx('talk',c.voice*(.9+Math.random()*.25))}else AU.voice(alien?'robot':ln[0],c.voice,vw[0],/\?/.test(curText.slice(i,i+4)))}if(i>=curText.length){clearInterval(typing);typing=null;$('#dlgNext').classList.add('on')}},17);
 }
 function advance(){if(typing){clearInterval(typing);typing=null;$('#dlgText').textContent=curText;$('#dlgNext').classList.add('on');return}nextLine()}
 $('#dlg').addEventListener('click',e=>{e.stopPropagation();advance()});
@@ -90,10 +90,11 @@ function renderMenu(){$$('#menuTabs [data-tab]').forEach(b=>b.setAttribute('aria
     <div class="setrow"><label for="sSfx">Звуки</label><input id="sSfx" type="range" min="0" max="1" step=".05" value="${s.sfx}"></div>
     <div class="setrow"><label for="sSens">Чувствительность камеры</label><input id="sSens" type="range" min=".3" max="2.5" step=".05" value="${s.sens}"></div>
     <label class="check"><input id="sInv" type="checkbox" ${s.invert?'checked':''}>Инвертировать камеру по вертикали</label>
-    <label class="check"><input id="sHint" type="checkbox" ${s.hints?'checked':''}>Подсказки обучения</label></div>
+    <label class="check"><input id="sHint" type="checkbox" ${s.hints?'checked':''}>Подсказки обучения</label>
+    <label class="check"><input id="sVoice" type="checkbox" ${s.voices!==false?'checked':''}>Голоса персонажей</label></div>
     <p class="sub" style="margin-top:6px">«Быстро» без теней и с меньшим разрешением, для слабых телефонов. «Красиво» с мягкими тенями и густой травой.</p>
     <div class="btns" style="justify-content:flex-start;margin-top:8px">${S.tut<TUT.length&&mode!=='title'?'<button id="sSkip">Пропустить обучение</button>':''}</div>`;
-    const up=()=>{s.music=+$('#sMus').value;s.sfx=+$('#sSfx').value;s.sens=+$('#sSens').value;s.invert=$('#sInv').checked;s.hints=$('#sHint').checked;save();AU.vol()};
+    const up=()=>{s.music=+$('#sMus').value;s.sfx=+$('#sSfx').value;s.sens=+$('#sSens').value;s.invert=$('#sInv').checked;s.hints=$('#sHint').checked;s.voices=$('#sVoice').checked;save();AU.vol()};
     B.querySelectorAll('input').forEach(i=>i.addEventListener('input',up));
     $('#sQ').onclick=e=>{const b=e.target.closest('[data-q]');if(!b)return;s.q=+b.dataset.q;save();applyQuality();applyShadows();UI.rebuildAfter=true;renderMenu()};
     const sk=$('#sSkip');if(sk)sk.onclick=()=>{S.tut=TUT.length;save();renderMenu();toast('Обучение пропущено')}}
@@ -145,7 +146,7 @@ function fishTick(dt){if(!MINI.on)return;
   if(MINI.kind==='mash'){MINI.v=Math.max(0,MINI.v-.3*dt);$('#fzone').style.width=MINI.v*100+'%';updMiniUI();return}
   if(MINI.kind==='hold'){if(MINI.holding){MINI.v+=dt*.62;if(MINI.v>=1){MINI.v=0;MINI.holding=false;AU.sfx('bad');toast('Перебор! Отпускайте раньше')}}else MINI.v=Math.max(0,MINI.v-dt*1.5);$('#fneedle').style.left=MINI.v*100+'%';return}
   MINI.t+=dt*MINI.spd;const v=(Math.sin(MINI.t*2.2)+1)/2*.96+.02;MINI.v=v;$('#fneedle').style.left=v*100+'%'}
-function miniWin(){const o=MINI.o;MINI.on=false;setTimeout(()=>{closeScreen();if(o.onWin)o.onWin()},450)}
+function miniWin(){const o=MINI.o;MINI.on=false;ev('mini');setTimeout(()=>{closeScreen();if(o.onWin)o.onWin()},450)}
 function fishRelease(){if(!MINI.on||MINI.kind!=='hold'||!MINI.holding)return;MINI.holding=false;const v=MINI.v,o=MINI.o;
   if(v>=MINI.zone[0]&&v<=MINI.zone[1]){AU.sfx('item');MINI.caught++;updMiniUI();if(MINI.caught>=o.need){miniWin();return}newZone()}else{AU.sfx('bad');toast(v<MINI.zone[0]?'Рано отпустили':'Поздно, перегрели')}MINI.v=0}
 function fishHook(){if(!MINI.on)return;
@@ -171,5 +172,19 @@ const TUT=[
 ];
 let tutLook=0,tutMove=0,tutJump=false,tutBarn=false,tutShown=-1;
 function tutCheck(){if(S.tut>=TUT.length)return;let ch=false;while(S.tut<TUT.length&&TUT[S.tut].ok()){S.tut++;ch=true}if(ch){save();const el=$('#tut');el.classList.remove('done');void el.offsetWidth;el.classList.add('done');AU.sfx('ui')}}
-function updTut(){const el=$('#tut');const show=S.set.hints&&S.tut<TUT.length&&(mode==='play'||mode==='space')&&(S.tut<8||mode==='space'||L&&L.id!=='base');
+/* v9 touch coach: a pulsing ring + label right over the control the player needs now */
+let coachKey='',coachT=0;
+function updCoach(){const el=$('#coach');if(!isTouch||!S.set.hints||!(mode==='play'||mode==='space')){if(!el.hidden)el.hidden=true;coachKey='';return}
+  let sel=null,lbl='',swipe=false;const st=S.tut;
+  if(mode==='play'&&st===0){swipe=true;lbl='Проведи пальцем'}
+  else if(mode==='play'&&st===1){sel='#joy';lbl='Двигай джойстик'}
+  else if(mode==='play'&&st===2){sel='#tJump';lbl='Прыгай'}
+  else if(mode==='play'&&target&&(S.coachE||0)<4){const h=typeof target.hold==='function'?target.hold():target.hold;sel='#tE';lbl=h>0?'Удерживай':'Нажми'}
+  else if(mode==='space'&&st===8&&!$('#tMap').hidden){sel='#tMap';lbl='Курс по карте'}
+  const key=(sel||'')+lbl+swipe;if(!sel&&!swipe){if(!el.hidden)el.hidden=true;coachKey='';return}
+  coachT-=1/60;if(key===coachKey&&coachT>0)return;coachKey=key;coachT=.5;el.hidden=false;
+  const ring=$('#coachRing'),lb=$('#coachLbl');$('#coachSwipe').hidden=!swipe;ring.hidden=!sel;lb.textContent=lbl;
+  if(sel){const r=$(sel).getBoundingClientRect(),pad=10;Object.assign(ring.style,{left:(r.left-pad)+'px',top:(r.top-pad)+'px',width:(r.width+pad*2)+'px',height:(r.height+pad*2)+'px'});Object.assign(lb.style,{left:(r.left+r.width/2)+'px',top:(r.top-pad-34)+'px'})}
+  else Object.assign(lb.style,{left:'72%',top:'calc(46% - 46px)'})}
+function updTut(){updCoach();const el=$('#tut');const show=S.set.hints&&S.tut<TUT.length&&(mode==='play'||mode==='space')&&(S.tut<8||mode==='space'||L&&L.id!=='base');
   if(!show){el.hidden=true;return}tutCheck();if(S.tut>=TUT.length){el.hidden=true;return}el.hidden=false;if(tutShown!==S.tut){tutShown=S.tut;$('#tutText').innerHTML=TUT[S.tut].t();$('#tutN').textContent=`${S.tut+1} из ${TUT.length}`;$('#tutBar').style.width=(S.tut/TUT.length*100)+'%'}}

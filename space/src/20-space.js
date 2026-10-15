@@ -135,7 +135,7 @@ const SPX=(()=>{
     /* free 6-DOF steering: yaw around the saucer's own up, pitch around its own right, so full loops are possible */
     _qt.setFromAxisAngle(_ax.set(0,1,0),-inp.lx);sh.q.multiply(_qt);_qt.setFromAxisAngle(_ax.set(1,0,0),-inp.ly);sh.q.multiply(_qt);sh.q.normalize();
     if(inp.roll){_qt.setFromAxisAngle(_ax.set(0,0,1),inp.roll*dt*2.2);sh.q.multiply(_qt)}
-    if(Math.abs(inp.ly)>1e-4){if(Math.sign(inp.ly)!==Math.sign(sh.loop))sh.loop=0;sh.loop+=inp.ly;if(Math.abs(sh.loop)>=TAU){sh.loop=0;SP.flips=(SP.flips||0)+1;AU.sfx('djump');banner('Сальто!',SP.flips>1?'Ещё одно: '+SP.flips:'Тарелка сделала полный оборот','');if(!S.got.flip){S.got.flip=1;save();setTimeout(()=>{addCoins(5);toast('Первое сальто: +5 монет')},600)}}}
+    if(Math.abs(inp.ly)>1e-4){if(Math.sign(inp.ly)!==Math.sign(sh.loop))sh.loop=0;sh.loop+=inp.ly;if(Math.abs(sh.loop)>=TAU){sh.loop=0;SP.flips=(SP.flips||0)+1;AU.sfx('djump');ev('ufoflip');banner('Сальто!',SP.flips>1?'Ещё одно: '+SP.flips:'Тарелка сделала полный оборот','');if(!S.got.flip){S.got.flip=1;save();setTimeout(()=>{addCoins(5);toast('Первое сальто: +5 монет')},600)}}}
     fwd.set(0,0,-1).applyQuaternion(sh.q);rgt.set(1,0,0).applyQuaternion(sh.q);upv.set(0,1,0).applyQuaternion(sh.q);sh.yaw=Math.atan2(-fwd.x,-fwd.z);sh.pitch=Math.asin(clamp(fwd.y,-1,1));
     const boosting=inp.boost&&sh.boost>.02&&inp.thr>=0;const acc=50*(boosting?(S.up.boost?3.1:2.2):1);
     if(boosting){sh.boost=Math.max(0,sh.boost-dt*(S.up.boost?.18:.25));if(!SP.bst)AU.sfx('boost');SP.bst=true}else{sh.boost=Math.min(1,sh.boost+dt*(S.up.boost?.18:.12));SP.bst=false}
